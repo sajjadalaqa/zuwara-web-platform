@@ -1,0 +1,61 @@
+"use client";
+
+import { useState } from "react";
+import { Icon } from "./Icon";
+
+type Journey = "healthcare" | "home-services";
+
+export function UnifiedDiscovery() {
+  const [journey, setJourney] = useState<Journey>("healthcare");
+  const isHealthcare = journey === "healthcare";
+
+  return (
+    <div className="discovery-shell">
+      <div className="discovery-tabs" role="tablist" aria-label="Choose a service journey">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={isHealthcare}
+          className={isHealthcare ? "is-active" : ""}
+          onClick={() => setJourney("healthcare")}
+        >
+          <Icon name="heart" size={17} /> Healthcare
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={!isHealthcare}
+          className={!isHealthcare ? "is-active" : ""}
+          onClick={() => setJourney("home-services")}
+        >
+          <Icon name="home" size={17} /> Home services
+        </button>
+      </div>
+      <form className="discovery-form" action={isHealthcare ? "/healthcare" : "/home-services"} method="get">
+        <label>
+          <span>{isHealthcare ? "Doctor, specialty or care need" : "Service, category or provider"}</span>
+          <div>
+            <Icon name="search" size={19} />
+            <input
+              key={journey}
+              type="search"
+              name="query"
+              placeholder={isHealthcare ? "Try “Mental Health”" : "Try “Laboratory”"}
+              autoComplete="off"
+            />
+          </div>
+        </label>
+        {!isHealthcare && (
+          <label className="discovery-location">
+            <span>Location</span>
+            <div><Icon name="location" size={19} /><input name="location" placeholder="Choose your area" autoComplete="address-level2" /></div>
+          </label>
+        )}
+        <button type="submit">
+          {isHealthcare ? "Find healthcare" : "Explore services"}
+          <Icon name="arrow" size={18} />
+        </button>
+      </form>
+    </div>
+  );
+}

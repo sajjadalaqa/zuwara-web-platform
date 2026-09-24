@@ -1,0 +1,6 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import { PageHero } from "@/components/PageHero";
+
+export const metadata:Metadata={title:"Download the Zuwara app",description:"Manage Zuwara appointments, family profiles, reports and care journeys from the patient mobile application.",alternates:{canonical:"/download"}};
+export default function Download(){return <><PageHero eyebrow="Zuwara mobile" title="Keep your care journey close." description="The Zuwara patient app brings appointments, family profiles, wallet activity, reports and conversations into one experience."/><section className="content-section"><div className="container app-showcase"><div className="app-copy"><span className="eyebrow eyebrow-light">App stores</span><h2>One place to manage the next step.</h2><p>Verified App Store and Google Play links will be added before production publication.</p><div className="notice notice-dark">Store buttons are intentionally not linked in this design build to avoid publishing unverified destinations.</div></div><div className="phones"><Image src="/images/app-phone-1.png" alt="Zuwara mobile app" width={260} height={540}/><Image src="/images/app-phone-2.png" alt="Zuwara appointment experience" width={260} height={540}/></div></div></section></>}

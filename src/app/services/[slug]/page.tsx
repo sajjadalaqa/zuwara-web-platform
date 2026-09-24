@@ -1,0 +1,12 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Icon } from "@/components/Icon";
+import { JsonLd } from "@/components/JsonLd";
+import { PageHero } from "@/components/PageHero";
+import { services, SITE_URL } from "@/data/site";
+
+export function generateStaticParams(){return services.map(({slug})=>({slug}))}
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{const {slug}=await params;const service=services.find(item=>item.slug===slug);if(!service)return{};return{title:service.title,description:service.description,alternates:{canonical:`/services/${slug}`},openGraph:{title:service.title,description:service.short,url:`/services/${slug}`}}}
+
+export default async function ServiceDetail({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const service=services.find(item=>item.slug===slug);if(!service)notFound();return <><JsonLd data={{"@context":"https://schema.org","@type":"Service",name:service.title,description:service.description,provider:{"@type":"Organization",name:"Zuwara",url:SITE_URL},url:`${SITE_URL}/services/${service.slug}`}}/><PageHero eyebrow={service.category} title={service.title} description={service.description}/><section className="content-section"><div className="container content-grid"><article className="prose"><h2>A clearer way to start</h2><p>{service.short} Zuwara brings important preparation, availability and booking information together so patients can understand the next step before they commit.</p><h3>How the journey works</h3><ol><li>Review the service information and who it is designed for.</li><li>Choose the appropriate profile, duration or provider where applicable.</li><li>Sign in securely and confirm the patient or dependant.</li><li>Review availability, price and payment details.</li><li>Track the booking and follow-up from the Zuwara experience.</li></ol><div className="notice">Service availability, pricing and eligibility will be loaded from verified Zuwara APIs when this presentation template enters the integration phase.</div></article><aside className="info-panel"><span className="eyebrow">At a glance</span><h3>What this journey supports</h3><ul>{service.highlights.map(item=><li key={item}><Icon name="check" size={20}/>{item}</li>)}</ul><Link href="/book" className="button button-primary">Continue to booking <Icon name="arrow" size={18}/></Link></aside></div></section></>}
