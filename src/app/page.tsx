@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
+import { existsSync } from "node:fs";
+import path from "node:path";
 import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { JsonLd } from "@/components/JsonLd";
 import { SafeImage } from "@/components/SafeImage";
 import { SectionIntro } from "@/components/SectionIntro";
-import { UnifiedDiscovery } from "@/components/UnifiedDiscovery";
+import { HeroSlider } from "@/components/HeroSlider";
 import { getD4hCategories } from "@/lib/api/d4h/catalog";
 import { getZuwaraHomeData } from "@/lib/api/zuwara/home";
 import { doctorSlug, specialtySlug } from "@/lib/api/zuwara/slugs";
+import { StatsCards } from "@/components/StatsCards";
+import careStyles from "./healthcare-discovery.module.css";
+import journeyStyles from "./healthcare-journey.module.css";
 
 export const metadata: Metadata = {
   title: "Healthcare and trusted home services",
@@ -23,11 +28,11 @@ export const metadata: Metadata = {
 };
 
 const healthcareSteps = [
-  ["Discover", "Find a consultant by specialty, profile, and consultation option."],
-  ["Choose", "Select a supported duration and available appointment time."],
-  ["Confirm", "Review the booking and complete the supported payment journey."],
-  ["Continue", "Return to appointments, reports, prescriptions, and follow-up."],
-];
+  { title: "Find your consultant", body: "Browse specialties and get to know the consultant who’s right for you.", icon: "search" },
+  { title: "Pick a time", body: "Choose an available appointment and a consultation option that suits you.", icon: "calendar" },
+  { title: "Make it official", body: "Check your appointment details and complete payment to confirm your booking.", icon: "check" },
+  { title: "Keep in touch", body: "Find your reports, prescriptions and follow-up appointments in one place.", icon: "heart" },
+] as const;
 
 const homeServiceSteps = [
   ["Explore", "Browse a service category or search by the help you need."],
@@ -55,69 +60,30 @@ function formatRating(value: number) {
 export default async function Home() {
   const [healthcare, homeServices] = await Promise.all([getZuwaraHomeData(), getD4hCategories()]);
   const faqItems = [...healthcareFaqs, ...homeServiceFaqs];
+  const welcomeBanner = ["png", "jpg", "webp"].map((extension) => `/images/zuwara-welcome.${extension}`).find((file) => existsSync(path.join(process.cwd(), "public", file)));
 
   return (
     <>
       <JsonLd data={{ "@context": "https://schema.org", "@type": "WebSite", name: "Zuwara", url: "https://www.zuwara.sa", description: "A connected platform for healthcare and trusted services at home." }} />
       <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqItems.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) }} />
 
-      <section className="ecosystem-hero">
-        <div className="container ecosystem-hero-grid">
-          <div className="ecosystem-hero-copy">
-            <span className="eyebrow">One Zuwara ecosystem</span>
-            <h1>Trusted support for your health and your home.</h1>
-            <p>Connect with healthcare consultants or arrange services at home through two focused journeys—designed to feel simple, clear, and connected.</p>
-            <UnifiedDiscovery />
-            <div className="hero-trust-row" aria-label="Zuwara platform qualities">
-              <span><Icon name="shield" size={17} /> Clear booking journeys</span>
-              <span><Icon name="check" size={17} /> Real provider data</span>
-              <span><Icon name="phone" size={17} /> Mobile continuity</span>
-            </div>
-          </div>
+      <HeroSlider welcomeBanner={welcomeBanner} />
 
-          <div className="ecosystem-hero-visual" aria-label="Zuwara healthcare and home services">
-            <div className="hero-portrait-panel">
-              <span>Healthcare</span>
-              <Image src="/images/hero-doctor.png" alt="Consultant available through Zuwara" width={551} height={575} priority />
-            </div>
-            <div className="hero-service-panel">
-              <div><Icon name="home" size={22} /><span>Services at home</span></div>
-              <strong>{homeServices.categories[0]?.name ?? "Care at your location"}</strong>
-              <p>Discover categories, providers, and location-aware booking through D4H.</p>
-              <Link href="/home-services">Explore services <Icon name="arrow" size={16} /></Link>
-            </div>
-            <div className="hero-orbit hero-orbit-one" />
-            <div className="hero-orbit hero-orbit-two" />
-          </div>
-        </div>
-      </section>
+      <StatsCards />
 
-      <section className="pathways" id="start">
-        <div className="container pathways-grid">
-          <div className="pathways-index"><span>01 — 02</span><p>Choose the journey that matches what you need today.</p></div>
-          <article className="pathway pathway-health">
-            <div><span>01</span><Icon name="heart" size={26} /></div>
-            <h2>Healthcare</h2>
-            <p>Find consultants, arrange consultations, access therapy, and keep your care information connected.</p>
-            <ul><li>Consultants & specialties</li><li>Therapy & instant consultations</li><li>Appointments & follow-up</li></ul>
-            <Link href="/healthcare">Explore healthcare <Icon name="arrow" size={18} /></Link>
-          </article>
-          <article className="pathway pathway-home">
-            <div><span>02</span><Icon name="home" size={26} /></div>
-            <h2>Home Services</h2>
-            <p>Browse real service categories, providers, shops, labs, and request support at your location.</p>
-            <ul><li>Categories & services</li><li>Providers & professionals</li><li>Bookings & tracking</li></ul>
-            <Link href="/home-services">Explore home services <Icon name="arrow" size={18} /></Link>
-          </article>
-        </div>
-      </section>
-
-      <section className="section healthcare-discovery">
+      <section className={careStyles.section} aria-labelledby="care-heading">
         <div className="container">
-          <SectionIntro eyebrow="Healthcare discovery" title="Find care with the details that matter." body="Specialties and consultant profiles below come directly from the Zuwara healthcare API. Availability and booking remain owned by the existing healthcare backend." href="/healthcare" linkLabel="Explore healthcare" />
+          <div className={careStyles.sectionLabel}><span>Healthcare</span><span>Find your care</span></div>
+          <div className={careStyles.heading}>
+            <h2 id="care-heading">The right care starts<br />with the right specialist.</h2>
+            <div>
+              <p>Explore specialties, get to know your consultant, and find care that fits your needs.</p>
+              <Link href="/healthcare" className={careStyles.explore}>Explore healthcare <Icon name="arrow" size={18} /></Link>
+            </div>
+          </div>
 
           {healthcare.categories.length > 0 ? (
-            <div className="api-category-strip" aria-label="Healthcare specialties">
+            <div className={`api-category-strip ${careStyles.categories}`} aria-label="Healthcare specialties">
               {healthcare.categories.slice(0, 8).map((item) => (
                 <Link key={item.id} href={`/healthcare/specialties/${specialtySlug(item.title, item.id)}`}>
                   <span className="api-category-icon">{item.imageUrl ? <SafeImage src={item.imageUrl} alt="" width={52} height={52} fallbackIcon="heart" /> : <Icon name="heart" size={25} />}</span>
@@ -127,11 +93,19 @@ export default async function Home() {
               ))}
             </div>
           ) : (
-            <div className="data-state"><Icon name="heart" /><div><strong>Healthcare catalogue is temporarily unavailable.</strong><p>You can still continue to the healthcare journey and try again.</p></div><Link href="/healthcare">Open healthcare</Link></div>
+            <div className={careStyles.emptyState}>
+              <span className={careStyles.emptyIcon}><Icon name="heart" size={28} /></span>
+              <div className={careStyles.emptyCopy}>
+                <span className={careStyles.status}>Temporarily unavailable</span>
+                <h3>We couldn’t load the specialties right now.</h3>
+                <p>You can still visit healthcare to explore your options, or try again later.</p>
+              </div>
+              <Link href="/healthcare" className={careStyles.emptyAction}>Go to healthcare <Icon name="arrow" size={18} /></Link>
+            </div>
           )}
 
           {healthcare.doctors.length > 0 ? (
-            <div className="live-doctor-grid">
+            <div className={`live-doctor-grid ${careStyles.doctors}`}>
               {healthcare.doctors.slice(0, 3).map((doctor) => (
                 <article className="live-doctor-card" key={doctor.id}>
                   <div className="live-doctor-image">
@@ -152,10 +126,31 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="journey-section journey-healthcare">
+      <section className={journeyStyles.section} aria-labelledby="healthcare-journey-heading">
         <div className="container">
-          <SectionIntro eyebrow="The healthcare journey" title="A clearer path from discovery to follow-up." body="Each step keeps the important choice visible while the existing Zuwara backend remains responsible for availability, payment, and appointment state." inverse />
-          <div className="journey-steps">{healthcareSteps.map(([title, body], index) => <article key={title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{body}</p></article>)}</div>
+          <div className={journeyStyles.heading}>
+            <div>
+              <span className={journeyStyles.eyebrow}>How healthcare works</span>
+              <h2 id="healthcare-journey-heading">From your first search<br />to your next follow-up.</h2>
+            </div>
+            <p>A few simple steps to book your care.<br />We’ll help you find your way.</p>
+          </div>
+          <ol className={journeyStyles.steps}>
+            {healthcareSteps.map(({ title, body, icon }, index) => (
+              <li className={journeyStyles.step} key={title}>
+                <div className={journeyStyles.stepTop}>
+                  <span className={journeyStyles.icon}><Icon name={icon} size={23} /></span>
+                  <span className={journeyStyles.number}>0{index + 1}</span>
+                </div>
+                <h3>{title}</h3>
+                <p>{body}</p>
+              </li>
+            ))}
+          </ol>
+          <div className={journeyStyles.footer}>
+            <p>Ready when you are.</p>
+            <Link href="/healthcare/doctors">Find a consultant <Icon name="arrow" size={18} /></Link>
+          </div>
         </div>
       </section>
 

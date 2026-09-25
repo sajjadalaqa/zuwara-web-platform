@@ -1,0 +1,107 @@
+.section {
+  padding: clamp(48px, 6vw, 88px) 0;
+  scroll-margin-top: 110px;
+  background: radial-gradient(ellipse at 0% 65%, #f3eaf9 0, transparent 55%), radial-gradient(ellipse at 100% 100%, #fceaf2 0, transparent 50%), #fcfafc;
+}
+
+.heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #602d8c;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.heading h2 {
+  max-width: 650px;
+  margin: 12px 0 0;
+  font-size: clamp(28px, 3.1vw, 42px);
+  line-height: 1.2;
+  font-weight: 650;
+  letter-spacing: -.045em;
+}
+
+.heading h2 span { color: #602d8c; }
+.heading > p { flex-shrink: 0; margin: 0 0 3px; color: var(--text-secondary); font-size: 13px; line-height: 1.8; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.health { --accent: #602d8c; --tint: #f2eaf8; --glow: #e9d9f4; }
+.home { --accent: #a92365; --tint: #fcebf3; --glow: #f6dce9; }
+
+.card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: clamp(26px, 3vw, 40px);
+  border: 1px solid color-mix(in srgb, var(--accent) 16%, white);
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 8px 30px #3d165f05;
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 310px;
+  height: 310px;
+  top: -165px;
+  right: -110px;
+  border: 35px solid color-mix(in srgb, var(--glow) 35%, white);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--tint) 60%, white);
+  transition: transform .4s ease;
+}
+
+.cardTop { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 19px; background: var(--tint); color: var(--accent); transition: background .3s ease, color .3s ease, transform .3s ease; }
+.tag { padding: 6px 12px; border: 1px solid color-mix(in srgb, var(--accent) 14%, white); border-radius: 30px; background: #ffffffb3; color: var(--accent); font-size: 10px; font-weight: 700; }
+.card h3 { margin: 26px 0 10px; font-size: clamp(27px, 2.8vw, 35px); line-height: 1.2; font-weight: 650; letter-spacing: -.04em; }
+.card > p { max-width: 440px; margin: 0; color: var(--text-secondary); font-size: 14px; line-height: 1.8; }
+.card ul { display: grid; gap: 12px; margin: 26px 0 30px; padding: 0; list-style: none; }
+.card li { display: flex; align-items: center; gap: 10px; color: #514758; font-size: 12px; }
+.card li svg { flex-shrink: 0; box-sizing: content-box; padding: 4px; border-radius: 50%; color: var(--accent); background: var(--tint); }
+.cta { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--tint); color: var(--accent); font-size: 13px; font-weight: 750; }
+.arrow { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: 50%; background: var(--tint); transition: background .3s ease, color .3s ease; }
+.arrow svg { transition: transform .3s ease; }
+
+.card:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
+.card:focus-visible .arrow { background: var(--accent); color: white; }
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { transform: translateY(-7px); border-color: color-mix(in srgb, var(--accent) 48%, white); box-shadow: 0 22px 48px color-mix(in srgb, var(--accent) 14%, transparent); }
+  .card:hover::before { transform: scale(1.14); }
+  .card:hover .icon { background: var(--accent); color: white; transform: rotate(-5deg); }
+  .card:hover .arrow { background: var(--accent); color: white; }
+  .card:hover .arrow svg { transform: translateX(3px); }
+}
+
+@media (max-width: 900px) {
+  .heading { display: block; }
+  .heading > p { margin-top: 16px; }
+  .heading > p br { display: none; }
+}
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; gap: 18px; }
+  .card { border-radius: 22px; }
+  .icon { width: 56px; height: 56px; border-radius: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .card::before, .icon, .arrow, .arrow svg { transition: none; }
+  .card:hover, .card:hover::before, .card:hover .icon, .card:hover .arrow svg { transform: none; }
+}

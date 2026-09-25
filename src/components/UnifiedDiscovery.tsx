@@ -31,7 +31,7 @@ export function UnifiedDiscovery() {
           <Icon name="home" size={17} /> Home services
         </button>
       </div>
-      <form className="discovery-form" action={isHealthcare ? "/healthcare" : "/home-services"} method="get">
+      <form className="discovery-form" data-journey={journey} action={isHealthcare ? "/healthcare" : "/home-services"} method="get">
         <label>
           <span>{isHealthcare ? "Doctor, specialty or care need" : "Service, category or provider"}</span>
           <div>
