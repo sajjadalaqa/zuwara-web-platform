@@ -1,0 +1,137 @@
+.section {
+  --brand: var(--primary, #55207d);
+  --ink: #14122b;
+  --muted: #5b6478;
+
+  padding: clamp(44px, 5.5vw, 80px) 0;
+  background: linear-gradient(180deg, #f6f0fb 0%, #ffffff 100%);
+}
+
+/* ---------- header ---------- */
+.header { max-width: 560px; margin: 0 auto clamp(30px, 4vw, 46px); text-align: center; 
+
+}
+
+.pill {
+  display: inline-block;
+  padding: 4px 14px;
+  border: 1px solid #e6d7f4;
+  border-radius: 999px;
+  background: #f1e6fb;
+  color: var(--brand);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.header h2 {
+  margin: 12px 0 10px;
+  color: var(--ink);
+  font-size: clamp(26px, 2.8vw, 34px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.035em;
+}
+.header p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+/* ---------- filter tabs ---------- */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 auto clamp(30px, 4vw, 46px);
+}
+
+.tab,
+.tabActive {
+  min-height: 34px;
+  padding: 0 16px;
+  border: 1px solid #ece4f4;
+  border-radius: 999px;
+  background: #fff;
+  color: #2c2540;
+  font-size: 11.5px;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.tab:hover { border-color: #d6bfea; color: var(--brand); }
+.tabActive {
+  border-color: transparent;
+  background: linear-gradient(135deg, #4f1a78, #6a25a8);
+  color: #fff;
+  box-shadow: 0 8px 18px -8px rgba(90, 26, 140, .6);
+}
+
+/* ---------- circles (Oladoc-style) ---------- */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(26px, 3vw, 38px) clamp(18px, 2.4vw, 30px);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: clamp(104px, 12vw, 152px);
+  text-align: center;
+}
+
+.circle {
+  display: grid;
+  place-items: center;
+  width: clamp(88px, 8.4vw, 112px);
+  height: clamp(88px, 8.4vw, 112px);
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fbf7fe 0%, #e9dbf6 100%);
+  color: var(--brand);
+  box-shadow: 0 0 0 1.5px #eadff5, 0 16px 26px -18px rgba(85, 32, 125, .5);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.circle svg { width: clamp(38px, 3.8vw, 48px); height: auto; }
+
+.item h3 {
+  margin: 14px 0 0;
+  color: #2b2540;
+  font-size: clamp(13px, 1.1vw, 14.5px);
+  font-weight: 500;
+  line-height: 1.4;
+  transition: color .2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover .circle { transform: translateY(-4px); box-shadow: 0 0 0 1.5px #cfaee8, 0 22px 30px -18px rgba(85, 32, 125, .6); }
+  .item:hover h3 { color: var(--brand); }
+}
+
+/* visually hidden, still read by screen readers */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 640px) {
+  .tabs { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; margin-inline: -14px; padding: 2px 14px 8px; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .grid { gap: 24px 12px; }
+  .item { width: calc((100% - 24px) / 3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab, .tabActive, .circle, .item h3 { transition: none; }
+  .item:hover .circle { transform: none; }
+}

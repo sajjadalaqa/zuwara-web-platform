@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "./Icon";
+import Link from "next/link";
 
 type Journey = "healthcare" | "home-services";
 
@@ -56,6 +57,17 @@ export function UnifiedDiscovery() {
           <Icon name="arrow" size={18} />
         </button>
       </form>
+      <div className="discovery-chips">
+  <span>Popular:</span>
+  {(isHealthcare
+    ? ["Mental Health", "Dermatology", "Pediatrics"]
+    : ["Laboratory", "Nursing", "Physiotherapy"]
+  ).map((term) => (
+    <Link key={term} href={`${isHealthcare ? "/healthcare" : "/home-services"}?query=${encodeURIComponent(term)}`}>
+      {term}
+    </Link>
+  ))}
+</div>
     </div>
   );
 }

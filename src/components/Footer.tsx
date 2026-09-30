@@ -1,27 +1,103 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Icon } from "@/components/Icon";
+import styles from "./Footer.module.css";
+
+const footerColumns = [
+  {
+    title: "Healthcare", icon: "heart",
+    links: [
+      { label: "Explore healthcare", href: "/healthcare" },
+      { label: "Find a consultant", href: "/healthcare/doctors" },
+      { label: "Therapy", href: "/services/therapy-sessions" },
+      { label: "Instant consultation", href: "/services/instant-consultations" },
+    ],
+  },
+  {
+    title: "Home services", icon: "home",
+    links: [
+      { label: "Browse categories", href: "/home-services" },
+      { label: "Service providers", href: "/home-services?view=providers" },
+      { label: "Shops & labs", href: "/home-services?view=shops" },
+      { label: "Post a request", href: "/home-services?view=request" },
+    ],
+  },
+  {
+    title: "Zuwara", icon: "search",
+    links: [
+      { label: "How it works", href: "/how-it-works" },
+      { label: "About", href: "/about" },
+      { label: "Insights", href: "/insights" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+  {
+    title: "Account & support", icon: "check",
+    links: [
+      { label: "Sign in", href: "/login" },
+      { label: "Download the app", href: "/download" },
+      { label: "Help center", href: "/help" },
+      { label: "العربية", href: "/ar", lang: "ar" },
+    ],
+  },
+  {
+    title: "Legal", icon: "shield",
+    links: [
+      { label: "Privacy notice", href: "/privacy" },
+      { label: "Terms of use", href: "/terms" },
+    ],
+  },
+] as const;
 
 export function Footer() {
   return (
-    <footer className="footer">
-      <div className="container footer-intro">
-        <div>
-          <Image src="/brand/zuwara-logo.png" alt="Zuwara" width={126} height={43}/>
-          <p>A connected platform for trusted healthcare and everyday services—designed around clearer choices and simpler journeys.</p>
+    <footer className={styles.footer}>
+      <div className={`container ${styles.inner}`}>
+        <div className={styles.intro}>
+          <div className={styles.brand}>
+            <Image className={styles.logo} src="/brand/zuwara-logo.png" alt="Zuwara" width={126} height={43} />
+            <p>A connected platform for trusted healthcare and everyday services—designed around clearer choices and simpler journeys.</p>
+          </div>
+
+          <div className={styles.helpCard}>
+            <div>
+              <strong>Need help choosing the right journey?</strong>
+              <span>Our support team can point you to the right place.</span>
+            </div>
+            <Link href="/help" className={styles.helpLink}>
+              Visit Zuwara support <Icon name="arrow" size={16} />
+            </Link>
+          </div>
         </div>
-        <div className="footer-contact">
-          <span>Need help choosing the right journey?</span>
-          <Link href="/help">Visit Zuwara support →</Link>
+
+        <nav className={styles.grid} aria-label="Footer">
+          {footerColumns.map((column) => (
+            <div className={styles.column} key={column.title}>
+              <h3>
+  <span className={styles.titleIcon}><Icon name={column.icon} size={16} /></span>
+  {column.title}
+</h3>
+              <ul>
+                {column.links.map((link) => (
+                  <li key={link.href + link.label}>
+                    <Link href={link.href} {...("lang" in link ? { lang: link.lang } : {})}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+
+        <div className={styles.bottom}>
+          <p>© {new Date().getFullYear()} Zuwara. All rights reserved.</p>
+          <p className={styles.notice}>
+            <Icon name="shield" size={14} />
+            Healthcare emergencies should be directed to the appropriate emergency service.
+          </p>
         </div>
       </div>
-      <div className="container footer-grid">
-        <div><h3>Healthcare</h3><Link href="/healthcare">Explore healthcare</Link><Link href="/healthcare/doctors">Find a consultant</Link><Link href="/services/therapy-sessions">Therapy</Link><Link href="/services/instant-consultations">Instant consultation</Link></div>
-        <div><h3>Home services</h3><Link href="/home-services">Browse categories</Link><Link href="/home-services?view=providers">Service providers</Link><Link href="/home-services?view=shops">Shops & labs</Link><Link href="/home-services?view=request">Post a request</Link></div>
-        <div><h3>Zuwara</h3><Link href="/how-it-works">How it works</Link><Link href="/about">About</Link><Link href="/insights">Insights</Link><Link href="/contact">Contact</Link></div>
-        <div><h3>Account & support</h3><Link href="/login">Sign in</Link><Link href="/download">Download the app</Link><Link href="/help">Help center</Link><Link href="/ar" lang="ar">العربية</Link></div>
-        <div><h3>Legal</h3><Link href="/privacy">Privacy notice</Link><Link href="/terms">Terms of use</Link><Link href="/ar" lang="ar">العربية</Link></div>
-      </div>
-      <div className="container footer-bottom"><p>© {new Date().getFullYear()} Zuwara. All rights reserved.</p><p>Healthcare emergencies should be directed to the appropriate emergency service.</p></div>
     </footer>
   );
 }
