@@ -28,20 +28,21 @@ const slides: Slide[] = [
   ratio: "9600 / 3600",
   alt: "Welcome to Zuwara. Care for your health and your home.",
 },
-  {
+    {
     label: "Healthcare",
     href: "/healthcare/doctors",
     image: "/images/hero-2.jpg",
-    ratio: "1920 / 720",          // <- replace with hero-2's real size
+    ratio: "9600 / 3600",
     alt: "Find the right healthcare consultant for you.",
   },
   {
     label: "Home services",
     href: "/home-services",
     image: "/images/hero-3.jpg",
-    ratio: "1920 / 720",          // <- replace with hero-3's real size
+    ratio: "9600 / 3600",
     alt: "Explore trusted home services in your area.",
   },
+    
 ];
 
   

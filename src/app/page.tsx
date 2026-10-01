@@ -28,7 +28,7 @@ import { PartnersMarquee } from "@/components/PartnersMarquee";
 
 export const metadata: Metadata = {
   title: "Healthcare and trusted home services",
-  description: "Find Zuwara consultants, book healthcare journeys, and discover trusted D4H services at home through one connected platform.",
+  description: "Find Zuwara consultants, book healthcare journeys, and discover trusted Zuwara Home Visit through one connected platform.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Zuwara | Healthcare and trusted services for everyday life",
@@ -346,7 +346,7 @@ export default async function Home() {
             <div className={z.copy}>
               <span className={z.label}><i /> Healthcare &amp; home services</span>
               <h2>Care for your health. <span>Help for your home.</span></h2>
-              <p>Explore real consultants and specialties, or browse real D4H categories and continue to provider and booking discovery.</p>
+              <p>Explore real consultants and specialties, or browse real Zuwara Home Visits and continue to provider and booking discovery.</p>
               <ul className={z.chips}>
                 <li><Icon name="check" size={12} /> Consultants</li>
                 <li><Icon name="check" size={12} /> Specialties</li>

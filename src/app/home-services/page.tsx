@@ -7,14 +7,14 @@ import { getD4hCategories } from "@/lib/api/d4h/catalog";
 
 export const metadata: Metadata = {
   title: "Home Services",
-  description: "Browse active D4H service categories and continue to trusted providers and booking journeys at your location.",
+  description: "Browse active Zuwara Home Services categories and continue to trusted providers and booking journeys at your location.",
   alternates: { canonical: "/home-services" },
 };
 
 export default async function HomeServicesPage() {
   const data = await getD4hCategories();
   return <>
-    <PageHero eyebrow="D4H by Zuwara" title="Trusted services, closer to home." description="Browse active service categories from D4H. Location and provider coverage determine the services genuinely available for booking." action={false}/>
+    <PageHero eyebrow="Home Services By Zuwara" title="Trusted services, closer to home." description="Browse active service categories from D4H. Location and provider coverage determine the services genuinely available for booking." action={false}/>
     <section className="content-section"><div className="container gateway-layout">
       <aside className="gateway-aside"><span className="eyebrow">Home-service journeys</span><h2>Start with the help you need.</h2><nav><a href="#categories">Categories</a><a href="#journey">How booking works</a><a href="#request">Post a Request</a><Link href="/login">Sign in</Link></nav></aside>
       <div>
