@@ -1,5 +1,8 @@
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.zuwara.sa";
 
+// Search engines stay blocked until SITE_INDEXABLE=true is set (go-live on the real domain).
+export const SITE_INDEXABLE = process.env.SITE_INDEXABLE === "true";
+
 export type Service = {
   slug: string;
   title: string;

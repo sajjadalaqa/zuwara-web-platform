@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
-import { SITE_URL } from "@/data/site";
+import { SITE_INDEXABLE, SITE_URL } from "@/data/site";
 import "./globals.css";
 
 const manrope = localFont({
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/", languages: { "en-SA": "/", "ar-SA": "/ar" } },
   openGraph: { type: "website", locale: "en_SA", alternateLocale: ["ar_SA"], siteName: "Zuwara", title: "Zuwara | Healthcare and trusted services for everyday life", description: "Two focused journeys—healthcare and services at home—connected through one trusted platform.", images: [{ url: "/images/hero-doctor.png", width: 551, height: 575, alt: "Zuwara healthcare and home-services ecosystem" }] },
   twitter: { card: "summary_large_image", title: "Zuwara | Healthcare and trusted services", description: "Discover healthcare and trusted services at home through one connected Zuwara experience.", images: ["/images/hero-doctor.png"] },
-  robots: { index: true, follow: true },
+  robots: SITE_INDEXABLE ? { index: true, follow: true } : { index: false, follow: false },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#602D8C" };
