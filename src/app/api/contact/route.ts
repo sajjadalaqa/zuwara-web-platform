@@ -1,33 +1,20 @@
 import { NextResponse } from "next/server";
-import { validateContact, type ContactPayload } from "@/lib/contact";
 
-export async function POST(request: Request) {
-  let body: ContactPayload;
+export async function POST(req: Request) {
+  const body = await req.json().catch(() => null);
+  if (!body) return NextResponse.json({ ok: false }, { status: 400 });
 
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
-  }
+  // Spam trap: pretend success so bots learn nothing
+  if (body.company) return NextResponse.json({ ok: true });
 
-  // Spam trap: real visitors never fill this hidden field.
-  if (body.website) return NextResponse.json({ ok: true });
+  const { firstName, lastName, email, phone, message } = body as Record<string, string>;
+  const valid =
+    firstName?.trim() && lastName?.trim() && phone?.trim() &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email ?? "") &&
+    (message?.trim().length ?? 0) >= 10;
+  if (!valid) return NextResponse.json({ ok: false }, { status: 422 });
 
-  const fieldErrors = validateContact({
-    firstName: body.firstName ?? "",
-    lastName: body.lastName ?? "",
-    phone: body.phone ?? "",
-    email: body.email ?? "",
-    message: body.message ?? "",
-  });
-
-  if (Object.keys(fieldErrors).length > 0) {
-    return NextResponse.json({ error: "Please check the highlighted fields.", fieldErrors }, { status: 422 });
-  }
-
-  // TODO (backend developer): connect the real backend here.
-  // Available fields: body.firstName, body.lastName, body.phone, body.email, body.message
-  // Examples: send an email, save to a database, or forward to your existing API.
+  // TODO: send the email here (Resend, Nodemailer, SendGrid, etc.) or save to your database.
 
   return NextResponse.json({ ok: true });
 }
