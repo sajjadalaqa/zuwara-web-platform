@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/Icon";
 import styles from "./Footer.module.css";
 
@@ -37,7 +37,7 @@ const footerColumns = [
       { label: "Sign in", href: "/login" },
       { label: "Download the app", href: "/download" },
       { label: "Help center", href: "/help" },
-      { label: "العربية", href: "/ar", lang: "ar" },
+     { label: "العربية", href: "/", lang: "ar", locale: "ar" },
     ],
   },
   {
@@ -80,7 +80,7 @@ export function Footer() {
               <ul>
                 {column.links.map((link) => (
                   <li key={link.href + link.label}>
-                    <Link href={link.href} {...("lang" in link ? { lang: link.lang } : {})}>
+                    <Link href={link.href} {...("lang" in link ? { lang: link.lang, locale: link.locale } : {})}>
                       {link.label}
                     </Link>
                   </li>
