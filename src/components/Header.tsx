@@ -1,20 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { useEffect, useState, type CSSProperties } from "react";
 import { Icon } from "./Icon";
 import styles from "./Header.module.css";
 
 const links = [
-  ["Healthcare", "/healthcare"],
-  ["Home Services", "/home-services"],
-  ["How It Works", "/how-it-works"],
-  ["Insights", "/insights"],
-  ["About", "/about"],
-  ["Support", "/help"],
-];
+  ["home", "/"],
+  ["services", "/home-services"],
+  ["categories", "/category"],
+  ["blogs", "/blog"],
+  ["provider", "/provider"],
+  ["contact", "/contact"],
+] as const;
 
 function GlobeIcon() {
   return (
@@ -27,11 +27,11 @@ function GlobeIcon() {
 }
 
 export function Header() {
+  const t = useTranslations("Header");
+  const locale = useLocale();
+  const otherLocale = locale === "ar" ? "en" : "ar";
+  const pathname = usePathname(); // already without the "/ar" prefix
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-
-  const isArabic = pathname === "/ar" || pathname.startsWith("/ar/");
-  const langHref = isArabic ? pathname.replace(/^\/ar/, "") || "/" : "/ar";
 
   useEffect(() => {
     if (!open) return;
@@ -71,24 +71,23 @@ export function Header() {
       />
 
       <div className={`container ${styles.wrap}`}>
-        <Link href="/" className={styles.brand} aria-label="Zuwara home" onClick={() => setOpen(false)}>
+        <Link href="/" className={styles.brand} aria-label={t("homeAria")} onClick={() => setOpen(false)}>
           <Image src="/brand/zuwara-logo.png" alt="Zuwara" width={118} height={40} priority />
         </Link>
 
         <nav id="main-nav" className={`${styles.nav} ${open ? styles.navOpen : ""}`} aria-label="Main navigation">
           {/* Drawer header: title and close button (mobile menu only) */}
           <div className={styles.menuHead}>
-            <p className={styles.menuTitle} aria-hidden="true">Menu</p>
-            <button type="button" className={styles.closeBtn} onClick={() => setOpen(false)} aria-label="Close navigation">
+            <p className={styles.menuTitle} aria-hidden="true">{t("menu")}</p>
+            <button type="button" className={styles.closeBtn} onClick={() => setOpen(false)} aria-label={t("closeNav")}>
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true" focusable="false">
                 <path d="M6 6l12 12M18 6L6 18" />
               </svg>
             </button>
           </div>
 
-          {links.map(([label, href], index) => {
-            const activePath = href.split("#")[0];
-            const active = pathname === activePath || (activePath !== "/" && pathname.startsWith(activePath));
+          {links.map(([key, href], index) => {
+            const active = pathname === href || (href !== "/" && pathname.startsWith(href));
             return (
               <Link
                 key={href}
@@ -98,7 +97,7 @@ export function Header() {
                 aria-current={active ? "page" : undefined}
                 style={{ "--i": index } as CSSProperties}
               >
-                {label}
+                {t(`nav.${key}`)}
               </Link>
             );
           })}
@@ -106,20 +105,21 @@ export function Header() {
           {/* Inside the mobile menu only */}
           <div className={styles.mobileActions}>
             <Link href="/#start" className={styles.mobileCta} onClick={() => setOpen(false)}>
-              Book an Appointment
+              {t("book")}
             </Link>
             <Link href="/login" className={styles.mobileSignIn} onClick={() => setOpen(false)}>
-              Sign in
+              {t("signIn")}
             </Link>
             <Link
-              href={langHref}
+              href={pathname}
+              locale={otherLocale}
               className={styles.mobileLang}
-              lang={isArabic ? "en" : "ar"}
-              hrefLang={isArabic ? "en" : "ar"}
+              lang={otherLocale}
+              hrefLang={otherLocale}
               onClick={() => setOpen(false)}
             >
               <GlobeIcon />
-              <span>{isArabic ? "English" : "العربية"}</span>
+              <span>{t("switchLong")}</span>
             </Link>
           </div>
         </nav>
@@ -127,24 +127,25 @@ export function Header() {
         <div className={styles.actions}>
           {/* In the top bar on desktop and tablet, hidden on phones (it is in the menu there) */}
           <Link
-            href={langHref}
+            href={pathname}
+            locale={otherLocale}
             className={styles.langPill}
-            lang={isArabic ? "en" : "ar"}
-            hrefLang={isArabic ? "en" : "ar"}
-            aria-label={isArabic ? "Switch to English" : "التبديل إلى العربية"}
+            lang={otherLocale}
+            hrefLang={otherLocale}
+            aria-label={t("switchAria")}
             onClick={() => setOpen(false)}
           >
             <GlobeIcon />
-            <span>{isArabic ? "EN" : "العربية"}</span>
+            <span>{t("switchShort")}</span>
           </Link>
 
-          <Link href="/#start" className={styles.cta}>Book an Appointment</Link>
+          <Link href="/#start" className={styles.cta}>{t("book")}</Link>
 
           <button
             type="button"
             className={styles.menuBtn}
             onClick={() => setOpen(!open)}
-            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-label={open ? t("closeNav") : t("openNav")}
             aria-expanded={open}
             aria-controls="main-nav"
           >

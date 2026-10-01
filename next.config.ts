@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
-
+import createNextIntlPlugin from "next-intl/plugin";
 // Search engines stay blocked until SITE_INDEXABLE=true is set (go-live on the real domain).
 const siteIndexable = process.env.SITE_INDEXABLE === "true";
+const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
@@ -30,4 +31,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

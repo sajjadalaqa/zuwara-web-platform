@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "nav": {
+      "home": "Home",
+      "services": "Services",
+      "categories": "Categories",
+      "blogs": "Blogs",
+      "provider": "Provider",
+      "contact": "Contact Us"
+    },
+    "menu": "Menu",
+    "openNav": "Open navigation",
+    "closeNav": "Close navigation",
+    "homeAria": "Zuwara home",
+    "book": "Book an Appointment",
+    "signIn": "Sign in",
+    "switchShort": "العربية",
+    "switchLong": "العربية",
+    "switchAria": "التبديل إلى العربية"
+  }
+}

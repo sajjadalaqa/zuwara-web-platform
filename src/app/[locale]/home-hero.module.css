@@ -1,0 +1,79 @@
+.hero {
+  background: #eee5f5;
+  border-bottom: 1px solid #d9c7e5;
+}
+
+.hero::before { background: radial-gradient(ellipse at 60% 40%, #d9bee94d, transparent 70%); }
+.hero :global(.ecosystem-hero-grid) { grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: clamp(32px, 4vw, 64px); padding-block: 60px 68px; }
+.hero :global(.ecosystem-hero-copy), .hero :global(.ecosystem-hero-visual) { min-width: 0; }
+.hero :global(.ecosystem-hero-copy h1) { font-size: clamp(42px, 4.5vw, 64px); line-height: 1.06; letter-spacing: -.05em; }
+.hero :global(.ecosystem-hero-copy > p) { font-size: 16px; }
+.hero :global(.ecosystem-hero-copy .eyebrow) { border-color: #d7c2e5; background: #ffffffb3; }
+.hero :global(.discovery-shell) { width: 100%; margin-top: 32px; border-color: #d9c8e3; box-shadow: 0 14px 36px #4c226411; }
+.hero :global(.discovery-tabs) { background: #faf7fc; }
+.hero :global(.discovery-tabs button) { min-width: 0; transition: background .2s ease; }
+.hero :global(.discovery-tabs button.is-active) { background: #eee3f5; }
+.hero :global(.discovery-form) { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 14px; }
+.hero :global(.discovery-form label) { padding: 6px 8px; border: 0; align-content: center; }
+.hero :global(.discovery-form label > div > svg) { flex-shrink: 0; }
+.hero :global(.discovery-form label > span) { font-size: 9px; line-height: 1.5; }
+.hero :global(.discovery-form label:focus-within) { border-radius: 6px; background: #f7f1fb; box-shadow: inset 0 0 0 1px #b38acb; }
+.hero :global(.discovery-form > button) { grid-column: auto; min-width: 166px; min-height: 54px; margin: 3px 0 3px 4px; padding: 12px 18px; border-radius: 10px; background: #602d8c; box-shadow: none; transition: background .2s ease, box-shadow .2s ease; }
+.hero :global(.discovery-form > button svg) { flex-shrink: 0; transition: transform .2s ease; }
+.hero :global(.discovery-form > button:hover) { background: #7a469e; }
+.hero :global(.discovery-form[data-journey="home-services"]) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hero :global(.discovery-form[data-journey="home-services"] > button) { grid-column: 1 / -1; margin: 4px 0 0; }
+.hero :global(.discovery-location) { border-left: 1px solid #e9e0ee; padding-left: 14px; }
+.hero :global(.hero-trust-row) { justify-content: flex-start; gap: 12px 20px; margin-top: 24px; }
+.hero :global(.hero-trust-row span) { min-width: 0; }
+.hero :global(.hero-trust-row svg) { flex-shrink: 0; }
+.hero :global(.hero-portrait-panel) { background: linear-gradient(155deg, #743c98, #502173); box-shadow: 0 22px 48px #4c226426; }
+.hero :global(.hero-portrait-panel > span) { top: 42px; left: 50%; transform: translateX(-50%); }
+.hero :global(.hero-service-panel) { left: 0; right: auto; bottom: 16px; width: min(310px, 82%); box-shadow: 0 14px 35px #39144e1f; }
+.hero :global(.hero-service-panel a) { min-height: 44px; margin-top: 8px; padding: 0 12px; border-radius: 6px; background: #f3ebf8; transition: background .2s ease; }
+.hero :global(.hero-service-panel a:hover) { background: #eadef2; }
+.hero :global(.hero-service-panel p) { margin-bottom: 8px; }
+.hero :global(button:focus-visible), .hero :global(a:focus-visible) { outline: 2px solid #602d8c; outline-offset: 3px; }
+
+@media (hover: hover) and (pointer: fine) {
+  .hero :global(.discovery-tabs button:hover) { background: #f0e7f6; }
+  .hero :global(.discovery-form > button:hover) { box-shadow: 0 5px 14px #602d8c1f; }
+  .hero :global(.discovery-form > button:hover svg) { transform: translateX(2px); }
+}
+
+@media (max-width: 1100px) {
+  .hero :global(.discovery-form) { grid-template-columns: minmax(0, 1fr); }
+  .hero :global(.discovery-form > button) { grid-column: 1 / -1; margin: 4px 0 0; }
+  .hero :global(.ecosystem-hero-visual) { min-height: 510px; }
+}
+
+@media (max-width: 900px) {
+  .hero :global(.ecosystem-hero-grid) { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-block: 44px 52px; }
+  .hero :global(.ecosystem-hero-copy h1) { max-width: 700px; font-size: clamp(40px, 6.8vw, 58px); }
+  .hero :global(.discovery-form) { grid-template-columns: minmax(0, 1fr) auto; }
+  .hero :global(.discovery-form > button) { grid-column: auto; margin: 3px 0 3px 4px; }
+  .hero :global(.ecosystem-hero-visual) { width: min(520px, 100%); min-height: 510px; margin: 0 auto; }
+}
+
+@media (max-width: 540px) {
+  .hero :global(.ecosystem-hero-grid) { gap: 28px; padding-block: 34px 40px; }
+  .hero :global(.ecosystem-hero-copy h1) { font-size: clamp(32px, 9.3vw, 46px); }
+  .hero :global(.ecosystem-hero-copy > p) { font-size: 14px; margin-bottom: 22px; }
+  .hero :global(.discovery-shell) { margin-top: 24px; }
+  .hero :global(.discovery-tabs button) { flex: 1; padding-inline: 8px; gap: 6px; font-size: 11px; }
+  .hero :global(.discovery-form), .hero :global(.discovery-form[data-journey="home-services"]) { grid-template-columns: minmax(0, 1fr); padding: 12px; gap: 8px; }
+  .hero :global(.discovery-form label) { padding: 8px; }
+  .hero :global(.discovery-location) { border-left: 0; border-top: 1px solid #e9e0ee; }
+  .hero :global(.discovery-form > button) { width: 100%; min-width: 0; margin: 6px 0 0; }
+  .hero :global(.hero-trust-row) { display: flex; gap: 10px 16px; margin-top: 18px; }
+  .hero :global(.ecosystem-hero-visual) { min-height: clamp(380px, 100vw, 460px); }
+  .hero :global(.hero-portrait-panel) { inset: 0 4px 24px 20px; }
+  .hero :global(.hero-service-panel) { bottom: 0; width: min(280px, 86%); padding: 18px; }
+  .hero :global(.hero-service-panel strong) { margin-top: 14px; font-size: 21px; }
+  .hero :global(.hero-orbit) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero :global(*), .hero :global(*::before) { transition: none !important; }
+  .hero :global(.discovery-form > button:hover svg) { transform: none; }
+}

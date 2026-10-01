@@ -1297,4 +1297,8 @@ body { font-size: 16px; line-height: 1.68; }
   .footer { padding-top: 56px; }
   .footer-contact { width: 100%; text-align: left; }
 }
-
+[dir="rtl"] body {
+  font-family: var(--font-arabic), system-ui, sans-serif;
+  letter-spacing: 0; /* negative letter-spacing breaks Arabic letter joining */
+}
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3 { letter-spacing: 0; }

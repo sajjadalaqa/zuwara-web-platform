@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "nav": {
+      "home": "الرئيسية",
+      "services": "الخدمات",
+      "categories": "الفئات",
+      "blogs": "المدونة",
+      "provider": "مقدمو الخدمة",
+      "contact": "تواصل معنا"
+    },
+    "menu": "القائمة",
+    "openNav": "فتح القائمة",
+    "closeNav": "إغلاق القائمة",
+    "homeAria": "زوارة – الصفحة الرئيسية",
+    "book": "احجز موعدًا",
+    "signIn": "تسجيل الدخول",
+    "switchShort": "EN",
+    "switchLong": "English",
+    "switchAria": "Switch to English"
+  }
+}
