@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 
+// Search engines stay blocked until SITE_INDEXABLE=true is set (go-live on the real domain).
+const siteIndexable = process.env.SITE_INDEXABLE === "true";
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
@@ -20,6 +23,8 @@ const nextConfig: NextConfig = {
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
         { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+        // Applies to every response (pages, images, files) and overrides page-level robots meta.
+        ...(siteIndexable ? [] : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]),
       ],
     }];
   },
