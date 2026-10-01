@@ -59,7 +59,7 @@ export function AboutSection() {
             About Zuwara
           </span>
           <h2 id="about-heading">
-            Professionals and <span>Personalized Doctors Excellence</span>
+            Professionals and <span>Personalized Consultants Excellence</span>
           </h2>
           <p className={styles.lead}>
             Founded with a bold vision to make elite medical expertise and advanced health technology accessible, human, and effortless for families and enterprises of all sizes. Zuwara combines the warmth of personal home care with cutting-edge digital health tools.
