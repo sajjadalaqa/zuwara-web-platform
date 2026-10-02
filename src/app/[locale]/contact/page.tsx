@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 // Replace with Zuwara's real details
 const CONTACT = {
   phone: "+1-888-238-3997",
-  email: "info@nexgenvoice.net",
+  email: "example@gmail.com",
   street: "4121 NW Urbandale Dr",
   cityLine: "Urbandale, Iowa, 50322, USA",
   hoursWeek: "Mon – Fri: 9:00 AM – 6:00 PM (EST)",
