@@ -10,7 +10,7 @@ import styles from "./Header.module.css";
 const links = [
   ["home", "/"],
   ["services", "/home-services"],
-  ["categories", "/category"],
+  ["categories", "/categories"],
   ["blogs", "/blog"],
   ["provider", "/provider"],
   ["contact", "/contact"],
