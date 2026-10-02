@@ -101,7 +101,14 @@ export function Header() {
               </Link>
             );
           })}
-
+<Link
+  href="/register-page"
+  className={styles.getStarted}
+  onClick={() => setOpen(false)}
+  style={{ "--i": links.length } as CSSProperties}
+>
+  {t("nav.getStarted")}
+</Link>
           {/* Inside the mobile menu only */}
           <div className={styles.mobileActions}>
             <Link href="/#start" className={styles.mobileCta} onClick={() => setOpen(false)}>

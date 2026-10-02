@@ -291,3 +291,30 @@
   .mobileCta, .mobileSignIn, .mobileLang { transition: none; }
   .navOpen > .menuHead, .navOpen > a, .navOpen .mobileActions { animation: none; }
 }
+
+.nav a.getStarted {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #55207d;
+  background: #f4ecfb;
+  border: 1.5px solid #d9c4ee;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.nav a.getStarted:hover {
+  background: #55207d;
+  border-color: #55207d;
+  color: #fff;
+}
+
+@media (max-width: 1100px) {
+  .nav a.getStarted {
+    height: 48px;
+    margin-top: 8px;
+    font-size: 15px;
+  }
+}

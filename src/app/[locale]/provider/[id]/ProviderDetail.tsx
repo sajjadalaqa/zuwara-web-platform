@@ -66,9 +66,9 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
   const showImage = Boolean(p.image) && !imgFailed;
 
   const joined = p.joinedAt
-    ? new Intl.DateTimeFormat(isAr ? "ar-SA-u-nu-latn" : "en-US", { dateStyle: "long", timeZone: "UTC" })
-        .format(new Date(p.joinedAt))
-    : "—";
+  ? new Intl.DateTimeFormat(isAr ? "ar-SA-u-ca-gregory-nu-latn" : "en-US", { dateStyle: "long", timeZone: "UTC" })
+      .format(new Date(p.joinedAt))
+  : "—";
 
   useEffect(() => {
     if (!open) return;
@@ -130,7 +130,7 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
               </li>
             </ul>
 
-            <Link href="/#start" className={styles.book}>{t("book")}</Link>
+           <Link href={`/provider/${p.id}/book`} className={styles.book}>{t("book")}</Link>
           </aside>
 
           {/* Details */}
@@ -176,7 +176,7 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
               <li>{t("point2")}</li>
               <li>{t("point3")}</li>
             </ul>
-            <Link href="/#start" className={styles.book} onClick={() => setOpen(false)}>{t("book")}</Link>
+            <Link href={`/provider/${p.id}/book`} className={styles.book} onClick={() => setOpen(false)}>{t("book")}</Link>
           </div>
         </div>
       )}
