@@ -57,7 +57,7 @@ export default function LoginPage() {
       <div className={s.foot}>
         <span>Don&apos;t Have An Account? <Link href="/register-page" className={s.link}>Sign Up</Link></span>
       </div>
-      <Link href="/provider-register-page" className={s.alt}>
+      <Link href="/register-page" className={s.alt}>
         <Icon name="heart" size={16} /> Want To Register As Provider Or Practitioner?
       </Link>
     </AuthLayout>

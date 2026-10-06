@@ -90,3 +90,5 @@
   .card, .media > div, .more svg, .chips button, .ctaBtn { transition: none; }
   .card:hover, .card:hover .media > div { transform: none; }
 }
+
+.layout { margin-top: 32px; }

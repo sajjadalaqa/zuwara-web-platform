@@ -3,8 +3,12 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { categories, formatDate, getCategory, getPost, getRelated, pick } from "@/data/blog";
+import { categories, formatDate, getPost, getRelated, pick } from "@/data/blog";
 import BlogCover from "../BlogCover";
+import PostHero from "../PostHero";
+import type { IconType } from "react-icons";
+import { FaWhatsapp, FaFacebookF, FaLinkedinIn, FaTelegramPlane } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import styles from "./blog-post.module.css";
 
 const Svg = ({ d, size = 18 }: { d: string; size?: number }) => (
@@ -13,23 +17,41 @@ const Svg = ({ d, size = 18 }: { d: string; size?: number }) => (
     <path d={d} />
   </svg>
 );
-const BACK = "M15 6l-6 6 6 6";
-const CLOCK = "M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2";
-const CAL = "M4 6h16v14H4zM4 10h16M9 3v4M15 3v4";
 const BULB = "M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.4 1 2.5h6c0-1.1.3-1.8 1-2.5A6 6 0 0012 3z";
 const ARROW = "M5 12h14M13 6l6 6-6 6";
 const LINK = "M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1";
+const SHARE = "M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13";
 
 export default function BlogPost({ slug }: { slug: string }) {
   const t = useTranslations("blogPage");
   const locale = useLocale();
   const post = getPost(slug)!;
-  const cat = getCategory(post.category);
   const related = getRelated(slug, post.category);
-  const title = pick(post.title, locale);
 
   const [progress, setProgress] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [pageUrl, setPageUrl] = useState("");
+  const [canShare, setCanShare] = useState(false);
+  const title = pick(post.title, locale);
+
+  useEffect(() => {
+    setPageUrl(window.location.href);
+    setCanShare(typeof navigator.share === "function");
+  }, []);
+
+  const u = encodeURIComponent(pageUrl);
+  const tt = encodeURIComponent(title);
+  const socials: { name: string; href: string; Icon: IconType; cls: string }[] = [
+    { name: "WhatsApp", href: `https://wa.me/?text=${tt}%20${u}`, Icon: FaWhatsapp, cls: "brandWa" },
+    { name: "X", href: `https://twitter.com/intent/tweet?text=${tt}&url=${u}`, Icon: FaXTwitter, cls: "brandX" },
+    { name: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${u}`, Icon: FaFacebookF, cls: "brandFb" },
+    { name: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`, Icon: FaLinkedinIn, cls: "brandLi" },
+    { name: "Telegram", href: `https://t.me/share/url?url=${u}&text=${tt}`, Icon: FaTelegramPlane, cls: "brandTg" },
+  ];
+
+  const nativeShare = async () => {
+    try { await navigator.share({ title, url: pageUrl }); } catch { /* cancelled */ }
+  };
 
   useEffect(() => {
     const onScroll = () => {
@@ -54,25 +76,13 @@ export default function BlogPost({ slug }: { slug: string }) {
     <main className={styles.page}>
       <div className={styles.progress} aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
 
-      <header className={styles.head}>
-        <div className={styles.narrow}>
-          <Link href="/blog" className={styles.back}>
-            <span className={styles.backIcon}><Svg d={BACK} size={16} /></span>
-            {t("back")}
-          </Link>
-          {cat && <span className={styles.tag}>{pick(cat.name, locale)}</span>}
-          <h1 className={styles.title}>{title}</h1>
-          <p className={styles.lead}>{pick(post.excerpt, locale)}</p>
-          <div className={styles.meta}>
-            <span className={styles.author}><span className={styles.avatar} aria-hidden="true">Z</span>{pick(post.author, locale)}</span>
-            <span><Svg d={CAL} size={15} /> {formatDate(post.date, locale)}</span>
-            <span><Svg d={CLOCK} size={15} /> {t("minRead", { count: post.readMinutes })}</span>
-          </div>
-        </div>
-      </header>
-
       <div className={styles.container}>
-        <div className={styles.banner}><BlogCover category={post.category} cover={post.cover} alt={title} /></div>
+        <PostHero
+          post={post}
+          locale={locale}
+          backLabel={t("back")}
+          readLabel={t("minRead", { count: post.readMinutes })}
+        />
 
         <div className={styles.layout}>
           <article className={styles.article}>
@@ -88,17 +98,33 @@ export default function BlogPost({ slug }: { slug: string }) {
                   </aside>
                 );
               if (b.type === "ul")
-  return (
-    <ul key={i}>
-      {b.items.map((it, j) => <li key={j}>{pick(it, locale)}</li>)}
-    </ul>
-  );
-return null;
+                return (
+                  <ul key={i}>
+                    {b.items.map((it, j) => <li key={j}>{pick(it, locale)}</li>)}
+                  </ul>
+                );
+              return null;
             })}
 
-            <div className={styles.share}>
-              <span>{t("share")}</span>
-              <button type="button" onClick={copyLink}><Svg d={LINK} size={16} /> {copied ? t("copied") : t("copy")}</button>
+                        <div className={styles.shareBox}>
+              <p className={styles.shareText}>{t("share")}</p>
+              <div className={styles.shareBtns}>
+                {pageUrl && socials.map(({ name, href, Icon, cls }) => (
+                  <a key={name} href={href} target="_blank" rel="noopener noreferrer"
+                    className={`${styles.shareBtn} ${styles[cls]}`} aria-label={name} title={name}>
+                    <Icon size={17} />
+                  </a>
+                ))}
+                {canShare && (
+                  <button type="button" className={styles.shareNative} onClick={nativeShare}
+                    aria-label={t("shareNative")} title={t("shareNative")}>
+                    <Svg d={SHARE} size={17} />
+                  </button>
+                )}
+                <button type="button" className={styles.shareCopy} onClick={copyLink}>
+                  <Svg d={LINK} size={16} /> {copied ? t("copied") : t("copy")}
+                </button>
+              </div>
             </div>
           </article>
 

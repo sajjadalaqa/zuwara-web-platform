@@ -88,3 +88,27 @@
   .rMedia { flex: none; height: 160px; }
 }
 @media (prefers-reduced-motion: reduce) { .rCard, .progress span { transition: none; } .rCard:hover { transform: none; } }
+.layout { margin-top: 32px; }
+/* Share bar */
+.shareBox { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px; margin-top: 36px; padding: 18px 20px; border-radius: 20px; background: var(--p50, #f8f4ff); border: 1px solid var(--p100, #efe6fb); }
+.shareText { margin: 0; font-size: 14.5px; font-weight: 700; color: var(--ink, #1b1033); }
+.shareBtns { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.shareBtn, .shareNative { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; border: 1px solid var(--p100, #efe6fb); background: #fff; color: var(--p700, #5b2a9e); text-decoration: none; cursor: pointer; transition: background .2s, color .2s, border-color .2s, transform .2s; }
+.shareBtn:hover, .shareNative:hover { color: #fff; transform: translateY(-2px); }
+.brandWa:hover { background: #25d366; border-color: #25d366; }
+.brandX:hover { background: #000; border-color: #000; }
+.brandFb:hover { background: #1877f2; border-color: #1877f2; }
+.brandLi:hover { background: #0a66c2; border-color: #0a66c2; }
+.brandTg:hover { background: #229ed9; border-color: #229ed9; }
+.shareNative:hover { background: var(--p600, #6b2fb3); border-color: var(--p600, #6b2fb3); }
+.shareCopy { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--p100, #efe6fb); background: #fff; color: var(--p700, #5b2a9e); font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.shareCopy:hover { background: var(--p600, #6b2fb3); border-color: var(--p600, #6b2fb3); color: #fff; }
+.shareBtn:focus-visible, .shareNative:focus-visible, .shareCopy:focus-visible { outline: 3px solid rgba(107, 47, 179, .35); outline-offset: 2px; }
+@media (max-width: 560px) {
+  .shareBox { justify-content: center; text-align: center; }
+  .shareBtns { justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shareBtn, .shareNative, .shareCopy { transition: none; }
+  .shareBtn:hover, .shareNative:hover { transform: none; }
+}

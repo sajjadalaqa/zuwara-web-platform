@@ -3,14 +3,14 @@ import { getCategory } from "@/data/blog";
 import styles from "./blog-cover.module.css";
 
 /** Designed cover: uses the post image when provided, otherwise a branded gradient with the category icon. */
-export default function BlogCover({ category, cover, alt }: { category: string; cover?: string; alt: string }) {
+export default function BlogCover({ category, cover, alt, hero }: { category: string; cover?: string; alt: string; hero?: boolean }) {
   const cat = getCategory(category);
   if (cover) {
     // eslint-disable-next-line @next/next/no-img-element
     return <div className={styles.cover}><img src={cover} alt={alt} loading="lazy" /></div>;
   }
   return (
-    <div className={`${styles.cover} ${styles.art} ${styles[`tone_${category.replace(/-/g, "_")}`] ?? ""}`} aria-hidden="true">
+    <div className={`${styles.cover} ${styles.art} ${hero ? styles.hero : ""} ${styles[`tone_${category.replace(/-/g, "_")}`] ?? ""}`} aria-hidden="true">
       <span className={styles.ring1} />
       <span className={styles.ring2} />
       <span className={styles.dots} />

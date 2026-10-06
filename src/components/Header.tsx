@@ -111,7 +111,7 @@ export function Header() {
 </Link>
           {/* Inside the mobile menu only */}
           <div className={styles.mobileActions}>
-            <Link href="/#start" className={styles.mobileCta} onClick={() => setOpen(false)}>
+            <Link href="/provider" className={styles.mobileCta} onClick={() => setOpen(false)}>
               {t("book")}
             </Link>
             <Link href="/login" className={styles.mobileSignIn} onClick={() => setOpen(false)}>
@@ -146,7 +146,7 @@ export function Header() {
             <span>{t("switchShort")}</span>
           </Link>
 
-          <Link href="/#start" className={styles.cta}>{t("book")}</Link>
+          <Link href="/provider" className={styles.cta} onClick={() => setOpen(false)}>{t("book")}</Link>
 
           <button
             type="button"

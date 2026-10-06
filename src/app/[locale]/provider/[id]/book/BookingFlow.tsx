@@ -120,6 +120,13 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
   };
 
   const slotDisabled = (mins: number) => Boolean(today && date === todayKey && mins < today.mins + 30);
+  const noSlots = Boolean(date) && SLOTS.every((s) => slotDisabled(s.mins));
+  const goToday = () => {
+    if (!today) return;
+    setView({ y: today.y, m: today.m });
+    setDate(todayKey);
+    setTime(null);
+  };
 
   /* ---------- validation + submit ---------- */
   const validate = () => {
@@ -184,63 +191,86 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
 
         <div className={styles.layout}>
           <div className={styles.card} ref={cardRef}>
-            {/* ---------------- STEP 1 ---------------- */}
+                        {/* ---------------- STEP 1 ---------------- */}
             {step === 1 && (
               <>
-                <h2 className={styles.h2}><Svg d={I.cal} /> {t("selectDate")}</h2>
-
-                {!today || !view ? (
-                  <div className={styles.skeleton} aria-hidden="true" />
-                ) : (
-                  <div className={styles.calendar}>
-                    <div className={styles.calHead}>
-                      <button type="button" onClick={() => shift(-1)} disabled={!canPrev} aria-label={t("prevMonth")}>
-                        <span className={isAr ? styles.flip : ""}><Svg d={I.prev} size={18} /></span>
-                      </button>
-                      <strong>{fmt.month.format(new Date(Date.UTC(view.y, view.m, 1)))}</strong>
-                      <button type="button" onClick={() => shift(1)} disabled={!canNext} aria-label={t("nextMonth")}>
-                        <span className={isAr ? styles.flip : ""}><Svg d={I.next} size={18} /></span>
+                <div className={styles.pick}>
+                  {/* Date */}
+                  <section className={styles.pickCol} aria-label={t("selectDate")}>
+                    <div className={styles.colHead}>
+                      <div>
+                        <h2><Svg d={I.cal} size={16} /> {t("selectDate")}</h2>
+                      </div>
+                      <button type="button" className={styles.todayBtn} onClick={goToday} disabled={!today}>
+                        {t("today")}
                       </button>
                     </div>
-                    <div className={styles.weekdays}>{weekdays.map((w) => <span key={w}>{w}</span>)}</div>
-                    <div className={styles.days}>
-                      {cells.map((d, i) => {
-                        if (d === null) return <span key={`e${i}`} />;
-                        const k = keyOf(view.y, view.m, d);
-                        const off = k < todayKey || k > maxKey;
-                        return (
-                          <button
-                            key={k} type="button" disabled={off}
-                            className={`${styles.day} ${k === date ? styles.daySel : ""} ${k === todayKey ? styles.dayToday : ""}`}
-                            aria-pressed={k === date}
-                            aria-label={dateLabel(k)}
-                            onClick={() => { setDate(k); setTime(null); }}
-                          >
-                            {d}
+
+                    {!today || !view ? (
+                      <div className={styles.skeleton} aria-hidden="true" />
+                    ) : (
+                      <div className={styles.calendar}>
+                        <div className={styles.calHead}>
+                          <button type="button" onClick={() => shift(-1)} disabled={!canPrev} aria-label={t("prevMonth")}>
+                            <span className={isAr ? styles.flip : ""}><Svg d={I.prev} size={16} /></span>
                           </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                          <strong>{fmt.month.format(new Date(Date.UTC(view.y, view.m, 1)))}</strong>
+                          <button type="button" onClick={() => shift(1)} disabled={!canNext} aria-label={t("nextMonth")}>
+                            <span className={isAr ? styles.flip : ""}><Svg d={I.next} size={16} /></span>
+                          </button>
+                        </div>
+                        <div className={styles.weekdays}>{weekdays.map((w) => <span key={w}>{w}</span>)}</div>
+                        <div className={styles.days}>
+                          {cells.map((d, i) => {
+                            if (d === null) return <span key={`e${i}`} />;
+                            const k = keyOf(view.y, view.m, d);
+                            const off = k < todayKey || k > maxKey;
+                            return (
+                              <button
+                                key={k} type="button" disabled={off}
+                                className={`${styles.day} ${k === date ? styles.daySel : ""} ${k === todayKey ? styles.dayToday : ""}`}
+                                aria-pressed={k === date}
+                                aria-label={dateLabel(k)}
+                                onClick={() => { setDate(k); setTime(null); }}
+                              >
+                                {d}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </section>
 
-                <h2 className={`${styles.h2} ${styles.gap}`}><Svg d={I.clock} /> {t("selectTime")}</h2>
-                {!date ? (
-                  <p className={styles.hint}>{t("pickDateFirst")}</p>
-                ) : (
-                  <div className={styles.slots} role="group" aria-label={t("selectTime")}>
-                    {SLOTS.map((s) => (
-                      <button
-                        key={s.value} type="button" disabled={slotDisabled(s.mins)}
-                        className={`${styles.slot} ${time === s.value ? styles.slotSel : ""}`}
-                        aria-pressed={time === s.value}
-                        onClick={() => setTime(s.value)}
-                      >
-                        {timeLabel(s.value)}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                  {/* Time */}
+                  <section className={styles.pickCol} aria-label={t("selectTime")}>
+                    <div className={styles.colHead}>
+                      <div>
+                        <h2><Svg d={I.clock} size={16} /> {t("selectTime")}</h2>
+                        {date && <p>{dateLabel(date)}</p>}
+                      </div>
+                    </div>
+
+                    {!date ? (
+                      <p className={styles.hint}>{t("pickDateFirst")}</p>
+                    ) : noSlots ? (
+                      <p className={styles.hint}>{t("noSlots")}</p>
+                    ) : (
+                      <div className={styles.slots} role="group" aria-label={t("selectTime")}>
+                        {SLOTS.map((s) => (
+                          <button
+                            key={s.value} type="button" disabled={slotDisabled(s.mins)}
+                            className={`${styles.slot} ${time === s.value ? styles.slotSel : ""}`}
+                            aria-pressed={time === s.value}
+                            onClick={() => setTime(s.value)}
+                          >
+                            {timeLabel(s.value)}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                </div>
 
                 <div className={styles.actions}>
                   <button type="button" className={styles.primary} disabled={!date || !time} onClick={() => setStep(2)}>

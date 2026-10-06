@@ -65,7 +65,7 @@ export default function ProviderView({ providers }: { providers: Provider[] }) {
 
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("all");
-  const [perPage, setPerPage] = useState(8);
+  const [perPage, setPerPage] = useState(9);
   const [page, setPage] = useState(1);
 
   const nameOf = (p: Provider) => (isAr && p.nameAr ? p.nameAr : p.name);
@@ -133,7 +133,7 @@ export default function ProviderView({ providers }: { providers: Provider[] }) {
         </div>
       </section>
 
-      <section className={styles.container}>
+      <section className={styles.listWrap}>
         {visible.length === 0 ? (
           <div className={styles.empty}>
             <EmptyIcon />
@@ -157,7 +157,7 @@ export default function ProviderView({ providers }: { providers: Provider[] }) {
               <label>
                 {t("display")}
                 <select value={perPage} onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1); }}>
-                  {[4, 8, 12, 24].map((n) => <option key={n} value={n}>{n}</option>)}
+                  {[6, 9, 12, 24].map((n) => <option key={n} value={n}>{n}</option>)}
                 </select>
               </label>
               <span>

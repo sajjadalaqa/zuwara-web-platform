@@ -20,7 +20,7 @@
     "switchAria": "التبديل إلى العربية"
   },
   "categoriesPage": {
-    "metaTitle": "Categories | Zuwara",
+    "metaTitle": "Categories",
     "badge": "Our categories",
     "title": "Find the care you need,",
     "titleAccent": "from home",
@@ -39,7 +39,7 @@
   },
   
   "providerPage": {
-    "metaTitle": "Providers | Zuwara",
+    "metaTitle": "Providers",
     "pill": "Our providers",
     "title": "Meet the people who",
     "titleAccent": "care for you",
@@ -59,7 +59,7 @@
     "clear": "Clear filters"
   },
   "providerDetail": {
-    "metaSuffix": "Provider | Zuwara",
+    "metaSuffix": "Provider",
     "back": "Back to providers",
     "role": "Role",
     "email": "Email",
@@ -81,7 +81,7 @@
     "close": "Close"
   },
    "blogPage": {
-    "metaTitle": "Blog | Zuwara",
+    "metaTitle": "Blog",
     "pill": "Zuwara blog",
     "title": "Health stories and tips,",
     "titleAccent": "written for you",
@@ -99,13 +99,14 @@
     "share": "Found this helpful? Share it with someone.",
     "copy": "Copy link",
     "copied": "Link copied",
+    "shareNative": "Share",
     "related": "Keep reading",
     "ctaTitle": "Need care at home?",
     "ctaText": "Book a verified professional and get care that fits around your day.",
     "ctaButton": "Book an Appointment"
   },
    "bookPage": {
-    "metaTitle": "Book an Appointment | Zuwara",
+    "metaTitle": "Book an Appointment",
     "back": "Back to provider",
     "title": "Book your appointment",
     "subtitle": "Choose a date and time, then tell us a few details. It only takes a minute.",
@@ -116,6 +117,8 @@
     "selectDate": "Select a date",
     "selectTime": "Select a time",
     "pickDateFirst": "Pick a date to see the available times.",
+"today": "Today",
+"noSlots": "No time slots available for this date.",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
     "continue": "Continue",

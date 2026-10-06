@@ -9,7 +9,7 @@ async function getProviders(): Promise<Provider[]> {
   return [
     { id: 1, name: "Rameen Imran", title: "Cardiologist", image: "" },
     { id: 2, name: "M S Khan", title: "Developer", image: "" },
-    { id: 3, name: "Zuwara Home Healthcare", title: "Manager", image: "/brand/zuwara-logo.png" },
+    { id: 3, name: "Zuwara Home Healthcare", title: "Manager", image: "" },
     { id: 4, name: "Ruth Fletcher", title: "Nurse", image: "" },
     { id: 5, name: "Cynthia Gross", title: "Therapist", image: "" },
     { id: 6, name: "Test Tesrrtt", title: "Plumber", image: "" },
