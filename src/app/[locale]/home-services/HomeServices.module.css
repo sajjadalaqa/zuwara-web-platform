@@ -64,7 +64,7 @@
 .trustItem span:not(.trustIcon) { display: block; margin-top: 2px; color: #6b5a80; font-size: 12.5px; line-height: 1.5; }
 
 /* ---------- categories ---------- */
-.catHead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 32px; margin-bottom: 28px; }
+.catHead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 32px; margin-bottom: 28px; }
 .searchBar { display: flex; align-items: center; gap: 12px; width: min(100%,420px); padding: 3px 14px; border: 1.5px solid #e0cdee; border-radius: 16px; background: #fff; color: #602d8c; box-shadow: 0 14px 28px -22px rgba(96,45,140,.5); transition: border-color .2s ease, box-shadow .2s ease; }
 .searchBar:focus-within { border-color: #602d8c; box-shadow: 0 0 0 4px rgba(96,45,140,.12); }
 .searchBar input { flex: 1; min-width: 0; min-height: 46px; border: 0; outline: 0; background: transparent; color: #141b30; font: inherit; font-size: 14.5px; }

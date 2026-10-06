@@ -7,7 +7,7 @@
   --purple-50: #f8f4ff;
   --ink: #1b1033;
   --muted: #6b6482;
-  background: linear-gradient(180deg, #fbf8ff 0%, #f6f0ff 100%);
+  background: linear-gradient(180deg, #f6effd 0%, #efe4fb 55%, #e9dcf8 100%);
   color: var(--ink);
   min-height: 70vh;
   padding-block-end: 80px;
@@ -31,7 +31,7 @@
 .badge {
   position: relative;
   display: inline-block; padding: 7px 16px; border-radius: 999px;
-  background: #fff; border: 1px solid var(--purple-100);
+  background: rgba(255, 255, 255, .35); border: 1px solid rgba(193, 160, 235, .6);
   color: var(--purple-700); font-size: 13px; font-weight: 700;
 }
 .title {
@@ -43,16 +43,20 @@
   position: relative; max-width: 560px; margin: 0 auto 28px;
   color: var(--muted); font-size: clamp(14px, 2vw, 16px); line-height: 1.7;
 }
+
 .search {
   position: relative;
   display: flex; align-items: center; gap: 10px;
   width: min(460px, 100%); margin-inline: auto; padding-inline: 18px; height: 54px;
-  background: #fff; border: 1px solid var(--purple-100); border-radius: 16px;
-  box-shadow: 0 10px 30px -14px rgba(91, 42, 158, .35);
+  background: rgba(255, 255, 255, .4); border: 1px solid rgba(193, 160, 235, .65); border-radius: 16px;
+  box-shadow: 0 10px 30px -16px rgba(91, 42, 158, .35);
   color: var(--purple-600);
-  transition: border-color .2s, box-shadow .2s;
+  transition: border-color .2s, box-shadow .2s, background .2s;
 }
-.search:focus-within { border-color: var(--purple-600); box-shadow: 0 0 0 4px rgba(107, 47, 179, .12); }
+
+.search:focus-within { background: rgba(255, 255, 255, .7); border-color: var(--purple-600); box-shadow: 0 0 0 4px rgba(107, 47, 179, .12); }
+
+
 .search input {
   flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
   font: inherit; font-size: 15px; color: var(--ink);
@@ -67,8 +71,9 @@
 .card {
   position: relative; display: flex; flex-direction: column; align-items: center;
   height: 100%; padding: 30px 22px 22px; text-align: center; text-decoration: none; color: inherit;
-  background: #fff; border: 1px solid var(--purple-100); border-radius: 24px;
-  box-shadow: 0 8px 24px -16px rgba(91, 42, 158, .35);
+  background: linear-gradient(180deg, #f8f2fe 0%, #f0e6fc 100%);
+  border: 1px solid rgba(193, 160, 235, .5); border-radius: 24px;
+  box-shadow: 0 10px 26px -18px rgba(91, 42, 158, .35);
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   overflow: hidden;
 }
@@ -84,9 +89,9 @@
 }
 .iconWrap {
   display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%;
-  background: linear-gradient(145deg, #fff, var(--purple-100));
-  border: 1px solid #e2d3f7; color: var(--purple-700);
-  box-shadow: 0 10px 20px -12px rgba(91, 42, 158, .6);
+  background: linear-gradient(145deg, rgba(255, 255, 255, .45), rgba(214, 192, 241, .7));
+  border: 1px solid rgba(205, 181, 238, .8); color: var(--purple-700);
+  box-shadow: 0 10px 20px -14px rgba(91, 42, 158, .5);
   transition: background .25s, color .25s;
 }
 .card:hover .iconWrap { background: linear-gradient(145deg, var(--purple-600), var(--purple-900)); color: #fff; }
@@ -94,40 +99,44 @@
 .cardText { margin: 0 0 18px; color: var(--muted); font-size: 14px; line-height: 1.6; }
 .cardCta {
   margin-block-start: auto; display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 16px; border-radius: 999px; background: var(--purple-50);
+  padding: 8px 16px; border-radius: 999px;
+  background: rgba(255, 255, 255, .4); border: 1px solid rgba(193, 160, 235, .6);
   color: var(--purple-700); font-size: 13px; font-weight: 700;
-  transition: background .25s, color .25s;
+  transition: background .25s, color .25s, border-color .25s;
 }
-.card:hover .cardCta { background: var(--purple-600); color: #fff; }
+.card:hover .cardCta { background: var(--purple-600); border-color: var(--purple-600); color: #fff; }
+
+
 [dir="rtl"] .cardCta svg { transform: scaleX(-1); }
 
 /* Footer bar */
 .footerBar {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
   margin-block-start: 36px; padding: 14px 18px;
-  background: #fff; border: 1px solid var(--purple-100); border-radius: 18px;
+  background: rgba(255, 255, 255, .35); border: 1px solid rgba(193, 160, 235, .55); border-radius: 18px;
 }
+
 .showing { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; color: var(--muted); font-size: 14px; }
 .showing label { display: inline-flex; align-items: center; gap: 8px; }
 .showing select {
-  height: 36px; padding-inline: 10px; border-radius: 10px; border: 1px solid var(--purple-100);
-  background: var(--purple-50); color: var(--ink); font: inherit; cursor: pointer;
+  height: 36px; padding-inline: 10px; border-radius: 10px; border: 1px solid rgba(193, 160, 235, .6);
+  background: rgba(255, 255, 255, .5); color: var(--ink); font: inherit; cursor: pointer;
 }
 .pager { display: flex; flex-wrap: wrap; gap: 6px; }
 .pager button {
   display: inline-flex; align-items: center; gap: 4px; min-width: 38px; height: 38px; padding-inline: 12px;
-  justify-content: center; border-radius: 10px; border: 1px solid var(--purple-100);
-  background: #fff; color: var(--purple-700); font: inherit; font-weight: 600; cursor: pointer;
+  justify-content: center; border-radius: 10px; border: 1px solid rgba(193, 160, 235, .6);
+  background: rgba(255, 255, 255, .45); color: var(--purple-700); font: inherit; font-weight: 600; cursor: pointer;
   transition: background .2s, color .2s;
 }
-.pager button:hover:not(:disabled) { background: var(--purple-50); }
+.pager button:hover:not(:disabled) { background: rgba(208, 158, 158, 0.8); }
 .pager button:disabled { opacity: .45; cursor: not-allowed; }
 .pager button.active { background: var(--purple-600); border-color: var(--purple-600); color: #fff; }
 
 /* Empty */
 .empty {
   display: grid; justify-items: center; gap: 8px; padding: 60px 20px; text-align: center;
-  background: #fff; border: 1px dashed #d8c6f2; border-radius: 24px; color: var(--purple-600);
+  background: rgba(255, 255, 255, .35); border: 1px dashed rgba(193, 160, 235, .8); border-radius: 24px; color: var(--purple-600);
 }
 .empty h2 { margin: 6px 0 0; color: var(--ink); font-size: 20px; }
 .empty p { margin: 0; color: var(--muted); }

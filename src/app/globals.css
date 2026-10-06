@@ -1302,3 +1302,185 @@ body { font-size: 16px; line-height: 1.68; }
   letter-spacing: 0; /* negative letter-spacing breaks Arabic letter joining */
 }
 [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3 { letter-spacing: 0; }
+
+/* ---------- Discovery tabs: sliding segmented control ---------- */
+.discovery-shell .discovery-tabs[role="tablist"] {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 0 16px;
+  padding: 4px;
+  background: #f3ecf9;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.discovery-shell .tab-indicator {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #7b3fb0, #5b2a9e);
+  box-shadow: 0 8px 18px -8px rgba(91, 42, 158, .8);
+  transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+  pointer-events: none;
+}
+
+.discovery-shell .discovery-tabs[data-active="home-services"] .tab-indicator {
+  transform: translateX(100%);
+}
+
+.discovery-shell .discovery-tabs[role="tablist"] button[role="tab"] {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #5b2a9e;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: none;
+  transition: color .3s ease;
+}
+
+.discovery-shell .discovery-tabs[role="tablist"] button[role="tab"]:hover { color: #3d165f; }
+
+.discovery-shell .discovery-tabs[role="tablist"] button[role="tab"].is-active,
+.discovery-shell .discovery-tabs[role="tablist"] button[role="tab"].is-active:hover {
+  color: #fff;
+}
+
+.discovery-shell .discovery-tabs[role="tablist"] button[role="tab"]:focus { outline: none; }
+.discovery-shell .discovery-tabs[role="tablist"] button[role="tab"]:focus-visible {
+  outline: 3px solid rgba(107, 47, 179, .5);
+  outline-offset: 2px;
+}
+
+/* Form fades in when switching */
+.discovery-shell .discovery-form {
+  animation: discoveryFade .3s ease both;
+}
+@keyframes discoveryFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-width: 720px) {
+  .discovery-shell .discovery-tabs[role="tablist"] { max-width: none; }
+}
+
+/* ---------- Discovery form: aligned input + button ---------- */
+.discovery-shell .discovery-form {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+}
+
+.discovery-shell .discovery-form label {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.discovery-shell .discovery-form .discovery-location { flex: .7 1 0; }
+
+/* label row: identical height for the inputs and the button's invisible spacer */
+.discovery-shell .discovery-form label > span,
+.discovery-shell .discovery-submit > span {
+  display: block;
+  height: 16px;
+  margin: 0 0 7px 2px;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.discovery-shell .discovery-submit > span { visibility: hidden; }
+
+.discovery-shell .discovery-form label > div {
+  box-sizing: border-box;
+  height: 52px;
+}
+
+.discovery-shell .discovery-submit {
+  flex: 0 0 190px;
+}
+
+.discovery-shell .discovery-submit button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 52px;
+  margin: 0;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #602d8c, #7b38ad);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 8px 18px #602d8c33;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.discovery-shell .discovery-submit button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px #602d8c40;
+}
+
+@media (max-width: 720px) {
+  .discovery-shell .discovery-form { flex-direction: column; align-items: stretch; }
+  .discovery-shell .discovery-form label,
+  .discovery-shell .discovery-form .discovery-location { flex: none; }
+  .discovery-shell .discovery-submit { flex: none; }
+  .discovery-shell .discovery-submit > span { display: none; }
+}
+/* ---------- Remove the extra box around the search label ---------- */
+.discovery-shell .discovery-form label,
+.discovery-shell .discovery-form label:focus,
+.discovery-shell .discovery-form label:focus-within,
+.discovery-shell .discovery-form label:focus-visible {
+  outline: none;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+/* The input sits inside the rounded box, which draws its own focus ring */
+.discovery-shell .discovery-form input,
+.discovery-shell .discovery-form input:focus,
+.discovery-shell .discovery-form input:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border: 0;
+  background: transparent;
+}
+
+/* Keep one clean ring on the rounded box only */
+.discovery-shell .discovery-form label > div:focus-within {
+  border-color: #7b3fb0;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(123, 63, 176, .14);
+}

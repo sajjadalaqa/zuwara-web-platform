@@ -44,8 +44,7 @@
 
 .vision {
   position: relative;
-  aspect-ratio: 217 / 136;
-  padding: 16px 16px 0;
+  padding: 16px 16px 44px; /* extra bottom space keeps text clear of the white badge */
   border-radius: 22px;
   background: linear-gradient(145deg, #5a1a8c 0%, #7b2cc4 100%);
   color: #fff;

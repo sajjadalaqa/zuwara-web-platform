@@ -231,14 +231,14 @@ export default async function Home() {
       <section className={a.section} aria-labelledby="app-ecosystem-heading">
   <div className={`container ${a.layout}`}>
     <div className={a.stage}>
-      <span className={a.halo} aria-hidden="true" />
-      <div className={`${a.device} ${a.deviceBack}`}>
-        <Image src="/images/app-phone-1.png" alt="Zuwara mobile healthcare experience" width={260} height={540} sizes="(max-width: 900px) 46vw, 260px" />
-      </div>
-      <div className={`${a.device} ${a.deviceFront}`}>
-        <Image src="/images/app-phone-2.png" alt="Zuwara mobile appointment experience" width={260} height={540} sizes="(max-width: 900px) 46vw, 260px" />
-      </div>
-    </div>
+  <span className={a.halo} aria-hidden="true" />
+  <div className={`${a.device} ${a.deviceBack}`}>
+    <Image src="/images/my-app-2.png" alt="Zuwara mobile healthcare experience" width={260} height={540} sizes="(max-width: 900px) 46vw, 260px" />
+  </div>
+  <div className={`${a.device} ${a.deviceFront}`}>
+    <Image src="/images/my-app-1.png" alt="Zuwara mobile appointment experience" width={260} height={540} sizes="(max-width: 900px) 46vw, 260px" />
+  </div>
+</div>
 
     <div className={a.copy}>
       <span className={a.eyebrow}><i /> One mobile experience</span>
