@@ -21,6 +21,7 @@ const BULB = "M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.4 1 2.5h6c0-1.1.3-1.
 const ARROW = "M5 12h14M13 6l6 6-6 6";
 const LINK = "M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1";
 const SHARE = "M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13";
+const CLOSE = "M6 6l12 12M18 6L6 18";
 
 export default function BlogPost({ slug }: { slug: string }) {
   const t = useTranslations("blogPage");
@@ -32,12 +33,26 @@ export default function BlogPost({ slug }: { slug: string }) {
   const [copied, setCopied] = useState(false);
   const [pageUrl, setPageUrl] = useState("");
   const [canShare, setCanShare] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const title = pick(post.title, locale);
 
   useEffect(() => {
     setPageUrl(window.location.href);
     setCanShare(typeof navigator.share === "function");
   }, []);
+
+  // Close popup with Escape + lock page scroll while it is open
+  useEffect(() => {
+    if (!shareOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setShareOpen(false); };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [shareOpen]);
 
   const u = encodeURIComponent(pageUrl);
   const tt = encodeURIComponent(title);
@@ -106,25 +121,13 @@ export default function BlogPost({ slug }: { slug: string }) {
               return null;
             })}
 
-                        <div className={styles.shareBox}>
+            {/* Share bar: one button that opens the popup */}
+            <div className={styles.shareBox}>
               <p className={styles.shareText}>{t("share")}</p>
-              <div className={styles.shareBtns}>
-                {pageUrl && socials.map(({ name, href, Icon, cls }) => (
-                  <a key={name} href={href} target="_blank" rel="noopener noreferrer"
-                    className={`${styles.shareBtn} ${styles[cls]}`} aria-label={name} title={name}>
-                    <Icon size={17} />
-                  </a>
-                ))}
-                {canShare && (
-                  <button type="button" className={styles.shareNative} onClick={nativeShare}
-                    aria-label={t("shareNative")} title={t("shareNative")}>
-                    <Svg d={SHARE} size={17} />
-                  </button>
-                )}
-                <button type="button" className={styles.shareCopy} onClick={copyLink}>
-                  <Svg d={LINK} size={16} /> {copied ? t("copied") : t("copy")}
-                </button>
-              </div>
+              <button type="button" className={styles.shareOpen} onClick={() => setShareOpen(true)}
+                aria-haspopup="dialog">
+                <Svg d={SHARE} size={16} /> {t("share")}
+              </button>
             </div>
           </article>
 
@@ -169,6 +172,46 @@ export default function BlogPost({ slug }: { slug: string }) {
           </section>
         )}
       </div>
+
+      {/* Share popup */}
+      {shareOpen && (
+        <div className={styles.shareOverlay} onClick={() => setShareOpen(false)}>
+          <div className={styles.shareModal} role="dialog" aria-modal="true" aria-label={t("share")}
+            onClick={(e) => e.stopPropagation()}>
+            <div className={styles.shareHead}>
+              <h3>{t("share")}</h3>
+              <button type="button" className={styles.shareClose} onClick={() => setShareOpen(false)}
+                aria-label={t("close")}>
+                <Svg d={CLOSE} size={18} />
+              </button>
+            </div>
+
+            <div className={styles.shareGrid}>
+              {socials.map(({ name, href, Icon, cls }) => (
+                <a key={name} href={href} target="_blank" rel="noopener noreferrer"
+                  className={`${styles.shareItem} ${styles[cls]}`}>
+                  <span className={styles.shareIcon}><Icon size={22} /></span>
+                  {name}
+                </a>
+              ))}
+              {canShare && (
+                <button type="button" className={`${styles.shareItem} ${styles.brandMore}`} onClick={nativeShare}>
+                  <span className={styles.shareIcon}><Svg d={SHARE} size={22} /></span>
+                  {t("shareNative")}
+                </button>
+              )}
+            </div>
+
+            <div className={styles.copyRow}>
+              <input type="text" readOnly value={pageUrl} onFocus={(e) => e.currentTarget.select()}
+                aria-label="Link" dir="ltr" />
+              <button type="button" onClick={copyLink}>
+                <Svg d={LINK} size={16} /> {copied ? t("copied") : t("copy")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
