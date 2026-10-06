@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import styles from "./AboutSection.module.css";
 
 const features = [
@@ -77,7 +77,7 @@ export function AboutSection() {
             ))}
           </ul>
 
-          <Link href="/healthcare/doctors" className={styles.cta}>Book an Appointment</Link>
+          <Link href="/provider" className={styles.cta}>Book an Appointment</Link>
         </div>
       </div>
     </section>
