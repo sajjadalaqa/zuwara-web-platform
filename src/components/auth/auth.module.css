@@ -1,6 +1,6 @@
 .page,.page *,.page *::before,.page *::after{box-sizing:border-box}
 .page{--p:#55207d;--p-dark:#3a1256;--p-mid:#7b3fa8;--p-soft:#f4ecfb;--p-line:#e7dbf3;--ink:#1b1230;--muted:#6f6385;--pink:#c8346b;--danger:#d92d4f;--ok:#1f9d6b;
-position:relative;display:flex;flex-direction:column;align-items:center;gap:18px;padding:22px 24px 64px;color:var(--ink);overflow:hidden;
+position:relative;display:flex;flex-direction:column;align-items:center;gap:18px;padding:22px 24px 64px;color:var(--ink);overflow-x:clip;
 background:radial-gradient(60% 50% at -5% 20%,rgba(139,77,184,.14),transparent 70%),radial-gradient(40% 55% at 108% 55%,rgba(123,63,168,.14),transparent 70%),linear-gradient(180deg,#fff 0%,#faf7fe 100%)}
 
 /* ---------- Top bar ---------- */
@@ -167,3 +167,5 @@ background:linear-gradient(135deg,#6a2b98 0%,#55207d 55%,#411563 100%);box-shado
 .optCode{flex:none;color:var(--muted);font-variant-numeric:tabular-nums;font-size:13px}
 .opt2Active .optCode{color:var(--p)}
 .empty{padding:14px 10px;text-align:center;font-size:13.5px;color:var(--muted)}
+.menuUp{top:auto;bottom:calc(100% + 8px);animation-name:menuInUp}
+@keyframes menuInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}

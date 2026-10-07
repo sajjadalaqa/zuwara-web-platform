@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_INDEXABLE, SITE_URL } from "@/data/site";
 import "../globals.css";
+import SiteChrome from "./SiteChrome";
 
 // Font paths now start with "../" because this file moved into [locale]
 const manrope = localFont({
@@ -95,9 +96,9 @@ export default async function LocaleLayout({
             }}
           />
           <a className="skip-link" href="#main-content">Skip to content</a>
-          <Header />
-          <main id="main-content">{children}</main>
-          <Footer />
+          <SiteChrome><Header /></SiteChrome>
+<main id="main-content">{children}</main>
+<SiteChrome><Footer /></SiteChrome>
         </NextIntlClientProvider>
       </body>
     </html>
