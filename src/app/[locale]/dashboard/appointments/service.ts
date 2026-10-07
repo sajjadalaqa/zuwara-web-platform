@@ -1,12 +1,14 @@
+import { cache } from "react";
 import { getStore } from "./mock"; // TODO (backend): delete this import
 import { STATUSES } from "./types";
 import type {
   ActionResult,
+  Appointment,
+  AppointmentDetail,
   AppointmentFilters,
   AppointmentsResult,
   StatusFilter,
 } from "./types";
-
 export const PAGE_SIZE = 6;
 
 export async function getAppointments(
@@ -75,4 +77,61 @@ export async function cancelAppointment(id: string): Promise<ActionResult> {
   }
   item.status = "cancelled";
   return { ok: true };
+}
+
+// ---------- Single appointment ----------
+
+export const getAppointment = cache(
+  async (id: string, locale: string): Promise<AppointmentDetail | null> => {
+    // TODO (backend): replace the body with
+    // const res = await fetch(`${process.env.API_URL}/appointments/${id}`, {
+    //   headers: { Authorization: `Bearer ${await getToken()}`, "Accept-Language": locale },
+    //   cache: "no-store",
+    // });
+    // if (res.status === 404) return null;           // shows not-found.tsx
+    // if (!res.ok) throw new Error("Failed to load appointment"); // shows error screen
+    // return (await res.json()) as AppointmentDetail;
+    void locale;
+    const a = getStore().find((x) => x.id === id);
+    return a ? toDetail(a) : null;
+  }
+);
+
+// TODO (backend): delete this helper. It only fakes the extra fields for the mock.
+function toDetail(a: Appointment): AppointmentDetail {
+  const DAY = 24 * 3600 * 1000;
+  const start = new Date(a.startsAt).getTime();
+  const iso = (ms: number) => new Date(ms).toISOString();
+
+  const timeline: AppointmentDetail["timeline"] = [{ key: "booked", at: iso(start - 3 * DAY) }];
+  if (a.status === "accepted" || a.status === "completed") {
+    timeline.push({ key: "accepted", at: iso(start - 2 * DAY) });
+  }
+  if (a.status === "declined") timeline.push({ key: "declined", at: iso(start - 2 * DAY) });
+  if (a.status === "completed") {
+    timeline.push({ key: "completed", at: iso(start + a.durationMin * 60000) });
+  }
+  if (a.status === "cancelled") {
+    timeline.push({ key: "cancelled", at: iso(Math.min(Date.now(), start - 3600000)) });
+  }
+
+  const fee = 10;
+  return {
+    ...a,
+    createdAt: iso(start - 3 * DAY),
+    notes: a.id === "apt_1" ? "Skin rash on both arms for about two weeks." : undefined,
+    meetingUrl:
+      a.status === "accepted" && a.type !== "visit"
+        ? `https://meet.example.com/${a.number}`
+        : undefined,
+    timeline,
+    payment: {
+      method: "MyFatoorah",
+      subtotal: a.price - fee,
+      fee,
+      total: a.price,
+      paidAt:
+        a.paymentStatus === "unpaid" ? undefined : iso(start - 3 * DAY + 5 * 60000),
+    },
+  };
 }

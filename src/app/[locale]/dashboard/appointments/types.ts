@@ -33,3 +33,19 @@ export type AppointmentsResult = {
 };
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
+
+export type TimelineKey = "booked" | "accepted" | "completed" | "cancelled" | "declined";
+
+export type AppointmentDetail = Appointment & {
+  createdAt: string; // ISO 8601
+  notes?: string;
+  meetingUrl?: string; // video consultations, once the provider accepts
+  timeline: { key: TimelineKey; at: string }[]; // oldest first
+  payment: {
+    method: string;
+    subtotal: number;
+    fee: number;
+    total: number;
+    paidAt?: string;
+  };
+};
