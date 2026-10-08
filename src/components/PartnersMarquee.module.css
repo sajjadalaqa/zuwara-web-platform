@@ -93,9 +93,29 @@
   .track { animation-duration: 26s; }
 }
 
-/* ---------- reduced motion: keep moving, but much slower and gentler ---------- */
+/* ---------- reduced motion: static, centered, no scrollbar ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .track { animation-duration: 90s; }
+  .track {
+    animation: none;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .row {
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  /* hide the duplicate loop group so items aren't shown twice */
+  .group[aria-hidden="true"] { display: none; }
+
+  .group {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 var(--gap);
+  }
+
   .item { transition: none; }
   .item:hover { transform: none; }
 }
