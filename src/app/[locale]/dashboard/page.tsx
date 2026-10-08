@@ -7,6 +7,10 @@ import {
 import { mockStats, mockUser } from "./user";
 import s from "./overview.module.css";
 import { getProfile } from "./profile/service";
+import { getSavedCount } from "./saved/service";
+import { getWalletSummary } from "./wallet/service";
+import { getRequestCounts } from "./requests/service";
+
 const copy = {
   en: {
     welcome: "Welcome back,",
@@ -74,7 +78,17 @@ export default async function DashboardHome({
   // TODO (backend): replace with real data
   const profile = await getProfile();
 const user = { ...mockUser, name: profile.fullName.split(" ")[0] };
-  const stats = mockStats;
+  const [savedProviders, wallet, requestCounts] = await Promise.all([
+  getSavedCount(),
+  getWalletSummary(),
+  getRequestCounts(),
+]);
+const stats = {
+  ...mockStats,
+  savedProviders,
+  walletBalance: wallet.balance,
+  serviceRequests: requestCounts.all,
+};
 
   const statCards = [
     { href: "/dashboard/appointments", icon: CalendarCheck, value: nf.format(stats.upcomingAppointments), label: t.stats.appointments, tone: s.tPurple },

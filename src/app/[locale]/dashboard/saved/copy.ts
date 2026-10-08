@@ -1,0 +1,56 @@
+export const copy = {
+  en: {
+    title: "Saved Providers",
+    subtitle: "Your favourite providers, ready to book.",
+    search: "Search by name, specialty or city",
+    clear: "Clear search",
+    results: "providers",
+    from: "From",
+    reviews: "reviews",
+    available: "Available today",
+    book: "Book",
+    remove: "Remove from saved",
+    removeFailed: "Couldn't remove. Try again.",
+    services: { consultation: "Video", visit: "Home visit", instant: "Instant" },
+    empty: {
+      title: "No saved providers yet",
+      text: "Tap the heart on a provider to save them here.",
+      cta: "Browse providers",
+    },
+    noMatch: { title: "No matches found", text: "Try a different name, specialty or city." },
+    pager: { prev: "Previous", next: "Next", page: "Page", of: "of" },
+    error: {
+      title: "We couldn't load your saved providers",
+      text: "Please check your connection and try again.",
+      retry: "Try again",
+    },
+  },
+  ar: {
+    title: "المزودون المحفوظون",
+    subtitle: "مزودوك المفضلون، جاهزون للحجز.",
+    search: "ابحث بالاسم أو التخصص أو المدينة",
+    clear: "مسح البحث",
+    results: "مزود",
+    from: "ابتداءً من",
+    reviews: "تقييم",
+    available: "متاح اليوم",
+    book: "احجز",
+    remove: "إزالة من المحفوظات",
+    removeFailed: "تعذّرت الإزالة. حاول مرة أخرى.",
+    services: { consultation: "مرئي", visit: "زيارة منزلية", instant: "فوري" },
+    empty: {
+      title: "لا يوجد مزودون محفوظون بعد",
+      text: "اضغط على القلب بجانب أي مزود لحفظه هنا.",
+      cta: "تصفّح المزودين",
+    },
+    noMatch: { title: "لا توجد نتائج", text: "جرّب اسماً أو تخصصاً أو مدينة مختلفة." },
+    pager: { prev: "السابق", next: "التالي", page: "صفحة", of: "من" },
+    error: {
+      title: "تعذّر تحميل المزودين المحفوظين",
+      text: "يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
+      retry: "حاول مرة أخرى",
+    },
+  },
+};
+
+export type Copy = typeof copy.en;

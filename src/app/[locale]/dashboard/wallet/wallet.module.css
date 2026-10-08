@@ -1,0 +1,192 @@
+.page {
+  --p-900: #3b1466; --p-700: #5b2a8c; --p-600: #6d35a6;
+  --p-100: #efe6fa; --p-50: #f8f4fd;
+  --ink: #17102a; --muted: #6b6480; --line: #e9e0f5;
+  display: grid;
+  gap: 12px;
+}
+.page * { min-width: 0; }
+
+.head h2 { margin: 0; font-size: 19px; font-weight: 800; color: var(--p-900); }
+.head p { margin: 3px 0 0; font-size: 12.5px; color: var(--muted); }
+:global(html[dir="rtl"]) .rtlFlip { transform: scaleX(-1); }
+
+/* ---------- Balance hero ---------- */
+.hero {
+  position: relative; overflow: hidden; display: grid; gap: 14px;
+  padding: 16px; border-radius: 22px; color: #fff;
+  background: linear-gradient(120deg, #3b1466 0%, #5b2a8c 55%, #8350bd 100%);
+  box-shadow: 0 22px 44px -26px rgba(91, 42, 140, 0.9);
+}
+.hero::after {
+  content: ""; position: absolute; width: 240px; height: 240px; border-radius: 50%;
+  inset-block-start: -120px; inset-inline-end: -60px; background: rgba(255, 255, 255, 0.08);
+}
+.heroTop {
+  position: relative; z-index: 1; display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.balLabel { margin: 0; display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; opacity: 0.85; }
+.balance { margin: 4px 0 0; font-size: 30px; font-weight: 800; line-height: 1.1; }
+.addBtn {
+  display: inline-flex; align-items: center; gap: 7px; padding: 10px 16px;
+  border: 0; border-radius: 13px; background: #fff; color: var(--p-700);
+  font: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 14px 28px -14px rgba(0, 0, 0, 0.5); transition: transform 0.2s;
+}
+.addBtn:hover { transform: translateY(-1px); }
+.mini { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.miniItem {
+  display: grid; gap: 2px; padding: 10px 12px; border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.miniItem small { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; opacity: 0.85; }
+.miniItem b { font-size: 15px; font-weight: 800; }
+
+/* ---------- Transactions card ---------- */
+.card { background: #fff; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
+.cardHead { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 14px 8px; }
+.cardHead h2 { margin: 0; font-size: 15.5px; font-weight: 800; color: var(--p-900); }
+.total { font-size: 11.5px; font-weight: 700; color: var(--muted); }
+
+.tabs { display: flex; gap: 6px; padding: 0 14px 12px; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 11px; border-radius: 10px; color: var(--muted);
+  font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.2s, color 0.2s;
+}
+.tab:hover { background: var(--p-50); color: var(--p-700); }
+.tabActive, .tabActive:hover { background: linear-gradient(135deg, var(--p-900), var(--p-600)); color: #fff; }
+.count {
+  min-width: 18px; height: 18px; padding-inline: 5px; display: grid; place-items: center;
+  border-radius: 99px; background: var(--p-100); color: var(--p-700); font-size: 10px; font-weight: 800;
+}
+.tabActive .count { background: rgba(255, 255, 255, 0.22); color: #fff; }
+
+.list { margin: 0; padding: 0; list-style: none; }
+.row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-top: 1px solid var(--line); }
+.row:hover { background: var(--p-50); }
+.txIcon {
+  flex: 0 0 36px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%;
+}
+.iconIn { background: #e2f6ec; color: #16875a; }
+.iconOut { background: var(--p-100); color: var(--p-700); }
+.iconRefund { background: #e8ecff; color: #4f5bd5; }
+.txText { flex: 1; display: grid; gap: 1px; }
+.txText h3 { margin: 0; font-size: 13.5px; font-weight: 700; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.txText p { margin: 0; font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.txText p:empty { display: none; }
+.txText small { font-size: 11px; color: #9a90b3; }
+.amt { display: grid; justify-items: end; gap: 3px; flex-shrink: 0; }
+.amt b { font-size: 13.5px; font-weight: 800; }
+.plus { color: #16875a; }
+.minus { color: var(--ink); }
+.dead { color: #9a90b3; text-decoration: line-through; }
+.chip { padding: 2px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 800; }
+.stPending { background: #fff4dc; color: #a56a00; }
+.stFailed { background: #fde8ed; color: #c93150; }
+
+/* ---------- Empty + pager ---------- */
+.empty { display: grid; justify-items: center; gap: 8px; padding: 32px 20px 36px; text-align: center; border-top: 1px solid var(--line); }
+.emptyIcon {
+  display: grid; place-items: center; width: 56px; height: 56px;
+  border-radius: 50%; background: var(--p-100); color: var(--p-700);
+}
+.empty h3 { margin: 6px 0 0; font-size: 17px; font-weight: 800; color: var(--p-900); }
+.empty p { margin: 0 0 8px; font-size: 13.5px; color: var(--muted); max-width: 320px; }
+.empty .addBtn {
+  background: linear-gradient(135deg, var(--p-900), var(--p-600)); color: #fff;
+  box-shadow: 0 12px 22px -14px rgba(91, 42, 140, 0.9);
+}
+
+.pager { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.pageBtn {
+  display: inline-flex; align-items: center; gap: 4px; padding: 7px 11px; border-radius: 12px;
+  background: #fff; border: 1px solid var(--line); color: var(--p-700);
+  font-size: 12px; font-weight: 700; text-decoration: none;
+}
+.pageBtn:hover { background: var(--p-50); }
+.pageBtnOff { opacity: 0.4; pointer-events: none; }
+.pageInfo { font-size: 12px; font-weight: 700; color: var(--muted); }
+
+/* ---------- Add funds dialog (portal -> literal colors) ---------- */
+.overlay {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px;
+  background: rgba(23, 16, 42, 0.5); backdrop-filter: blur(2px);
+}
+.dialog {
+  width: min(100%, 380px); display: grid; justify-items: center; gap: 8px;
+  padding: 24px 20px 20px; border-radius: 22px; background: #fff; text-align: center;
+  box-shadow: 0 30px 60px -20px rgba(59, 20, 102, 0.5); animation: pop 0.16s ease-out;
+}
+@keyframes pop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+.dialogIcon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #efe6fa; color: #5b2a8c; }
+.dialog h4 { margin: 6px 0 0; font-size: 17px; font-weight: 800; color: #3b1466; }
+.dialog p { margin: 0; font-size: 13.5px; line-height: 1.5; color: #6b6480; }
+.presets { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 6px; }
+.preset {
+  min-width: 64px; padding: 8px 14px; border: 1px solid #e9e0f5; border-radius: 12px;
+  background: #f8f4fd; color: #5b2a8c; font: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer;
+}
+.preset:hover { background: #efe6fa; }
+.presetOn { background: #5b2a8c; border-color: #5b2a8c; color: #fff; }
+.presetOn:hover { background: #5b2a8c; }
+.amountBox { position: relative; width: 100%; margin-top: 4px; }
+.amountBox input {
+  width: 100%; height: 50px; padding-inline: 14px 52px; border: 1px solid #e9e0f5; border-radius: 14px;
+  background: #f8f4fd; color: #17102a; font: inherit; font-size: 20px; font-weight: 800; text-align: start; outline: none;
+}
+.amountBox input:focus { border-color: #6d35a6; background: #fff; box-shadow: 0 0 0 3px rgba(109, 53, 166, 0.12); }
+.amountBox input[aria-invalid="true"] { border-color: #e0526c; }
+.amountBox span {
+  position: absolute; inset-inline-end: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 13px; font-weight: 800; color: #6b6480; pointer-events: none;
+}
+.dialog .dialogError { color: #d63a55; font-weight: 700; font-size: 12.5px; }
+.dialog .dialogNote { font-size: 12px; color: #9a90b3; }
+.dialogBtns { display: flex; gap: 8px; width: 100%; margin-top: 8px; }
+.dialogKeep, .dialogConfirm {
+  flex: 1; padding: 11px; border: 0; border-radius: 12px; font: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer;
+}
+.dialogKeep { background: #f8f4fd; color: #5b2a8c; }
+.dialogConfirm { background: linear-gradient(135deg, #3b1466, #6d35a6); color: #fff; }
+.dialogKeep:disabled, .dialogConfirm:disabled { opacity: 0.6; cursor: wait; }
+
+/* ---------- Loading ---------- */
+.skel {
+  border-radius: 20px;
+  background: linear-gradient(90deg, #f1eaf9 25%, #f8f4fd 37%, #f1eaf9 63%);
+  background-size: 400% 100%; animation: shimmer 1.4s ease infinite;
+}
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+.skelHead { height: 44px; width: 50%; }
+.skelHero { height: 150px; }
+.skelList { height: 380px; }
+
+/* ---------- Tablet ---------- */
+@media (min-width: 640px) {
+  .head h2 { font-size: 24px; }
+  .head p { font-size: 13.5px; }
+  .hero { padding: 24px; gap: 18px; }
+  .balance { font-size: 38px; }
+  .miniItem { padding: 12px 16px; }
+  .miniItem b { font-size: 17px; }
+  .mini { max-width: 460px; }
+  .cardHead { padding: 18px 20px 10px; }
+  .tabs { padding: 0 20px 14px; }
+  .tab { padding: 8px 14px; font-size: 13px; }
+  .row { padding: 14px 20px; gap: 14px; }
+  .txIcon { flex-basis: 42px; width: 42px; height: 42px; }
+  .txText h3 { font-size: 14.5px; }
+  .txText p { font-size: 12.5px; }
+  .txText small { font-size: 12px; }
+  .amt b { font-size: 15px; }
+  .pageBtn { padding: 9px 14px; font-size: 13px; }
+  .pageInfo { font-size: 13px; }
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 1100px) {
+  .balance { font-size: 44px; }
+}
