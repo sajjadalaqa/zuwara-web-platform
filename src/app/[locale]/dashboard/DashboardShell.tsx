@@ -49,9 +49,11 @@ function useDropdown() {
 
 export default function DashboardShell({
   user,
+  bell,
   children,
 }: {
   user: DashboardUser;
+  bell: React.ReactNode; // server-rendered <NotificationBell /> passed from layout.tsx
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -104,14 +106,8 @@ export default function DashboardShell({
         </Link>
 
         <div className={s.headerRight}>
-          <Link href={href("/dashboard/notifications")} className={s.iconBtn} aria-label="Notifications">
-            <Bell size={19} />
-            {user.unreadNotifications > 0 && (
-              <span className={s.badge}>
-                {user.unreadNotifications > 9 ? "9+" : user.unreadNotifications}
-              </span>
-            )}
-          </Link>
+          {/* Notification bell with dropdown (server-rendered, passed from layout) */}
+          {bell}
 
           {/* Language dropdown */}
           <div className={`${s.dropWrap} ${s.hideMobile}`} ref={lang.ref}>
