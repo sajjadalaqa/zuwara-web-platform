@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { cancelRequest, createRequest } from "./service";
+import { acceptOffer, cancelRequest, createRequest } from "./service";
 import type { ActionResult, FormState } from "./types";
 import { validateRequest } from "./validation";
 
@@ -32,6 +32,16 @@ export async function createRequestAction(_prev: FormState, fd: FormData): Promi
 
 export async function cancelRequestAction(id: string): Promise<ActionResult> {
   const res = await cancelRequest(id);
+  if (res.ok) revalidatePath("/", "layout");
+  return res;
+}
+
+export async function acceptOfferAction(
+  requestId: string,
+  offerId: string
+): Promise<ActionResult> {
+  // TODO (backend): check the session, and that this request belongs to the signed-in user.
+  const res = await acceptOffer(requestId, offerId);
   if (res.ok) revalidatePath("/", "layout");
   return res;
 }

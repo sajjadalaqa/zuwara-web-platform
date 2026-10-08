@@ -54,6 +54,7 @@ export const copy = {
       invalid_budget: "Enter a whole amount between 10 and 100,000.",
       not_found: "This request no longer exists.",
       not_cancellable: "This request can no longer be cancelled.",
+      offer_unavailable: "This offer is no longer available.",
       generic: "Something went wrong. Please try again.",
     },
     empty: {
@@ -121,6 +122,7 @@ export const copy = {
       invalid_budget: "أدخل مبلغاً صحيحاً بين 10 و100,000.",
       not_found: "هذا الطلب لم يعد موجوداً.",
       not_cancellable: "لا يمكن إلغاء هذا الطلب بعد الآن.",
+      offer_unavailable: "هذا العرض لم يعد متاحاً.",
       generic: "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     },
     empty: {

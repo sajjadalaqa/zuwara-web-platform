@@ -1,4 +1,4 @@
-import type { ServiceRequest } from "./types";
+import type { Offer, ServiceRequest } from "./types";
 
 const seed: ServiceRequest[] = [
   { id: "req_1", number: "REQ20001", category: "nursing", title: "Post-surgery wound dressing", description: "I need a nurse to change my wound dressing every other day for two weeks after my surgery.", city: "Riyadh", preferredDate: "2026-10-12", budget: 200, currency: "SAR", status: "open", offersCount: 3, createdAt: "2026-10-07T09:00:00Z" },
@@ -22,4 +22,52 @@ declare global {
 export function getStore(): ServiceRequest[] {
   if (!globalThis.__zuwaraRequests) globalThis.__zuwaraRequests = structuredClone(seed);
   return globalThis.__zuwaraRequests;
+}
+
+// ---------- Offers (mock) ----------
+// TODO (backend): delete all of this. Your API returns the real offers.
+
+const POOL = [
+  { id: "p4", name: "Nora Al-Shehri", specialty: "Home Nursing", rating: 4.9, reviews: 98,
+    message: "Hello! I have 8 years of home care experience and can come on your preferred date. I'll bring all the supplies I need." },
+  { id: "p8", name: "Reem Al-Dosari", specialty: "Physiotherapy", rating: 4.9, reviews: 77,
+    message: "I'd be glad to help. I can follow a schedule that suits you and share a short progress note after each visit." },
+  { id: "p11", name: "Hind Al-Qarni", specialty: "Nursing & Wound Care", rating: 4.7, reviews: 64,
+    message: "Available that day, and I can arrive early in the morning if that's easier for you." },
+  { id: "p12", name: "Saad Al-Anazi", specialty: "General Medicine", rating: 4.6, reviews: 121,
+    message: "Happy to take this on. Feel free to message me first with any details before the visit." },
+  { id: "p13", name: "Maha Al-Subaie", specialty: "Home Care", rating: 4.8, reviews: 89,
+    message: "I'm nearby and can start right away. References are available on request." },
+];
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __zuwaraOffers: Record<string, Offer[]> | undefined;
+}
+
+export function getOffers(r: ServiceRequest): Offer[] {
+  const map = (globalThis.__zuwaraOffers ??= {});
+  if (!map[r.id]) {
+    const factors = [0.9, 1, 1.1, 0.95, 1.2];
+    const base = r.budget ?? 150;
+    map[r.id] = POOL.slice(0, r.offersCount).map((p, i) => {
+      const chosen = !!r.provider && i === 0;
+      const hour = String(8 + i * 2).padStart(2, "0");
+      return {
+        id: `${r.id}_o${i + 1}`,
+        provider: chosen
+          ? { id: r.provider!.id, name: r.provider!.name, specialty: p.specialty }
+          : { id: p.id, name: p.name, specialty: p.specialty },
+        rating: p.rating,
+        reviewsCount: p.reviews,
+        price: Math.round((base * factors[i]) / 5) * 5,
+        currency: r.currency,
+        availableAt: new Date(`${r.preferredDate}T${hour}:00:00+03:00`).toISOString(),
+        message: p.message,
+        status: r.provider ? (i === 0 ? "accepted" : "declined") : "pending",
+        createdAt: new Date(+new Date(r.createdAt) + (i + 1) * 3 * 3600_000).toISOString(),
+      } satisfies Offer;
+    });
+  }
+  return map[r.id];
 }

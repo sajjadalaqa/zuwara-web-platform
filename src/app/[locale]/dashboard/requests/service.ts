@@ -1,8 +1,8 @@
 import { cache } from "react";
-import { getStore } from "./mock"; // TODO (backend): delete this import
+import { getOffers, getStore } from "./mock"; // TODO (backend): delete this import
 import { REQUEST_STATUSES } from "./types";
 import type {
-  ActionResult, Category, CreateResult, RequestFilters,
+  ActionResult, Category, CreateResult, RequestDetail, RequestFilters,
   RequestInput, RequestsResult, ServiceRequest, StatusFilter,
 } from "./types";
 
@@ -79,5 +79,70 @@ export async function cancelRequest(id: string): Promise<ActionResult> {
   if (!r) return { ok: false, error: "not_found" };
   if (r.status !== "open") return { ok: false, error: "not_cancellable" };
   r.status = "cancelled";
+  return { ok: true };
+}
+
+// ---------- Single request ----------
+
+export const getRequest = cache(
+  async (id: string, locale: string): Promise<RequestDetail | null> => {
+    // TODO (backend): replace the body with
+    // const res = await fetch(`${process.env.API_URL}/service-requests/${id}`, {
+    //   headers: { Authorization: `Bearer ${await getToken()}`, "Accept-Language": locale },
+    //   cache: "no-store",
+    // });
+    // if (res.status === 404) return null;            // shows the not-found screen
+    // if (!res.ok) throw new Error("Failed to load request");
+    // return (await res.json()) as RequestDetail;
+    void locale;
+    const r = getStore().find((x) => x.id === id);
+    return r ? toDetail(r) : null;
+  }
+);
+
+// TODO (backend): delete this helper. It only fakes the extra fields for the mock.
+function toDetail(r: ServiceRequest): RequestDetail {
+  const DAY = 24 * 3600 * 1000;
+  const created = +new Date(r.createdAt);
+  const iso = (ms: number) => new Date(ms).toISOString();
+
+  const offers = getOffers(r).map((o) => ({
+    ...o,
+    status: r.status === "cancelled" && o.status === "pending" ? ("declined" as const) : o.status,
+  }));
+  const accepted = offers.find((o) => o.status === "accepted");
+
+  const timeline: RequestDetail["timeline"] = [{ key: "posted", at: r.createdAt }];
+  if (r.status === "in_progress" || r.status === "completed") {
+    timeline.push({ key: "accepted", at: iso(Math.min(Date.now(), created + DAY)) });
+  }
+  if (r.status === "completed") {
+    timeline.push({
+      key: "completed",
+      at: iso(Math.min(Date.now(), +new Date(`${r.preferredDate}T12:00:00Z`))),
+    });
+  }
+  if (r.status === "cancelled") {
+    timeline.push({ key: "cancelled", at: iso(Math.min(Date.now(), created + DAY)) });
+  }
+
+  return { ...r, offers, agreedPrice: accepted?.price, timeline };
+}
+
+export async function acceptOffer(requestId: string, offerId: string): Promise<ActionResult> {
+  // TODO (backend): POST `${API_URL}/service-requests/${requestId}/offers/${offerId}/accept`
+  // 404 -> { ok:false, error:"not_found" }, 409 -> { ok:false, error:"offer_unavailable" }
+  const r = getStore().find((x) => x.id === requestId);
+  if (!r) return { ok: false, error: "not_found" };
+  if (r.status !== "open") return { ok: false, error: "offer_unavailable" };
+
+  const offers = getOffers(r);
+  const chosen = offers.find((o) => o.id === offerId);
+  if (!chosen) return { ok: false, error: "not_found" };
+  if (chosen.status !== "pending") return { ok: false, error: "offer_unavailable" };
+
+  offers.forEach((o) => { o.status = o.id === chosen.id ? "accepted" : "declined"; });
+  r.status = "in_progress";
+  r.provider = { id: chosen.provider.id, name: chosen.provider.name };
   return { ok: true };
 }

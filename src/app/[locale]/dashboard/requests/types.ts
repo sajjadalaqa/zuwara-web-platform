@@ -55,6 +55,7 @@ export type ErrorCode =
   | "invalid_budget"
   | "not_found"
   | "not_cancellable"
+  | "offer_unavailable"
   | "generic";
 
 export type FieldName =
@@ -68,3 +69,25 @@ export const initialFormState: FormState = { ok: false };
 
 export type CreateResult = { ok: true; id: string } | { ok: false; code: ErrorCode };
 export type ActionResult = { ok: true } | { ok: false; error: ErrorCode };
+
+export type TimelineKey = "posted" | "accepted" | "completed" | "cancelled";
+export type OfferStatus = "pending" | "accepted" | "declined";
+
+export type Offer = {
+  id: string;
+  provider: { id: string; name: string; specialty: string; avatarUrl?: string };
+  rating: number; // 0 to 5
+  reviewsCount: number;
+  price: number;
+  currency: string; // "SAR"
+  availableAt: string; // ISO 8601: when the provider can come
+  message: string; // written by the provider
+  status: OfferStatus;
+  createdAt: string; // ISO 8601
+};
+
+export type RequestDetail = ServiceRequest & {
+  offers: Offer[];
+  agreedPrice?: number; // set once an offer is accepted
+  timeline: { key: TimelineKey; at: string }[]; // oldest first
+};
