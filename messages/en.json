@@ -154,5 +154,53 @@
     "successText": "Thank you. Your request with {name} has been sent. You will get a confirmation using the contact details you gave.",
     "backToProvider": "Back to provider",
     "goHome": "Go to home"
+  },
+  "Stats": {
+  "ariaLabel": "Zuwara in numbers",
+  "verified": "Verified",
+  "minutes": "min",
+  "patients": { "title": "Home Patients Treated", "description": "Across Riyadh, Jeddah & Central Region" },
+  "specialists": { "title": "Board-Certified Specialists", "description": "SCFHS licensed & verified medical staff" },
+  "satisfaction": { "title": "Patient Satisfaction", "description": "Rated 4.9/5 on App Store & Google Play" },
+  "dispatch": { "title": "Average Dispatch Time", "description": "Rapid nurse & emergency response in Riyadh" }
+},
+"About": {
+  "pill": "About Zuwara",
+  "headingStart": "Professionals and",
+  "headingHighlight": "Personalized Consultants With Excellence",
+  "lead": "Founded with a bold vision to make elite medical expertise and advanced health technology accessible, human, and effortless for families and enterprises of all sizes. Zuwara combines the warmth of personal home care with cutting-edge digital health tools.",
+  "cta": "Book an Appointment",
+  "vision": "Vision 2030",
+  "years": "10+ Years",
+  "visionText": "Pioneering healthcare delivery & telehealth tech across the Kingdom.",
+  "accredited": "Saudi MOH Accredited",
+  "licenseLabel": "License No:",
+  "licenseNumber": "14000389",
+  "alt": {
+    "surgeons": "Surgeons gathered around an operating light",
+    "injection": "A clinician administering an injection",
+    "clinic": "A bright, modern clinic room"
+  },
+  "features": {
+    "patientFirst": { "title": "Patient-First Home Care Model", "description": "We bring certified doctors, sterile instruments, and medical lab tech straight to you." },
+    "platforms": { "title": "Integrated with Saudi Health Platforms", "description": "Seamless compatibility with Sehati, Wasfaty e-prescriptions, and NPHIES insurance." },
+    "staff": { "title": "Compassionate & Licensed Medical Staff", "description": "Every team member is licensed by the Saudi Commission for Health Specialties (SCFHS)." }
   }
+},
+"Services": {
+  "pill": "Services",
+  "heading": "Our Services",
+  "intro": "A complete spectrum of preventive, therapeutic, and diagnostic healthcare delivered in the privacy of your home by verified Saudi medical teams.",
+  "items": {
+    "virtual": { "title": "Virtual Consultations", "description": "Connect with qualified doctors from the comfort of your home." },
+    "instant": { "title": "Instant Appointments", "description": "Book appointments quickly with trusted healthcare professionals." },
+    "therapy": { "title": "Therapy Sessions", "description": "Receive professional therapy and personalized care from home." },
+    "caregiver": { "title": "Caregiver", "description": "Get reliable professional care and support in the comfort of your home." },
+    "laboratory": { "title": "Laboratory", "description": "Access reliable laboratory testing for accurate and timely results." },
+    "nurse": { "title": "Nurse Visit", "description": "Receive professional nursing care and assistance at your home." },
+    "xray": { "title": "X-Ray", "description": "Get accurate X-ray imaging for faster and reliable diagnosis." },
+    "vaccination": { "title": "Vaccination", "description": "Protect yourself and your loved ones with convenient vaccination services." },
+    "iv": { "title": "IV Therapy", "description": "Get essential vitamins and nutrients through personalized IV therapy." }
+  }
+}
 }
