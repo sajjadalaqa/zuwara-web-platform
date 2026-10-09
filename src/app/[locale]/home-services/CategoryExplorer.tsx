@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import type { CSSProperties } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
 import styles from "./HomeServices.module.css";
@@ -10,6 +11,7 @@ import styles from "./HomeServices.module.css";
 type Category = { id: string | number; name: string; imageUrl?: string | null; serviceCount: number };
 
 export function CategoryExplorer({ categories }: { categories: Category[] }) {
+  const t = useTranslations("HomeServices.categories");
   const [query, setQuery] = useState("");
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -20,9 +22,9 @@ export function CategoryExplorer({ categories }: { categories: Category[] }) {
     <>
       <div className={styles.catHead}>
         <div className={styles.reveal}>
-          <span className={styles.eyebrow}>Categories</span>
-          <h2>Find the right service for your needs</h2>
-          <p>Explore our categories and choose the service that fits your requirements.</p>
+          <span className={styles.eyebrow}>{t("eyebrow")}</span>
+          <h2>{t("title")}</h2>
+          <p>{t("intro")}</p>
         </div>
         <div className={styles.searchBar}>
           <Icon name="search" size={18} />
@@ -30,10 +32,12 @@ export function CategoryExplorer({ categories }: { categories: Category[] }) {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search categories, e.g. nursing"
-            aria-label="Search service categories"
+            placeholder={t("searchPlaceholder")}
+            aria-label={t("searchLabel")}
           />
-          <span className={styles.count} aria-live="polite">{results.length} of {categories.length}</span>
+          <span className={styles.count} aria-live="polite">
+            {t("count", { shown: results.length, total: categories.length })}
+          </span>
         </div>
       </div>
 
@@ -55,14 +59,14 @@ export function CategoryExplorer({ categories }: { categories: Category[] }) {
               </span>
               <span className={styles.cardText}>
                 <strong>{item.name}</strong>
-                <small>{item.serviceCount} services</small>
+                <small>{t("services", { count: item.serviceCount })}</small>
               </span>
               <span className={styles.go}><Icon name="arrow" size={16} /></span>
             </Link>
           ))}
         </div>
       ) : (
-        <p className={styles.empty}>No categories match “{query}”. Try a shorter word.</p>
+        <p className={styles.empty}>{t("noMatch", { query })}</p>
       )}
     </>
   );

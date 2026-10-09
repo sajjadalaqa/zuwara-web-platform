@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Icon } from "@/components/Icon";
 import styles from "./PartnersMarquee.module.css";
+import { useTranslations } from "next-intl";
 
 type Partner = {
   name: string;
@@ -43,10 +44,12 @@ function PartnerItem({ name, icon, logo }: Partner) {
 }
 
 export function PartnersMarquee() {
+  const t = useTranslations("Partners");
+
   return (
     <section className={styles.section} aria-labelledby="partners-heading">
       <div className="container">
-        <p id="partners-heading" className={styles.title}>Our partners</p>
+        <p id="partners-heading" className={styles.title}>{t("title")}</p>
       </div>
 
       <div className={styles.row}>

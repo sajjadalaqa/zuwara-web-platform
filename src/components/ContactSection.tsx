@@ -1,17 +1,14 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTranslations } from "next-intl";
 import { Icon } from "./Icon";
 import { submitContact, validateContact, type ContactErrors, type ContactPayload } from "@/lib/contact";
 import styles from "./ContactSection.module.css";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-const topics = [
-  "Booking and appointments",
-  "Payments and confirmations",
-  "Account and profile help",
-];
+const topicIds = ["booking", "payments", "account"] as const;
 
 function FieldIcon({ name }: { name: "user" | "phone" | "mail" | "chat" }) {
   const paths = {
@@ -29,6 +26,8 @@ function FieldIcon({ name }: { name: "user" | "phone" | "mail" | "chat" }) {
 }
 
 export function ContactSection() {
+  const t = useTranslations("Contact");
+
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<ContactErrors>({});
   const [formError, setFormError] = useState("");
@@ -78,17 +77,17 @@ export function ContactSection() {
         <div className={styles.panel}>
           {/* ---------- left: info ---------- */}
           <aside className={styles.info}>
-            <span className={styles.eyebrow}><i /> Contact us</span>
+            <span className={styles.eyebrow}><i /> {t("eyebrow")}</span>
             <h2 id="contact-heading">
-              We’re here to <span>help you.</span>
+              {t("headingStart")} <span>{t("headingHighlight")}</span>
             </h2>
-            <p>Have a question about a booking, a payment or your account? Send us a message and our team will get back to you.</p>
+            <p>{t("intro")}</p>
 
             <ul className={styles.topics}>
-              {topics.map((topic) => (
-                <li key={topic}>
+              {topicIds.map((id) => (
+                <li key={id}>
                   <span><Icon name="check" size={12} /></span>
-                  {topic}
+                  {t(`topics.${id}`)}
                 </li>
               ))}
             </ul>
@@ -99,34 +98,34 @@ export function ContactSection() {
             {status === "success" ? (
               <div className={styles.success} role="status">
                 <span className={styles.successIcon}><Icon name="check" size={28} /></span>
-                <h3>Thank you, your message is sent.</h3>
-                <p>We’ve received your message and will get back to you soon.</p>
+                <h3>{t("success.title")}</h3>
+                <p>{t("success.text")}</p>
                 <button type="button" className={styles.again} onClick={() => setStatus("idle")}>
-                  Send another message
+                  {t("success.again")}
                 </button>
               </div>
             ) : (
               <form className={styles.form} onSubmit={handleSubmit} noValidate aria-busy={submitting}>
                 <div className={styles.formHead}>
-                  <h3>Send us a message</h3>
-                  <p>All fields are required.</p>
+                  <h3>{t("form.title")}</h3>
+                  <p>{t("form.required")}</p>
                 </div>
 
                 <div className={styles.row}>
                   <div className={styles.field}>
-                    <label htmlFor="contact-first-name">First name</label>
+                    <label htmlFor="contact-first-name">{t("form.firstName")}</label>
                     <div className={`${styles.control} ${errors.firstName ? styles.invalid : ""}`}>
                       <FieldIcon name="user" />
-                      <input id="contact-first-name" name="firstName" type="text" autoComplete="given-name" placeholder="Your first name" aria-invalid={!!errors.firstName} aria-describedby={errors.firstName ? "err-first" : undefined} />
+                      <input id="contact-first-name" name="firstName" type="text" autoComplete="given-name" placeholder={t("form.firstNamePh")} aria-invalid={!!errors.firstName} aria-describedby={errors.firstName ? "err-first" : undefined} />
                     </div>
                     {errors.firstName && <span className={styles.error} id="err-first">{errors.firstName}</span>}
                   </div>
 
                   <div className={styles.field}>
-                    <label htmlFor="contact-last-name">Last name</label>
+                    <label htmlFor="contact-last-name">{t("form.lastName")}</label>
                     <div className={`${styles.control} ${errors.lastName ? styles.invalid : ""}`}>
                       <FieldIcon name="user" />
-                      <input id="contact-last-name" name="lastName" type="text" autoComplete="family-name" placeholder="Your last name" aria-invalid={!!errors.lastName} aria-describedby={errors.lastName ? "err-last" : undefined} />
+                      <input id="contact-last-name" name="lastName" type="text" autoComplete="family-name" placeholder={t("form.lastNamePh")} aria-invalid={!!errors.lastName} aria-describedby={errors.lastName ? "err-last" : undefined} />
                     </div>
                     {errors.lastName && <span className={styles.error} id="err-last">{errors.lastName}</span>}
                   </div>
@@ -134,36 +133,36 @@ export function ContactSection() {
 
                 <div className={styles.row}>
                   <div className={styles.field}>
-                    <label htmlFor="contact-phone">Phone number</label>
+                    <label htmlFor="contact-phone">{t("form.phone")}</label>
                     <div className={`${styles.control} ${errors.phone ? styles.invalid : ""}`}>
                       <FieldIcon name="phone" />
-                      <input id="contact-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="Your phone number" aria-invalid={!!errors.phone} aria-describedby={errors.phone ? "err-phone" : undefined} />
+                      <input id="contact-phone" name="phone" type="tel" dir="ltr" inputMode="tel" autoComplete="tel" placeholder={t("form.phonePh")} aria-invalid={!!errors.phone} aria-describedby={errors.phone ? "err-phone" : undefined} />
                     </div>
                     {errors.phone && <span className={styles.error} id="err-phone">{errors.phone}</span>}
                   </div>
 
                   <div className={styles.field}>
-                    <label htmlFor="contact-email">Email address</label>
+                    <label htmlFor="contact-email">{t("form.email")}</label>
                     <div className={`${styles.control} ${errors.email ? styles.invalid : ""}`}>
                       <FieldIcon name="mail" />
-                      <input id="contact-email" name="email" type="email" inputMode="email" autoComplete="email" placeholder="you@example.com" aria-invalid={!!errors.email} aria-describedby={errors.email ? "err-email" : undefined} />
+                      <input id="contact-email" name="email" type="email" dir="ltr" inputMode="email" autoComplete="email" placeholder={t("form.emailPh")} aria-invalid={!!errors.email} aria-describedby={errors.email ? "err-email" : undefined} />
                     </div>
                     {errors.email && <span className={styles.error} id="err-email">{errors.email}</span>}
                   </div>
                 </div>
 
                 <div className={styles.field}>
-                  <label htmlFor="contact-message">Message</label>
+                  <label htmlFor="contact-message">{t("form.message")}</label>
                   <div className={`${styles.control} ${styles.textarea} ${errors.message ? styles.invalid : ""}`}>
                     <FieldIcon name="chat" />
-                    <textarea id="contact-message" name="message" rows={5} placeholder="How can we help you?" aria-invalid={!!errors.message} aria-describedby={errors.message ? "err-message" : undefined} />
+                    <textarea id="contact-message" name="message" rows={5} placeholder={t("form.messagePh")} aria-invalid={!!errors.message} aria-describedby={errors.message ? "err-message" : undefined} />
                   </div>
                   {errors.message && <span className={styles.error} id="err-message">{errors.message}</span>}
                 </div>
 
                 {/* Spam trap: hidden from real visitors, keep it empty */}
                 <div className={styles.trap} aria-hidden="true">
-                  <label htmlFor="contact-website">Website</label>
+                  <label htmlFor="contact-website">{t("form.trapLabel")}</label>
                   <input id="contact-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
                 </div>
 
@@ -171,9 +170,9 @@ export function ContactSection() {
 
                 <button type="submit" className={styles.submit} disabled={submitting}>
                   {submitting ? (
-                    <><span className={styles.spinner} aria-hidden="true" /> Sending…</>
+                    <><span className={styles.spinner} aria-hidden="true" /> {t("form.sending")}</>
                   ) : (
-                    <>Send message <Icon name="arrow" size={16} /></>
+                    <>{t("form.send")} <Icon name="arrow" size={16} /></>
                   )}
                 </button>
               </form>

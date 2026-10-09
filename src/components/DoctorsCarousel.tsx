@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
 import c from "./DoctorsCarousel.module.css";
@@ -24,6 +25,8 @@ const ALL = "All";
 const FALLBACK_CATEGORY = "Healthcare consultant";
 
 export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
+  const t = useTranslations("Doctors");
+
   const [active, setActive] = useState<string>(ALL);
 
   const trackRef = useRef<HTMLDivElement>(null);
@@ -128,11 +131,11 @@ export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
           <div className={c.empty}>
             <span className={c.emptyIcon}><Icon name="user" size={26} /></span>
             <div>
-              <h2 id="doctors-carousel-heading" className={c.emptyTitle}>Consultants are temporarily unavailable</h2>
-              <p>We couldn’t load consultants right now. You can still browse them on the healthcare page.</p>
+              <h2 id="doctors-carousel-heading" className={c.emptyTitle}>{t("emptyTitle")}</h2>
+              <p>{t("emptyText")}</p>
             </div>
             <Link href="/healthcare/doctors" className={c.viewAll}>
-              Go to consultants <Icon name="arrow" size={16} />
+              {t("emptyCta")} <Icon name="arrow" size={16} />
             </Link>
           </div>
         </div>
@@ -145,103 +148,105 @@ export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
       <div className={`container ${c.inner}`}>
         <header className={c.header}>
           <div>
-            <span className={c.eyebrow}><i /> Our consultants</span>
+            <span className={c.eyebrow}><i /> {t("eyebrow")}</span>
             <h2 id="doctors-carousel-heading">
-              Meet the Consultants <span>ready to help you.</span>
+              {t("headingStart")} <span>{t("headingHighlight")}</span>
             </h2>
           </div>
           <div className={c.headerSide}>
-            <p>Choose a specialty to see the consultants who can help, then open a profile to book.</p>
-            
+            <p>{t("intro")}</p>
           </div>
         </header>
 
-        {/* ---------- specialty filters ---------- */}
-        <div className={c.filters} role="group" aria-label="Filter consultants by specialty">
-          {categories.map((cat) => (
-            <button
-              key={cat.name}
-              type="button"
-              className={`${c.chip} ${active === cat.name ? c.chipActive : ""}`}
-              aria-pressed={active === cat.name}
-              onClick={() => setActive(cat.name)}
-            >
-              {cat.name}
-              <span className={c.chipCount}>{cat.count}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* ---------- scroller ---------- */}
-        <div className={c.scroller}>
-          <button
-            type="button"
-            className={`${c.nav} ${c.navPrev}`}
-            onClick={() => scrollByCard(-1)}
-            disabled={!canPrev}
-            aria-label="Scroll consultants left"
-          >
-            <Icon name="arrow" size={18} />
-          </button>
-
-          <div
-            ref={trackRef}
-            className={`${c.track} ${dragging ? c.dragging : ""}`}
-            onScroll={onScroll}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={endDrag}
-            onPointerLeave={endDrag}
-            onPointerCancel={endDrag}
-            onClickCapture={onClickCapture}
-            tabIndex={0}
-            role="region"
-            aria-label="Consultants"
-          >
-            {visible.map((doctor) => (
-              <article className={c.card} key={doctor.id}>
-                <div className={c.media}>
-                  {doctor.imageUrl ? (
-                    <SafeImage
-                      src={doctor.imageUrl}
-                      alt={`Profile photo of ${doctor.name}`}
-                      fill
-                      sizes="(max-width: 600px) 80vw, 320px"
-                    />
-                  ) : (
-                    <div className={c.fallback}><Icon name="user" size={48} /></div>
-                  )}
-                  <span className={c.tag}>{doctor.categoryTitle?.trim() || FALLBACK_CATEGORY}</span>
-                  {doctor.rating > 0 ? <span className={c.rating}>★ {doctor.rating.toFixed(1)}</span> : null}
-                </div>
-
-                <div className={c.body}>
-                  <span className={c.role}>{doctor.role || "Consultant"}</span>
-                  <h3>{doctor.name}</h3>
-                  {doctor.nameAr ? <p className={c.nameAr} lang="ar" dir="rtl">{doctor.nameAr}</p> : null}
-
-                  <div className={c.facts}>
-                    {doctor.experienceYears > 0 ? <span>{doctor.experienceYears} years experience</span> : null}
-                    <span>From {doctor.startingPrice} {doctor.currency}</span>
-                  </div>
-
-                  <Link href={doctor.href} className={c.link} draggable={false}>
-                    View consultant <Icon name="arrow" size={17} />
-                  </Link>
-                </div>
-              </article>
+        {/* Everything below stays English and left-to-right on every locale */}
+        <div dir="ltr" lang="en">
+          {/* ---------- specialty filters ---------- */}
+          <div className={c.filters} role="group" aria-label={t("filterLabel")}>
+            {categories.map((cat) => (
+              <button
+                key={cat.name}
+                type="button"
+                className={`${c.chip} ${active === cat.name ? c.chipActive : ""}`}
+                aria-pressed={active === cat.name}
+                onClick={() => setActive(cat.name)}
+              >
+                {cat.name}
+                <span className={c.chipCount}>{cat.count}</span>
+              </button>
             ))}
           </div>
 
-          <button
-            type="button"
-            className={`${c.nav} ${c.navNext}`}
-            onClick={() => scrollByCard(1)}
-            disabled={!canNext}
-            aria-label="Scroll consultants right"
-          >
-            <Icon name="arrow" size={18} />
-          </button>
+          {/* ---------- scroller ---------- */}
+          <div className={c.scroller}>
+            <button
+              type="button"
+              className={`${c.nav} ${c.navPrev}`}
+              onClick={() => scrollByCard(-1)}
+              disabled={!canPrev}
+              aria-label={t("prev")}
+            >
+              <Icon name="arrow" size={18} />
+            </button>
+
+            <div
+              ref={trackRef}
+              className={`${c.track} ${dragging ? c.dragging : ""}`}
+              onScroll={onScroll}
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={endDrag}
+              onPointerLeave={endDrag}
+              onPointerCancel={endDrag}
+              onClickCapture={onClickCapture}
+              tabIndex={0}
+              role="region"
+              aria-label={t("trackLabel")}
+            >
+              {visible.map((doctor) => (
+                <article className={c.card} key={doctor.id}>
+                  <div className={c.media}>
+                    {doctor.imageUrl ? (
+                      <SafeImage
+                        src={doctor.imageUrl}
+                        alt={`Profile photo of ${doctor.name}`}
+                        fill
+                        sizes="(max-width: 600px) 80vw, 320px"
+                      />
+                    ) : (
+                      <div className={c.fallback}><Icon name="user" size={48} /></div>
+                    )}
+                    <span className={c.tag}>{doctor.categoryTitle?.trim() || FALLBACK_CATEGORY}</span>
+                    {doctor.rating > 0 ? <span className={c.rating}>★ {doctor.rating.toFixed(1)}</span> : null}
+                  </div>
+
+                  <div className={c.body}>
+                    <span className={c.role}>{doctor.role || "Consultant"}</span>
+                    <h3>{doctor.name}</h3>
+            
+
+                    <div className={c.facts}>
+                      {doctor.experienceYears > 0 ? <span>{doctor.experienceYears} years experience</span> : null}
+                      <span>From {doctor.startingPrice} {doctor.currency}</span>
+                    </div>
+
+                    <Link href={doctor.href} className={c.link} draggable={false}>
+                      View consultant <Icon name="arrow" size={17} />
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              className={`${c.nav} ${c.navNext}`}
+              onClick={() => scrollByCard(1)}
+              disabled={!canNext}
+              aria-label={t("next")}
+            >
+              <Icon name="arrow" size={18} />
+            </button>
+          </div>
         </div>
       </div>
     </section>

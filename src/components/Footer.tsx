@@ -1,100 +1,111 @@
 import Image from "next/image";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/Icon";
 import styles from "./Footer.module.css";
 
 const footerColumns = [
   {
-    title: "Healthcare", icon: "heart",
+    id: "healthcare", icon: "heart",
     links: [
-      { label: "Explore healthcare", href: "/healthcare" },
-      { label: "Find a consultant", href: "/healthcare/doctors" },
-      { label: "Therapy", href: "/services/therapy-sessions" },
-      { label: "Instant consultation", href: "/services/instant-consultations" },
+      { id: "explore", href: "/healthcare" },
+      { id: "consultant", href: "/healthcare/doctors" },
+      { id: "therapy", href: "/services/therapy-sessions" },
+      { id: "instant", href: "/services/instant-consultations" },
     ],
   },
   {
-    title: "Home services", icon: "home",
+    id: "homeServices", icon: "home",
     links: [
-      { label: "Browse categories", href: "/home-services" },
-      { label: "Service providers", href: "/home-services?view=providers" },
-      { label: "Shops & labs", href: "/home-services?view=shops" },
-      { label: "Post a request", href: "/home-services?view=request" },
+      { id: "categories", href: "/home-services" },
+      { id: "providers", href: "/home-services?view=providers" },
+      { id: "shops", href: "/home-services?view=shops" },
+      { id: "request", href: "/home-services?view=request" },
     ],
   },
   {
-    title: "Zuwara", icon: "search",
+    id: "zuwara", icon: "search",
     links: [
-      { label: "How it works", href: "/how-it-works" },
-      { label: "About", href: "/about" },
-      { label: "Insights", href: "/insights" },
-      { label: "Contact", href: "/contact" },
+      { id: "how", href: "/how-it-works" },
+      { id: "about", href: "/about" },
+      { id: "insights", href: "/insights" },
+      { id: "contact", href: "/contact" },
     ],
   },
   {
-    title: "Account & support", icon: "check",
+    id: "account", icon: "check",
     links: [
-      { label: "Sign in", href: "/login" },
-      { label: "Download the app", href: "/download" },
-      { label: "Help center", href: "/help" },
-     { label: "العربية", href: "/", lang: "ar", locale: "ar" },
+      { id: "signin", href: "/login" },
+      { id: "download", href: "/download" },
+      { id: "help", href: "/help" },
     ],
   },
   {
-    title: "Legal", icon: "shield",
+    id: "legal", icon: "shield",
     links: [
-      { label: "Privacy notice", href: "/privacy" },
-      { label: "Terms of use", href: "/terms" },
+      { id: "privacy", href: "/privacy" },
+      { id: "terms", href: "/terms" },
     ],
   },
 ] as const;
 
 export function Footer() {
+  const t = useTranslations("Footer");
+  const locale = useLocale();
+  const otherLocale = locale === "ar" ? "en" : "ar";
+
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.inner}`}>
         <div className={styles.intro}>
           <div className={styles.brand}>
-            <Image className={styles.logo} src="/brand/zuwara-logo.png" alt="Zuwara" width={126} height={43} />
-            <p>A connected platform for trusted healthcare and everyday services—designed around clearer choices and simpler journeys.</p>
+            <Image className={styles.logo} src="/brand/zuwara-logo.png" alt={t("logoAlt")} width={126} height={43} />
+            <p>{t("about")}</p>
           </div>
 
           <div className={styles.helpCard}>
             <div>
-              <strong>Need help choosing the right journey?</strong>
-              <span>Our support team can point you to the right place.</span>
+              <strong>{t("helpTitle")}</strong>
+              <span>{t("helpText")}</span>
             </div>
             <Link href="/help" className={styles.helpLink}>
-              Visit Zuwara support <Icon name="arrow" size={16} />
+              {t("helpLink")} <Icon name="arrow" size={16} />
             </Link>
           </div>
         </div>
 
-        <nav className={styles.grid} aria-label="Footer">
+        <nav className={styles.grid} aria-label={t("navLabel")}>
           {footerColumns.map((column) => (
-            <div className={styles.column} key={column.title}>
+            <div className={styles.column} key={column.id}>
               <h3>
-  <span className={styles.titleIcon}><Icon name={column.icon} size={16} /></span>
-  {column.title}
-</h3>
+                <span className={styles.titleIcon}><Icon name={column.icon} size={16} /></span>
+                {t(`columns.${column.id}.title`)}
+              </h3>
               <ul>
                 {column.links.map((link) => (
-                  <li key={link.href + link.label}>
-                    <Link href={link.href} {...("lang" in link ? { lang: link.lang, locale: link.locale } : {})}>
-                      {link.label}
-                    </Link>
+                  <li key={link.id}>
+                    <Link href={link.href}>{t(`columns.${column.id}.links.${link.id}`)}</Link>
                   </li>
                 ))}
+
+                {/* Language switch lives at the end of the "Account & support" column */}
+                {column.id === "account" && (
+                  <li>
+                    <Link href="/" locale={otherLocale} lang={otherLocale}>
+                      {t("language")}
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
           ))}
         </nav>
 
         <div className={styles.bottom}>
-          <p>© {new Date().getFullYear()} Zuwara. All rights reserved.</p>
+          <p>{t("copyright", { year: String(new Date().getFullYear()) })}</p>
           <p className={styles.notice}>
             <Icon name="shield" size={14} />
-            Healthcare emergencies should be directed to the appropriate emergency service.
+            {t("notice")}
           </p>
         </div>
       </div>

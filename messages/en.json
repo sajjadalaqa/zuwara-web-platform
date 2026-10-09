@@ -202,5 +202,278 @@
     "vaccination": { "title": "Vaccination", "description": "Protect yourself and your loved ones with convenient vaccination services." },
     "iv": { "title": "IV Therapy", "description": "Get essential vitamins and nutrients through personalized IV therapy." }
   }
+},
+"Doctors": {
+  "all": "All",
+  "fallbackCategory": "Healthcare consultant",
+  "fallbackRole": "Consultant",
+  "eyebrow": "Our consultants",
+  "headingStart": "Meet the Consultants",
+  "headingHighlight": "ready to help you.",
+  "intro": "Choose a specialty to see the consultants who can help, then open a profile to book.",
+  "filterLabel": "Filter consultants by specialty",
+  "trackLabel": "Consultants",
+  "prev": "Show previous consultants",
+  "next": "Show next consultants",
+  "photoAlt": "Profile photo of {name}",
+  "experience": "{count, plural, one {# year experience} other {# years experience}}",
+  "from": "From {price} {currency}",
+  "view": "View consultant",
+  "emptyTitle": "Consultants are temporarily unavailable",
+  "emptyText": "We couldn’t load consultants right now. You can still browse them on the healthcare page.",
+  "emptyCta": "Go to consultants"
+},
+"Contact": {
+  "eyebrow": "Contact us",
+  "headingStart": "We’re here to",
+  "headingHighlight": "help you.",
+  "intro": "Have a question about a booking, a payment or your account? Send us a message and our team will get back to you.",
+  "topics": {
+    "booking": "Booking and appointments",
+    "payments": "Payments and confirmations",
+    "account": "Account and profile help"
+  },
+  "form": {
+    "title": "Send us a message",
+    "required": "All fields are required.",
+    "firstName": "First name",
+    "firstNamePh": "Your first name",
+    "lastName": "Last name",
+    "lastNamePh": "Your last name",
+    "phone": "Phone number",
+    "phonePh": "Your phone number",
+    "email": "Email address",
+    "emailPh": "you@example.com",
+    "message": "Message",
+    "messagePh": "How can we help you?",
+    "trapLabel": "Website",
+    "sending": "Sending…",
+    "send": "Send message"
+  },
+  "success": {
+    "title": "Thank you, your message is sent.",
+    "text": "We’ve received your message and will get back to you soon.",
+    "again": "Send another message"
+  }
+},
+"Partners": {
+  "title": "Our partners"
+},
+"Home": {
+  "meta": {
+    "title": "Healthcare and trusted home services",
+    "description": "Find Zuwara consultants, book healthcare journeys, and discover trusted Zuwara Home Visit through one connected platform.",
+    "ogTitle": "Zuwara | Healthcare and trusted services for everyday life",
+    "ogDescription": "Two focused journeys—healthcare and services at home—connected through one trusted Zuwara experience.",
+    "ogImageAlt": "Healthcare through the Zuwara platform"
+  },
+  "steps": {
+    "eyebrow": "How healthcare works",
+    "headingStart": "From your first search",
+    "headingHighlight": "to your next follow-up.",
+    "intro": "A few simple steps to book your care. We’ll help you find your way.",
+    "find": { "title": "Find your consultant", "body": "Browse specialties and get to know the consultant who’s right for you." },
+    "time": { "title": "Pick a time", "body": "Choose an available appointment and a consultation option that suits you." },
+    "official": { "title": "Make it official", "body": "Check your appointment details and complete payment to confirm your booking." },
+    "touch": { "title": "Keep in touch", "body": "Find your reports, prescriptions and follow-up appointments in one place." }
+  },
+  "request": {
+    "eyebrow": "Can’t find the right service?",
+    "headingStart": "Describe what you need.",
+    "headingHighlight": "Let the right provider respond.",
+    "text": "Post a Request is the supported D4H alternative when the catalogue does not match a specific need. Sign-in is required only when you continue to the protected request action.",
+    "point1": "Describe what you need",
+    "point2": "Providers respond",
+    "point3": "Sign in only to continue",
+    "cta": "Post a Request"
+  },
+  "why": {
+    "eyebrow": "Why choose Zuwara",
+    "headingStart": "Care and help at home,",
+    "headingHighlight": "made simple and trusted.",
+    "intro": "One connected platform for your health and your home, with clear steps and details you can rely on.",
+    "featuredTitle": "One platform, two journeys",
+    "featuredBody": "Book healthcare consultations and trusted services at home through a single, connected Zuwara experience.",
+    "chipHealthcare": "Healthcare",
+    "chipHome": "Home services",
+    "featuredLink": "See how it works",
+    "profiles": { "title": "Real consultant profiles", "body": "Browse consultants by specialty and review supported durations and prices before you book." },
+    "payments": { "title": "Verified payments", "body": "Zuwara confirms your payment with its backend before your booking moves forward." },
+    "nearby": { "title": "Services near you", "body": "Location-aware discovery shows home services where provider coverage is available." },
+    "oneplace": { "title": "Everything in one place", "body": "Appointments, reports, prescriptions and bookings stay together in your account." }
+  },
+  "app": {
+    "eyebrow": "One mobile experience",
+    "headingStart": "Continue the journey",
+    "headingHighlight": "beyond the website.",
+    "text": "The Zuwara patient app supports the verified healthcare and D4H capabilities already available in the Flutter product, while keeping the two booking and wallet domains distinct.",
+    "altBack": "Zuwara mobile healthcare experience",
+    "altFront": "Zuwara mobile appointment experience",
+    "ios": "Download for iOS",
+    "windows": "Download for Windows",
+    "bookings": { "title": "Bookings", "body": "Appointments and service journeys" },
+    "healthcare": { "title": "Healthcare", "body": "Therapy, reports, prescriptions" },
+    "home": { "title": "At home", "body": "Addresses, requests, tracking" },
+    "account": { "title": "Account", "body": "Notifications and support" }
+  },
+  "faq": {
+    "eyebrow": "Frequently asked questions",
+    "headingStart": "Clear answers for",
+    "headingHighlight": "both service journeys.",
+    "intro": "Healthcare and home services use separate backend domains, so each journey keeps its own booking, payment, and account rules.",
+    "panelTitle": "Healthcare & Home Services",
+    "count": "{count, plural, one {# question} other {# questions}}",
+    "helpTitle": "Still have questions?",
+    "helpText": "Visit support for booking, payment and account guidance.",
+    "helpLink": "Open support",
+    "items": {
+      "choose": { "question": "How do I choose a healthcare consultant?", "answer": "Browse real consultant profiles by specialty, review supported consultation durations and prices, then continue to the Zuwara booking journey." },
+      "patients": { "question": "Can I manage more than one patient?", "answer": "The authenticated Zuwara experience supports patient and dependant profiles where the existing backend permits them." },
+      "paid": { "question": "How is a paid appointment confirmed?", "answer": "Zuwara verifies the selected payment journey with its backend before treating a booking as paid and ready for the next appointment state." },
+      "nearby": { "question": "How do I find a service available near me?", "answer": "D4H supports location-aware discovery where provider coverage and service zones are configured. Location is requested only when it improves the result." },
+      "missing": { "question": "What if I cannot find the service I need?", "answer": "Use Post a Request to describe the required work through the supported D4H request journey." },
+      "track": { "question": "Can I track a home-service booking?", "answer": "Authenticated D4H bookings can expose status and tracking information when those capabilities are available for the selected service." }
+    }
+  },
+    "testimonials": {
+    "eyebrow": "What people say",
+    "headingStart": "Trusted by people who",
+    "headingHighlight": "put their care first.",
+    "intro": "Real experiences from patients and customers who use Zuwara for their health and their home."
+  },
+  "cta": {
+    "ariaLabel": "Choose your journey",
+    "label": "Healthcare & home services",
+    "headingStart": "Care for your health.",
+    "headingHighlight": "Help for your home.",
+    "text": "Explore real consultants and specialties, or browse real Zuwara Home Visits and continue to provider and booking discovery.",
+    "chipConsultants": "Consultants",
+    "chipSpecialties": "Specialties",
+    "chipProviders": "Providers",
+    "chipBookings": "Bookings",
+    "healthcare": "Find healthcare",
+    "home": "Book a home service"
+  }
+},
+"Footer": {
+  "logoAlt": "Zuwara",
+  "navLabel": "Footer",
+  "about": "A connected platform for trusted healthcare and everyday services—designed around clearer choices and simpler journeys.",
+  "helpTitle": "Need help choosing the right journey?",
+  "helpText": "Our support team can point you to the right place.",
+  "helpLink": "Visit Zuwara support",
+  "language": "العربية",
+  "copyright": "© {year} Zuwara. All rights reserved.",
+  "notice": "Healthcare emergencies should be directed to the appropriate emergency service.",
+  "columns": {
+    "healthcare": {
+      "title": "Healthcare",
+      "links": {
+        "explore": "Explore healthcare",
+        "consultant": "Find a consultant",
+        "therapy": "Therapy",
+        "instant": "Instant consultation"
+      }
+    },
+    "homeServices": {
+      "title": "Home services",
+      "links": {
+        "categories": "Browse categories",
+        "providers": "Service providers",
+        "shops": "Shops & labs",
+        "request": "Post a request"
+      }
+    },
+    "zuwara": {
+      "title": "Zuwara",
+      "links": {
+        "how": "How it works",
+        "about": "About",
+        "insights": "Insights",
+        "contact": "Contact"
+      }
+    },
+    "account": {
+      "title": "Account & support",
+      "links": {
+        "signin": "Sign in",
+        "download": "Download the app",
+        "help": "Help center"
+      }
+    },
+    "legal": {
+      "title": "Legal",
+      "links": {
+        "privacy": "Privacy notice",
+        "terms": "Terms of use"
+      }
+    }
+  }
+},
+"HomeServices": {
+  "meta": {
+    "title": "Home Services",
+    "description": "Browse active Zuwara Home Services categories and continue to trusted providers and booking journeys at your location."
+  },
+  "hero": {
+    "pill": "Home Services by Zuwara",
+    "titleLine1": "Trusted services,",
+    "titleAccent": "closer to home.",
+    "lead": "Browse active service categories from D4H. Location and provider coverage determine the services genuinely available for booking.",
+    "browse": "Browse categories",
+    "request": "Post a request",
+    "photoAlt": "A caregiver supporting a patient at home",
+    "glance": "At a glance",
+    "activeCategories": "Active categories",
+    "servicesListed": "Services listed"
+  },
+  "trust": {
+    "location": { "title": "Location-aware", "text": "Results are refined by your location where supported." },
+    "clear": { "title": "Clear booking details", "text": "Review the provider and booking details before you continue." },
+    "signin": { "title": "Sign in only when needed", "text": "Browse freely. Sign in at a protected action." }
+  },
+  "categories": {
+    "eyebrow": "Categories",
+    "title": "Find the right service for your needs",
+    "empty": "Service categories are temporarily unavailable."
+  },
+  "journey": {
+    "eyebrow": "How booking works",
+    "title": "Four simple steps",
+    "intro": "Choose a category, refine with your location, review the details, and sign in only when you continue.",
+    "imageAlt": "Booking a home service from a phone",
+    "choose": { "title": "Choose a category", "text": "Start with the kind of help you need." },
+    "refine": { "title": "Refine by location", "text": "Narrow results to where you are, where supported." },
+    "review": { "title": "Review the details", "text": "Check the provider and booking information." },
+    "signin": { "title": "Sign in to continue", "text": "Only when you move to a protected action." }
+  },
+  "faq": {
+    "eyebrow": "Good to know",
+    "title": "Frequently asked questions",
+    "intro": "Quick answers to common questions about our services and booking process.",
+    "items": {
+      "everywhere": { "q": "Are all services available everywhere?", "a": "No. Location and provider coverage determine which services are genuinely available for booking in your area." },
+      "account": { "q": "Do I need an account to browse?", "a": "No. You can browse categories freely and sign in only when you continue to a protected action." },
+      "source": { "q": "Where do the categories come from?", "a": "They are the active featured categories returned by D4H, so the list reflects what is currently offered." },
+      "missing": { "q": "I can't find what I need. What now?", "a": "Use Post a Request to describe the service you need through the supported request journey." }
+    }
+  },
+  "cta": {
+    "eyebrow": "Ready to get started?",
+    "title": "Post a Request",
+    "text": "Describe the service you need through the supported Zuwara Home Service request journey.",
+    "button": "Continue securely"
+  },
+  "categories": {
+  "eyebrow": "Categories",
+  "title": "Find the right service for your needs",
+  "empty": "Service categories are temporarily unavailable.",
+  "intro": "Explore our categories and choose the service that fits your requirements.",
+  "searchPlaceholder": "Search categories, e.g. nursing",
+  "searchLabel": "Search service categories",
+  "count": "{shown} of {total}",
+  "services": "{count, plural, one {# service} other {# services}}",
+  "noMatch": "No categories match “{query}”. Try a shorter word."
+}
 }
 }
