@@ -149,3 +149,63 @@
   .card, .photo img, .cta, .cta svg { transition: none; }
   .card:hover, .card:hover .photo img { transform: none; }
 }
+
+/* ===== Responsive card fixes (keep at the end of the file) ===== */
+
+/* Reliably center the avatar / photo */
+.photo { display: flex; align-items: center; justify-content: center; }
+
+/* Cards in the same row stay equal height */
+.grid > li { display: flex; min-width: 0; }
+.grid > li > .card { flex: 1; width: 100%; height: auto; }
+
+/* Touch screens: no sticky hover state */
+@media (hover: none) {
+  .card:hover,
+  .card:focus-visible {
+    transform: none;
+    border-color: var(--soft-line);
+    box-shadow: 0 16px 32px -18px rgba(91, 42, 158, .45), 0 2px 6px rgba(91, 42, 158, .06);
+  }
+  .card:hover .photo img { transform: none; }
+  .card:hover .cta {
+    background: rgba(255, 255, 255, .6);
+    border-color: #d6c0f1;
+    color: var(--p700);
+  }
+  .card:hover .cta svg { transform: none; }
+  [dir="rtl"] .card:hover .cta svg { transform: scaleX(-1); }
+}
+
+/* Phones: compact two-column cards */
+@media (max-width: 640px) {
+  .listWrap { width: calc(100% - 24px); }
+  .grid { gap: 10px; }
+
+  .photo { aspect-ratio: auto; height: 116px; }
+  .initials {
+    width: 54px; height: 54px; font-size: 18px; border-width: 2px;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, .35), 0 10px 18px -10px rgba(58, 18, 110, .7);
+  }
+  .badge {
+    font-size: 9.5px; padding: 3px 8px; gap: 4px;
+    inset-block-start: 6px; inset-inline-start: 6px;
+  }
+  .badge::before { width: 5px; height: 5px; }
+
+  .info { padding: 4px 10px 12px; gap: 2px; }
+  .name { font-size: 14px; line-height: 1.25; }
+  .role, .roleEmpty {
+    max-width: 100%; margin: 4px 0 10px; padding: 2px 10px;
+    font-size: 11px; overflow-wrap: anywhere;
+  }
+  .cta {
+    width: 100%; min-height: 38px; justify-content: center;
+    padding: 6px 10px; font-size: 12px;
+  }
+}
+
+/* Small tablets: slightly shorter photo area */
+@media (min-width: 641px) and (max-width: 900px) {
+  .photo { aspect-ratio: 16 / 9; }
+}
