@@ -189,3 +189,25 @@
   .card:hover, .card:hover .thumb, .card:hover .go, .step:hover, .btnPrimary:hover, .btnGhost:hover, .ctaBtn:hover { transform: none; }
   .card:hover::after { animation: none; }
 }
+
+/* Arrow: sit at the inline-end (right in English, left in Arabic) */
+.card {
+  position: relative;
+}
+
+.go {
+  right: auto;
+  left: auto;
+  inset-inline-end: 16px;
+}
+
+/* Keep text clear of the arrow */
+.cardText {
+  padding-inline-end: 56px;
+  min-width: 0;
+}
+
+/* Point the arrow the right way in Arabic */
+:global([dir="rtl"]) .go svg {
+  transform: scaleX(-1);
+}
