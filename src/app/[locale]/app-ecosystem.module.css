@@ -233,20 +233,28 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  height: 46px;
-  padding: 0 22px;
+  gap: 10px;
+  height: 54px;
+  min-width: 172px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, .28);
   border-radius: 12px;
-  background: #fff;
-  color: #2a1140;
-  font-size: 13px;
-  font-weight: 700;
+  background: #000;
+  color: #fff;
   text-decoration: none;
   box-shadow: 0 10px 24px -12px rgba(0, 0, 0, .5);
   transition: transform .2s ease, box-shadow .2s ease;
 }
 .storeButton:hover { transform: translateY(-2px); box-shadow: 0 16px 28px -12px rgba(0, 0, 0, .6); }
-.storeButton svg { width: 18px; height: 18px; }
+.storeButton svg { width: 26px; height: 26px; flex: none; }
+.storeLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+}
+.storeLabel small { font-size: 10px; font-weight: 500; opacity: .85; }
+.storeLabel strong { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
 
 @media (max-width: 560px) {
   .storeButtons { flex-direction: column; }

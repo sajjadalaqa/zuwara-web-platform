@@ -281,7 +281,7 @@
     "eyebrow": "Can’t find the right service?",
     "headingStart": "Describe what you need.",
     "headingHighlight": "Let the right provider respond.",
-    "text": "Post a Request is the supported D4H alternative when the catalogue does not match a specific need. Sign-in is required only when you continue to the protected request action.",
+    "text": "Post a Request is the supported Zuwara Visit alternative when the catalogue does not match a specific need. Sign-in is required only when you continue to the protected request action.",
     "point1": "Describe what you need",
     "point2": "Providers respond",
     "point3": "Sign in only to continue",
@@ -306,11 +306,15 @@
     "eyebrow": "One mobile experience",
     "headingStart": "Continue the journey",
     "headingHighlight": "beyond the website.",
-    "text": "The Zuwara patient app supports the verified healthcare and D4H capabilities already available in the Flutter product, while keeping the two booking and wallet domains distinct.",
+    "text": "The Zuwara patient app supports the verified healthcare and Zuwara Visit capabilities already available in the Flutter product, while keeping the two booking and wallet domains distinct.",
     "altBack": "Zuwara mobile healthcare experience",
     "altFront": "Zuwara mobile appointment experience",
-    "ios": "Download for iOS",
-    "windows": "Download for Windows",
+    "ios": "Download on the App Store",
+    "iosSmall": "Download on the",
+    "iosStore": "App Store",
+    "android": "Get it on Google Play",
+    "androidSmall": "GET IT ON",
+    "androidStore": "Google Play",
     "bookings": { "title": "Bookings", "body": "Appointments and service journeys" },
     "healthcare": { "title": "Healthcare", "body": "Therapy, reports, prescriptions" },
     "home": { "title": "At home", "body": "Addresses, requests, tracking" },
@@ -330,9 +334,9 @@
       "choose": { "question": "How do I choose a healthcare consultant?", "answer": "Browse real consultant profiles by specialty, review supported consultation durations and prices, then continue to the Zuwara booking journey." },
       "patients": { "question": "Can I manage more than one patient?", "answer": "The authenticated Zuwara experience supports patient and dependant profiles where the existing backend permits them." },
       "paid": { "question": "How is a paid appointment confirmed?", "answer": "Zuwara verifies the selected payment journey with its backend before treating a booking as paid and ready for the next appointment state." },
-      "nearby": { "question": "How do I find a service available near me?", "answer": "D4H supports location-aware discovery where provider coverage and service zones are configured. Location is requested only when it improves the result." },
-      "missing": { "question": "What if I cannot find the service I need?", "answer": "Use Post a Request to describe the required work through the supported D4H request journey." },
-      "track": { "question": "Can I track a home-service booking?", "answer": "Authenticated D4H bookings can expose status and tracking information when those capabilities are available for the selected service." }
+      "nearby": { "question": "How do I find a service available near me?", "answer": "Zuwara Visit supports location-aware discovery where provider coverage and service zones are configured. Location is requested only when it improves the result." },
+      "missing": { "question": "What if I cannot find the service I need?", "answer": "Use Post a Request to describe the required work through the supported Zuwara Visit request journey." },
+      "track": { "question": "Can I track a home-service booking?", "answer": "Authenticated Zuwara Visit bookings can expose status and tracking information when those capabilities are available for the selected service." }
     }
   },
     "testimonials": {
@@ -419,7 +423,7 @@
     "pill": "Home Services by Zuwara",
     "titleLine1": "Trusted services,",
     "titleAccent": "closer to home.",
-    "lead": "Browse active service categories from D4H. Location and provider coverage determine the services genuinely available for booking.",
+    "lead": "Browse active service categories from Zuwara Visit. Location and provider coverage determine the services genuinely available for booking.",
     "browse": "Browse categories",
     "request": "Post a request",
     "photoAlt": "A caregiver supporting a patient at home",
@@ -454,7 +458,7 @@
     "items": {
       "everywhere": { "q": "Are all services available everywhere?", "a": "No. Location and provider coverage determine which services are genuinely available for booking in your area." },
       "account": { "q": "Do I need an account to browse?", "a": "No. You can browse categories freely and sign in only when you continue to a protected action." },
-      "source": { "q": "Where do the categories come from?", "a": "They are the active featured categories returned by D4H, so the list reflects what is currently offered." },
+      "source": { "q": "Where do the categories come from?", "a": "They are the active featured categories returned by Zuwara Visit, so the list reflects what is currently offered." },
       "missing": { "q": "I can't find what I need. What now?", "a": "Use Post a Request to describe the service you need through the supported request journey." }
     }
   },

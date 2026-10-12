@@ -3,6 +3,10 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.zuwara.
 // Search engines stay blocked until SITE_INDEXABLE=true is set (go-live on the real domain).
 export const SITE_INDEXABLE = process.env.SITE_INDEXABLE === "true";
 
+// Zuwara patient mobile app store listings.
+export const APP_STORE_URL = "https://apps.apple.com/app/id6745524186";
+export const GOOGLE_PLAY_URL = "https://play.google.com/store/apps/details?id=com.zuwara.patient.flutter.app&pcampaignid=web_share";
+
 export type Service = {
   slug: string;
   title: string;
