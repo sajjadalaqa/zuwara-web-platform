@@ -26,9 +26,11 @@
   cursor: pointer; transition: background .2s, color .2s, border-color .2s, transform .2s;
 }
 .chips button em { font-style: normal; min-width: 22px; padding: 1px 7px; border-radius: 999px; background: var(--p50); color: var(--p700); font-size: 12px; font-weight: 700; text-align: center; }
-.chips button:hover:not(:disabled) { background: var(--p50); transform: translateY(-1px); }
+/* FIX: don't let hover override the active chip's colors */
+.chips button:hover:not(:disabled):not(.chipOn) { background: var(--p50); transform: translateY(-1px); }
 .chips button:disabled { opacity: .5; cursor: not-allowed; }
-.chips button.chipOn { background: var(--p600); border-color: var(--p600); color: #fff; box-shadow: 0 12px 22px -14px rgba(91, 42, 158, .9); }
+.chips button.chipOn,
+.chips button.chipOn:hover { background: var(--p600); border-color: var(--p600); color: #fff; box-shadow: 0 12px 22px -14px rgba(91, 42, 158, .9); }
 .chips button.chipOn em { background: rgba(255,255,255,.22); color: #fff; }
 
 /* Grid + cards */
@@ -78,7 +80,8 @@
 .ctaBtn:hover { transform: translateY(-2px); }
 
 @media (max-width: 640px) {
-  .chips { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-block-end: 8px; margin-inline: -16px; padding-inline: 16px; scrollbar-width: none; }
+  /* padding-block-start gives the hover lift room so it isn't clipped by overflow-x */
+  .chips { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-block: 4px 8px; margin-inline: -16px; padding-inline: 16px; scrollbar-width: none; }
   .chips button { flex: none; }
   .grid { gap: 18px; }
   .card { border-radius: 22px; }
