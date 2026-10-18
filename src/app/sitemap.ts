@@ -15,7 +15,7 @@ const routes = [
   ["/contact", 0.65, "monthly"],
   ["/help", 0.7, "monthly"],
   ["/download", 0.65, "monthly"],
-  ["/privacy", 0.3, "yearly"],
+  ["/privacy-policy", 0.3, "yearly"],
   ["/terms", 0.3, "yearly"],
   ["/ar", 0.75, "weekly"],
 ] as const;

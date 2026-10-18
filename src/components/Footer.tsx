@@ -43,7 +43,7 @@ const footerColumns = [
   {
     id: "legal", icon: "shield",
     links: [
-      { id: "privacy", href: "/privacy" },
+      { id: "privacy", href: "/privacy-policy" },
       { id: "terms", href: "/terms" },
     ],
   },

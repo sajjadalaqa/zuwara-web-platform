@@ -3,12 +3,16 @@ import styles from "./privacy.module.css";
 
 type Props = { params: Promise<{ locale: string }> };
 
+type ListItem = string | { label: string; text: string };
+
 type Section = {
   id: string;
   title: string;
   body: string[];
-  list?: string[];
-  contact?: boolean;
+  list?: ListItem[];
+  after?: string[];
+  email?: boolean;
+  address?: boolean;
 };
 
 type Content = {
@@ -19,223 +23,187 @@ type Content = {
   updatedLabel: string;
   updated: string;
   tocLabel: string;
-  notice: string;
+  company: string;
+  city: string;
   sections: Section[];
 };
 
-// Placeholder address: replace with the real privacy contact before launch.
-const CONTACT_EMAIL = "privacy@example.com";
+const CONTACT_EMAIL = "contact@zuwara.net";
 
 const en: Content = {
   metaTitle: "Privacy Policy | Zuwara",
-  metaDescription: "How Zuwara collects, uses and protects your personal information.",
+  metaDescription:
+    "How Zuwara, operated by ALAQA Business Services Company, collects, uses, discloses and safeguards your information.",
   title: "Privacy Policy",
   intro:
-    "At Zuwara we respect your privacy. This page explains what information we collect, how we use and protect it, and the choices you have.",
+    "Welcome to Zuwara, a service operated by ALAQA Business Services Company, based in Riyadh, Saudi Arabia. Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Zuwara mobile application (for both doctors and patients).",
   updatedLabel: "Last updated",
-  updated: "October 1, 2026",
+  updated: "October 18, 2026",
   tocLabel: "On this page",
-  notice:
-    "Placeholder content: this text is a dummy draft and must be reviewed and approved by a qualified legal adviser before the site goes live.",
+  company: "ALAQA Business Services Company",
+  city: "Riyadh, Saudi Arabia",
   sections: [
     {
       id: "information-we-collect",
-      title: "Information we collect",
-      body: [
-        "We collect information you give us directly, and information that is collected automatically when you use Zuwara.",
-      ],
+      title: "Information We Collect",
+      body: ["We collect the following types of information:"],
       list: [
-        "Contact details such as your name, phone number and email address.",
-        "Appointment and service request details.",
-        "Messages you send through our contact form.",
-        "Device and usage data such as browser type, pages visited and approximate location.",
+        { label: "Personal Information", text: "Name, email address, phone number, date of birth, and gender." },
+        {
+          label: "Health Information",
+          text: "Medical history, appointment details, prescriptions, and other health-related data (for patients); professional details and qualifications (for doctors).",
+        },
+        {
+          label: "Usage Data",
+          text: "Device information, IP address, app usage statistics, error logs, and user interaction data.",
+        },
       ],
     },
     {
       id: "how-we-use-information",
-      title: "How we use your information",
-      body: ["We use your information to:"],
+      title: "How We Use Your Information",
+      body: ["Your information is used to:"],
       list: [
-        "Arrange and manage your appointments and service requests.",
-        "Respond to your questions and provide support.",
-        "Improve our website, apps and services.",
-        "Send service notices, and updates where you have agreed to receive them.",
-        "Meet our legal and regulatory obligations.",
+        "Provide and manage healthcare consultation and appointment services.",
+        "Facilitate communication between doctors and patients via messaging, video calls, and document sharing.",
+        "Enhance app functionality, security, and user experience.",
+        "Comply with regulatory and legal obligations.",
       ],
     },
     {
       id: "sharing",
-      title: "Sharing your information",
-      body: [
-        "We share only what is needed with healthcare providers and home-service partners to fulfil your request, and with trusted vendors who help us run the platform. We do not sell your personal information.",
-      ],
-    },
-    {
-      id: "health-information",
-      title: "Health information",
-      body: [
-        "Details you share about a medical need are treated as sensitive. We use them only to fulfil your request and limit access to authorised staff and the providers you choose.",
-      ],
-    },
-    {
-      id: "cookies",
-      title: "Cookies",
-      body: [
-        "We use cookies and similar technologies to run the site, remember your preferences (such as language) and understand how the site is used. You can control cookies through your browser settings.",
-      ],
-    },
-    {
-      id: "retention",
-      title: "How long we keep your data",
-      body: [
-        "We keep your information only for as long as needed for the purposes described in this policy or as required by law, then delete it or make it anonymous.",
+      title: "Information Sharing and Disclosure",
+      body: ["We do not sell your personal data. However, we may share information with:"],
+      list: [
+        "Authorized medical professionals for the purpose of delivering healthcare services.",
+        "Third-party service providers involved in the operation, security, and maintenance of the Zuwara app.",
+        "Legal authorities if required by applicable law or to respond to lawful requests and legal processes.",
       ],
     },
     {
       id: "security",
-      title: "Security",
+      title: "Data Security",
       body: [
-        "We apply reasonable technical and organisational measures to protect your information from unauthorised access, disclosure or alteration. No method of electronic transmission or storage is completely secure.",
+        "We implement appropriate technical and organizational measures to safeguard your data. While we strive to protect your information, no digital system is completely secure. Users are responsible for maintaining the confidentiality of their account credentials.",
       ],
     },
     {
       id: "your-rights",
-      title: "Your rights",
-      body: ["Under applicable law you may have the right to:"],
-      list: [
-        "Access the personal data we hold about you.",
-        "Ask us to correct inaccurate data.",
-        "Ask us to delete your data.",
-        "Withdraw your consent at any time.",
-        "Object to or restrict how we process your data.",
+      title: "Your Rights",
+      body: [
+        "You have the right to access, correct, or delete your personal data. You may also withdraw consent where applicable. For such requests, contact us at:",
+      ],
+      email: true,
+    },
+    {
+      id: "account-deletion",
+      title: "Account Deletion",
+      body: [
+        "Zuwara provides users with the option to permanently delete their account and associated data. This can be done directly from within the app by going to the Profile section and tapping the Delete Account button. Once deleted, your personal and health-related data will no longer be accessible, except where retention is required by law.",
       ],
     },
     {
-      id: "children",
-      title: "Children",
+      id: "updates",
+      title: "Updates to This Policy",
       body: [
-        "Our services are not directed at children, and we do not knowingly collect information from children without the consent of a parent or guardian.",
-      ],
-    },
-    {
-      id: "changes",
-      title: "Changes to this policy",
-      body: [
-        "We may update this policy from time to time. The latest version will always be on this page with its last updated date.",
+        "This policy may be updated periodically. We will notify users of significant changes via the app or email. Continued use of the Zuwara platform indicates acceptance of the updated policy.",
       ],
     },
     {
       id: "contact",
-      title: "Contact us",
-      body: ["For any privacy question or request, contact us at:"],
-      contact: true,
+      title: "Contact Us",
+      body: ["If you have any questions or concerns regarding this Privacy Policy, please contact us:"],
+      address: true,
+      email: true,
     },
   ],
 };
 
 const ar: Content = {
   metaTitle: "سياسة الخصوصية | زوارة",
-  metaDescription: "كيف تجمع زوارة معلوماتك الشخصية وتستخدمها وتحميها.",
+  metaDescription:
+    "كيف تجمع زوارة، التي تشغّلها شركة علاقة لخدمات الأعمال، معلوماتك وتستخدمها وتفصح عنها وتحميها.",
   title: "سياسة الخصوصية",
   intro:
-    "نحن في زوارة نحترم خصوصيتك. توضح هذه الصفحة المعلومات التي نجمعها، وكيف نستخدمها ونحميها، وما لديك من خيارات بشأنها.",
+    "مرحبًا بك في زوارة، وهي خدمة تشغّلها شركة علاقة لخدمات الأعمال ومقرها الرياض، المملكة العربية السعودية. خصوصيتك مهمة لنا. توضح سياسة الخصوصية هذه كيف نجمع معلوماتك ونستخدمها ونفصح عنها ونحميها عند استخدامك لتطبيق زوارة للجوال (للأطباء والمرضى على حد سواء).",
   updatedLabel: "آخر تحديث",
-  updated: "١ أكتوبر ٢٠٢٦",
+  updated: "١٨ أكتوبر ٢٠٢٦",
   tocLabel: "محتويات الصفحة",
-  notice:
-    "محتوى تجريبي: هذا النص مسودة افتراضية، ويجب مراجعته واعتماده من مستشار قانوني مختص قبل إطلاق الموقع.",
+  company: "شركة علاقة لخدمات الأعمال",
+  city: "الرياض، المملكة العربية السعودية",
   sections: [
     {
       id: "information-we-collect",
       title: "المعلومات التي نجمعها",
-      body: [
-        "نجمع المعلومات التي تقدمها لنا مباشرة، إضافة إلى معلومات تُجمع تلقائيًا عند استخدامك لزوارة.",
-      ],
+      body: ["نجمع الأنواع التالية من المعلومات:"],
       list: [
-        "بيانات التواصل مثل الاسم ورقم الجوال والبريد الإلكتروني.",
-        "تفاصيل المواعيد وطلبات الخدمة.",
-        "الرسائل التي ترسلها عبر نموذج التواصل.",
-        "بيانات الجهاز والاستخدام مثل نوع المتصفح والصفحات التي زرتها والموقع التقريبي.",
+        { label: "المعلومات الشخصية", text: "الاسم والبريد الإلكتروني ورقم الجوال وتاريخ الميلاد والجنس." },
+        {
+          label: "المعلومات الصحية",
+          text: "التاريخ الطبي وتفاصيل المواعيد والوصفات الطبية وغيرها من البيانات المتعلقة بالصحة (للمرضى)؛ والبيانات المهنية والمؤهلات (للأطباء).",
+        },
+        {
+          label: "بيانات الاستخدام",
+          text: "معلومات الجهاز وعنوان IP وإحصاءات استخدام التطبيق وسجلات الأخطاء وبيانات تفاعل المستخدم.",
+        },
       ],
     },
     {
       id: "how-we-use-information",
       title: "كيف نستخدم معلوماتك",
-      body: ["نستخدم معلوماتك من أجل:"],
+      body: ["تُستخدم معلوماتك من أجل:"],
       list: [
-        "ترتيب مواعيدك وطلبات الخدمة وإدارتها.",
-        "الرد على استفساراتك وتقديم الدعم.",
-        "تحسين موقعنا وتطبيقاتنا وخدماتنا.",
-        "إرسال إشعارات الخدمة، وإرسال التحديثات عند موافقتك على ذلك.",
-        "الوفاء بالتزاماتنا النظامية.",
+        "تقديم خدمات الاستشارات الصحية والمواعيد وإدارتها.",
+        "تسهيل التواصل بين الأطباء والمرضى عبر الرسائل ومكالمات الفيديو ومشاركة المستندات.",
+        "تحسين وظائف التطبيق وأمانه وتجربة المستخدم.",
+        "الالتزام بالمتطلبات التنظيمية والنظامية.",
       ],
     },
     {
       id: "sharing",
-      title: "مشاركة معلوماتك",
-      body: [
-        "نشارك فقط ما يلزم مع مقدمي الرعاية الصحية وشركاء الخدمات المنزلية لتنفيذ طلبك، ومع مزودين موثوقين يساعدوننا في تشغيل المنصة. نحن لا نبيع معلوماتك الشخصية.",
-      ],
-    },
-    {
-      id: "health-information",
-      title: "المعلومات الصحية",
-      body: [
-        "تُعامل التفاصيل التي تشاركها بشأن حاجتك الطبية على أنها معلومات حساسة. نستخدمها فقط لتنفيذ طلبك، ونقصر الوصول إليها على الموظفين المخولين ومقدمي الخدمة الذين تختارهم.",
-      ],
-    },
-    {
-      id: "cookies",
-      title: "ملفات تعريف الارتباط",
-      body: [
-        "نستخدم ملفات تعريف الارتباط وتقنيات مشابهة لتشغيل الموقع وتذكّر تفضيلاتك (مثل اللغة) وفهم كيفية استخدام الموقع. يمكنك التحكم بها من إعدادات متصفحك.",
-      ],
-    },
-    {
-      id: "retention",
-      title: "مدة الاحتفاظ ببياناتك",
-      body: [
-        "نحتفظ بمعلوماتك للمدة اللازمة لتحقيق الأغراض الموضحة في هذه السياسة أو وفق ما تتطلبه الأنظمة، ثم نحذفها أو نجعلها مجهولة الهوية.",
+      title: "مشاركة المعلومات والإفصاح عنها",
+      body: ["نحن لا نبيع بياناتك الشخصية. ومع ذلك، قد نشارك المعلومات مع:"],
+      list: [
+        "الممارسين الصحيين المعتمدين لغرض تقديم خدمات الرعاية الصحية.",
+        "مزودي الخدمات من الأطراف الثالثة المشاركين في تشغيل تطبيق زوارة وتأمينه وصيانته.",
+        "الجهات النظامية إذا تطلّب ذلك النظام المعمول به، أو للاستجابة للطلبات والإجراءات النظامية.",
       ],
     },
     {
       id: "security",
-      title: "أمن المعلومات",
+      title: "أمن البيانات",
       body: [
-        "نطبق إجراءات تقنية وتنظيمية معقولة لحماية معلوماتك من الوصول أو الإفصاح أو التعديل غير المصرح به. ومع ذلك، لا توجد وسيلة نقل أو تخزين إلكتروني آمنة بالكامل.",
+        "نطبّق إجراءات تقنية وتنظيمية مناسبة لحماية بياناتك. ورغم سعينا لحماية معلوماتك، لا يوجد نظام رقمي آمن بالكامل. ويتحمّل المستخدمون مسؤولية الحفاظ على سرية بيانات الدخول إلى حساباتهم.",
       ],
     },
     {
       id: "your-rights",
       title: "حقوقك",
-      body: ["وفقًا للأنظمة المعمول بها، قد يحق لك:"],
-      list: [
-        "الاطلاع على بياناتك الشخصية التي نحتفظ بها.",
-        "طلب تصحيح البيانات غير الدقيقة.",
-        "طلب حذف بياناتك.",
-        "سحب موافقتك في أي وقت.",
-        "الاعتراض على معالجة بياناتك أو تقييدها.",
+      body: [
+        "يحق لك الاطلاع على بياناتك الشخصية أو تصحيحها أو حذفها. ويمكنك أيضًا سحب موافقتك متى كان ذلك ممكنًا. لتقديم هذه الطلبات، تواصل معنا عبر:",
+      ],
+      email: true,
+    },
+    {
+      id: "account-deletion",
+      title: "حذف الحساب",
+      body: [
+        "توفر زوارة للمستخدمين خيار حذف حساباتهم والبيانات المرتبطة بها نهائيًا. ويمكن ذلك مباشرة من داخل التطبيق بالانتقال إلى قسم الملف الشخصي والضغط على زر حذف الحساب. وبعد الحذف، لن تعود بياناتك الشخصية والصحية متاحة، إلا في الحالات التي يتطلب فيها النظام الاحتفاظ بها.",
       ],
     },
     {
-      id: "children",
-      title: "الأطفال",
+      id: "updates",
+      title: "تحديثات هذه السياسة",
       body: [
-        "خدماتنا غير موجهة للأطفال، ولا نجمع عن قصد معلومات الأطفال دون موافقة ولي الأمر.",
-      ],
-    },
-    {
-      id: "changes",
-      title: "التغييرات على هذه السياسة",
-      body: [
-        "قد نحدّث هذه السياسة من وقت لآخر. ستكون أحدث نسخة منها متاحة دائمًا في هذه الصفحة مع تاريخ آخر تحديث.",
+        "قد يتم تحديث هذه السياسة بشكل دوري. وسنُبلغ المستخدمين بالتغييرات الجوهرية عبر التطبيق أو البريد الإلكتروني. ويُعد استمرارك في استخدام منصة زوارة قبولًا للسياسة المحدّثة.",
       ],
     },
     {
       id: "contact",
       title: "تواصل معنا",
-      body: ["لأي سؤال أو طلب يتعلق بالخصوصية، تواصل معنا عبر:"],
-      contact: true,
+      body: ["إذا كانت لديك أي أسئلة أو استفسارات بشأن سياسة الخصوصية هذه، يُرجى التواصل معنا:"],
+      address: true,
+      email: true,
     },
   ],
 };
@@ -249,7 +217,14 @@ function getContent(locale: string): Content {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const c = getContent(locale);
-  return { title: c.metaTitle, description: c.metaDescription };
+  return {
+    title: c.metaTitle,
+    description: c.metaDescription,
+    alternates: {
+      canonical: locale === "ar" ? "/ar/privacy-policy" : "/privacy-policy",
+      languages: { "en-SA": "/privacy-policy", "ar-SA": "/ar/privacy-policy" },
+    },
+  };
 }
 
 export default async function PrivacyPage({ params }: Props) {
@@ -282,8 +257,6 @@ export default async function PrivacyPage({ params }: Props) {
         </nav>
 
         <article className={styles.content}>
-          <p className={styles.notice} role="note">{c.notice}</p>
-
           {c.sections.map((section) => (
             <section key={section.id} id={section.id} className={styles.section}>
               <h2>{section.title}</h2>
@@ -292,12 +265,24 @@ export default async function PrivacyPage({ params }: Props) {
               ))}
               {section.list && (
                 <ul className={styles.list}>
-                  {section.list.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
+                  {section.list.map((item) =>
+                    typeof item === "string" ? (
+                      <li key={item}>{item}</li>
+                    ) : (
+                      <li key={item.label}>
+                        <strong>{item.label}:</strong> {item.text}
+                      </li>
+                    ),
+                  )}
                 </ul>
               )}
-              {section.contact && (
+              {section.address && (
+                <address className={styles.address}>
+                  <strong>{c.company}</strong>
+                  <span>{c.city}</span>
+                </address>
+              )}
+              {section.email && (
                 <a className={styles.mail} dir="ltr" href={`mailto:${CONTACT_EMAIL}`}>
                   {CONTACT_EMAIL}
                 </a>

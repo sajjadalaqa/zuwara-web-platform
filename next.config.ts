@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "dashboardvisit.zuwara.sa", pathname: "/images/**" },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/privacy", destination: "/privacy-policy", permanent: true },
+      { source: "/ar/privacy", destination: "/ar/privacy-policy", permanent: true },
+    ];
+  },
   async headers() {
     return [{
       source: "/:path*",
