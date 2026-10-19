@@ -409,6 +409,8 @@
       "title": "Legal",
       "links": {
         "privacy": "Privacy Policy",
+        "accountDeletion": "Delete your account",
+        "dataDeletion": "Delete your data",
         "terms": "Terms of use"
       }
     }

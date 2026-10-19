@@ -409,6 +409,8 @@
       "title": "قانوني",
       "links": {
         "privacy": "سياسة الخصوصية",
+        "accountDeletion": "حذف الحساب",
+        "dataDeletion": "حذف البيانات",
         "terms": "شروط الاستخدام"
       }
     }
