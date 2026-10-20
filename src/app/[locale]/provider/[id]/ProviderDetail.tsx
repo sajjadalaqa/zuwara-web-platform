@@ -60,9 +60,9 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
   const name = isAr && p.nameAr ? p.nameAr : p.name;
   const title = isAr && p.titleAr ? p.titleAr : p.title;
   const bio = isAr && p.bioAr ? p.bioAr : p.bio;
-  const rating = p.rating ?? 0;
-  const reviews = p.reviewsCount ?? 0;
-  const bookings = p.bookingsCompleted ?? 0;
+  const rating = p.rating;
+  const reviews = p.reviewsCount;
+  const bookings = p.bookingsCompleted;
   const showImage = Boolean(p.image) && !imgFailed;
 
   const joined = p.joinedAt
@@ -82,7 +82,7 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
     [t("memberSince"), joined],
     ...(title ? ([[t("role"), title]] as [string, React.ReactNode][]) : []),
     ...(p.email ? ([[t("email"), <a key="m" href={`mailto:${p.email}`} dir="ltr">{p.email}</a>]] as [string, React.ReactNode][]) : []),
-    [t("bookings"), t("bookingsDone", { count: bookings })],
+    [t("bookings"), bookings === undefined ? "—" : t("bookingsDone", { count: bookings })],
   ];
 
   return (
@@ -109,8 +109,8 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
             {title && <p className={styles.role}>{title}</p>}
 
             <div className={styles.rating}>
-              <Stars value={rating} />
-              <span>{t("reviews", { count: reviews })}</span>
+              <Stars value={rating ?? 0} />
+              <span>{reviews === undefined ? t("unavailable") : t("reviews", { count: reviews })}</span>
             </div>
 
             <button type="button" className={styles.why} onClick={() => setOpen(true)}>
@@ -126,7 +126,7 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
               )}
               <li>
                 <span><Icon d={ICON.check} size={16} /> {t("bookings")}</span>
-                <strong>{t("bookingsDone", { count: bookings })}</strong>
+                <strong>{bookings === undefined ? "—" : t("bookingsDone", { count: bookings })}</strong>
               </li>
             </ul>
 
@@ -149,14 +149,14 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
 
             <section className={styles.panel}>
               <h2 className={styles.heading}><Icon d={ICON.heart} /> {t("about")}</h2>
-              {bio ? <p className={styles.bio}>{bio}</p> : <p className={styles.muted}>{t("noBio")}</p>}
+              {bio ? <p className={styles.bio}>{bio}</p> : <p className={styles.muted}>{t("unavailable")}</p>}
             </section>
 
             <section className={styles.panel}>
               <h2 className={styles.heading}><Icon d={ICON.calendar} /> {t("reviewsTitle")}</h2>
               <div className={styles.emptyReviews}>
                 <Stars value={0} />
-                <p>{reviews === 0 ? t("noReviews") : t("reviews", { count: reviews })}</p>
+                <p>{reviews === undefined ? t("unavailable") : reviews === 0 ? t("noReviews") : t("reviews", { count: reviews })}</p>
               </div>
             </section>
           </div>
@@ -170,7 +170,7 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
               <Icon d={ICON.close} size={16} />
             </button>
             <h3>{t("whyTitle", { name })}</h3>
-            {bio ? <p>{bio}</p> : <p className={styles.muted}>{t("noBio")}</p>}
+            {bio ? <p>{bio}</p> : <p className={styles.muted}>{t("unavailable")}</p>}
             <ul className={styles.points}>
               <li>{t("point1")}</li>
               <li>{t("point2")}</li>

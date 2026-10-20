@@ -4,7 +4,7 @@ export type Profile = {
   id: string;
   fullName: string;
   email: string;
-  emailVerified: boolean;
+  emailVerified?: boolean;
   phone: string;
   dateOfBirth: string; // "YYYY-MM-DD" or ""
   gender: Gender;

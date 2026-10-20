@@ -20,6 +20,7 @@ export type NotificationsResult = {
   page: number;
   pageSize: number;
   counts: Record<NotificationFilter, number>;
+  readAllThrough: number;
 };
 
 export type ActionResult = { ok: true } | { ok: false; error: string };

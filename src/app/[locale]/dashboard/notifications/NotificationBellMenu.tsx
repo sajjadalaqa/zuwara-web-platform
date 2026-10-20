@@ -45,6 +45,7 @@ type Item = {
 type Props = {
   items: Item[];
   unreadCount: number;
+  through: number;
   viewAllHref: string;
   labels: {
     title: string;
@@ -55,26 +56,25 @@ type Props = {
   };
 };
 
-export default function NotificationBellMenu({ items, unreadCount, viewAllHref, labels }: Props) {
-  const [open, setOpen] = useState(false);
+export default function NotificationBellMenu({ items, unreadCount, through, viewAllHref, labels }: Props) {
+  const [openState, setOpenState] = useState({ pathname: "", open: false });
   const [pending, start] = useTransition();
   const wrapRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const open = openState.pathname === pathname && openState.open;
+  const setOpen = (value: boolean | ((previous: boolean) => boolean)) => setOpenState(previous => ({ pathname, open: typeof value === "function" ? value(previous.pathname === pathname && previous.open) : value }));
 
-  // Close when the route changes
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+
 
   // Close on outside click / Escape
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent | TouchEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpenState({ pathname, open: false });
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") setOpenState({ pathname, open: false });
     };
     document.addEventListener("mousedown", onDown);
     document.addEventListener("touchstart", onDown);
@@ -84,7 +84,7 @@ export default function NotificationBellMenu({ items, unreadCount, viewAllHref, 
       document.removeEventListener("touchstart", onDown);
       document.removeEventListener("keydown", onKey);
     };
-  }, [open]);
+  }, [open, pathname]);
 
   const renderContent = (n: Item) => {
     const Icon = icons[n.kind];
@@ -131,7 +131,7 @@ export default function NotificationBellMenu({ items, unreadCount, viewAllHref, 
               disabled={unreadCount === 0 || pending}
               onClick={() =>
                 start(async () => {
-                  const res = await markAllReadAction();
+                  const res = await markAllReadAction(through);
                   if (res.ok) router.refresh();
                 })
               }

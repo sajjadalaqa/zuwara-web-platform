@@ -18,11 +18,11 @@ export default async function ProfilePage({
 
   const profile = await getProfile();
 
-  const since = new Intl.DateTimeFormat(isAr ? "ar-SA-u-ca-gregory" : "en-GB", {
+  const since = profile.memberSince ? new Intl.DateTimeFormat(isAr ? "ar-SA-u-ca-gregory" : "en-GB", {
     month: "long",
     year: "numeric",
     timeZone: "Asia/Riyadh",
-  }).format(new Date(profile.memberSince));
+  }).format(new Date(profile.memberSince)) : "—";
 
   return (
     <div className={s.page}>
@@ -39,7 +39,7 @@ export default async function ProfilePage({
           <div className={s.chips}>
             <span className={s.pill}>
               <BadgeCheck size={13} />
-              {profile.emailVerified ? t.verified : t.unverified}
+              {profile.emailVerified === undefined ? "—" : profile.emailVerified ? t.verified : t.unverified}
             </span>
             <span className={s.pill}>
               <CalendarDays size={13} />

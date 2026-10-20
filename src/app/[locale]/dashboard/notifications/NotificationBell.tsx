@@ -20,7 +20,7 @@ export default async function NotificationBell({ locale }: { locale: string }) {
   });
 
   const ago = (iso: string) => {
-    const min = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+    const min = Math.floor((new Date().getTime() - new Date(iso).getTime()) / 60000);
     if (min < 1) return t.justNow;
     if (min < 60) return rtf.format(-min, "minute");
     const h = Math.floor(min / 60);
@@ -44,6 +44,7 @@ export default async function NotificationBell({ locale }: { locale: string }) {
     <NotificationBellMenu
       items={items}
       unreadCount={data.counts.unread}
+      through={data.readAllThrough}
       viewAllHref={`${prefix}/dashboard/notifications`}
       labels={{
         title: t.title,

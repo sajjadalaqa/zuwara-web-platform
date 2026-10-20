@@ -1,23 +1,11 @@
 import DashboardShell from "./DashboardShell";
-import { mockUser } from "./user";
-import { getProfile } from "./profile/service";
-import { getUnreadCount } from "./notifications/service";
-import { getUnreadMessagesCount } from "./messages/service";
-
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  // TODO (backend): const user = await getCurrentUser(); if (!user) redirect("/login-page");
-  const [profile, unreadNotifications, unreadMessages] = await Promise.all([
-    getProfile(),
-    getUnreadCount(),
-    getUnreadMessagesCount(),
-  ]);
-  const user = {
-    ...mockUser,
-    name: profile.fullName,
-    email: profile.email,
-    avatarUrl: profile.avatarUrl,
-    unreadNotifications,
-    unreadMessages,
-  };
-  return <DashboardShell user={user}>{children}</DashboardShell>;
+import NotificationBell from "./notifications/NotificationBell";
+import SessionKeeper from "@/components/auth/SessionKeeper";
+import { requireSession } from "@/lib/auth/session";
+export default async function DashboardLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const { user } = await requireSession();
+  return <DashboardShell user={{ id: user.id, name: user.full_name, email: user.email ?? "",
+    avatarUrl: user.profile_image ?? undefined, unreadNotifications: 0, unreadMessages: 0 }}
+    bell={<NotificationBell locale={locale} />}><SessionKeeper />{children}</DashboardShell>;
 }

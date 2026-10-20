@@ -1,6 +1,6 @@
 "use client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
+import { otpStatusAction, resendOtpAction, verifyOtpAction } from "@/lib/auth/actions";
 import { useEffect, useRef, useState, type ClipboardEvent, type FormEvent, type KeyboardEvent } from "react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { SubmitButton } from "@/components/auth/Field";
@@ -15,6 +15,11 @@ export default function VerifyOtpPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [seconds, setSeconds] = useState(60);
+  const [resending, setResending] = useState(false);
+  useEffect(() => { otpStatusAction().then(result => {
+    if (result.ok) setSeconds(Math.max(0, Math.ceil(((result.resendAt ?? 0) - Date.now()) / 1000)));
+    else { setError(result.error); setSeconds(0); }
+  }).catch(() => setError("Unable to load verification status.")); }, []);
   const refs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -41,24 +46,34 @@ export default function VerifyOtpPage() {
     e.preventDefault();
     if (digits.join("").length < LEN) return setError("Enter the 6-digit code.");
     setError(""); setLoading(true);
-    // TODO: call verify OTP API here -> { code: digits.join("") }
-    await new Promise((r) => setTimeout(r, 900));
-    setLoading(false);
-    router.push("/reset-password-page");
+    try {
+      const result = await verifyOtpAction(digits.join(""));
+      if (result.ok) { router.replace("/dashboard"); router.refresh(); }
+      else setError(result.error);
+    } catch { setError("Unable to connect. Please try again."); }
+    finally { setLoading(false); }
   }
 
-  function resend() {
-    // TODO: call resend OTP API here
-    setSeconds(60); setDigits(Array(LEN).fill("")); refs.current[0]?.focus();
+  async function resend() {
+    if (resending || loading) return;
+    setResending(true); setError("");
+    try {
+      const result = await resendOtpAction();
+      if (result.ok) {
+        setSeconds(Math.max(0, Math.ceil(((result.resendAt ?? 0) - Date.now()) / 1000)));
+        setDigits(Array(LEN).fill("")); refs.current[0]?.focus();
+      } else setError(result.error);
+    } catch { setError("Unable to resend. Please try again."); }
+    finally { setResending(false); }
   }
 
   return (
-    <AuthLayout headline="Check your inbox." tagline="We sent a 6-digit verification code to your email. It expires in 10 minutes.">
+    <AuthLayout headline="Check your phone." tagline="We sent a 6-digit verification code to your phone. It expires in two minutes.">
       <span className={s.badge}><Icon name="shield" size={26} /></span>
       <div className={s.cardHead}>
         <div>
           <h2>Verify Your Code</h2>
-          <p>Enter the 6-digit code we sent to your email address.</p>
+          <p>Enter the 6-digit code we sent to your phone.</p>
         </div>
       </div>
       <form className={s.form} onSubmit={onSubmit} noValidate>
@@ -77,7 +92,7 @@ export default function VerifyOtpPage() {
       <div className={s.foot}>
         {seconds > 0
           ? <span>Resend code in <b>0:{String(seconds).padStart(2, "0")}</b></span>
-          : <span>Didn&apos;t get it? <button type="button" onClick={resend} className={s.link} style={{ background: "none", border: 0, cursor: "pointer", font: "inherit", fontWeight: 600 }}>Resend code</button></span>}
+          : <span>Didn&apos;t get it? <button type="button" onClick={resend} disabled={resending || loading} className={s.link} style={{ background: "none", border: 0, cursor: "pointer", font: "inherit", fontWeight: 600 }}>Resend code</button></span>}
         <Link href="/login-page" className={s.link}><Icon name="arrowLeft" size={14} /> Back to Sign In</Link>
       </div>
     </AuthLayout>

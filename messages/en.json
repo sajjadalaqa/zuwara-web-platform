@@ -39,6 +39,7 @@
   },
   
   "providerPage": {
+    "providerBadge": "Provider",
     "metaTitle": "Providers",
     "pill": "Our providers",
     "title": "Meet the people who",
@@ -59,6 +60,7 @@
     "clear": "Clear filters"
   },
   "providerDetail": {
+    "unavailable": "Not available",
     "metaSuffix": "Provider",
     "back": "Back to providers",
     "role": "Role",

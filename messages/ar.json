@@ -39,6 +39,7 @@
   },
   
   "providerPage": {
+    "providerBadge": "مقدم خدمة",
     "metaTitle": "مقدمو الخدمة",
     "pill": "مقدمو خدماتنا",
     "title": "تعرّف على من",
@@ -59,6 +60,7 @@
     "clear": "مسح التصفية"
   },
   "providerDetail": {
+    "unavailable": "غير متاح",
     "metaSuffix": "مقدم الخدمة",
     "back": "العودة إلى مقدمي الخدمة",
     "role": "التخصص",

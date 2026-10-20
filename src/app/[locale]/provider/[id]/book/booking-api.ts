@@ -12,19 +12,9 @@ export type BookingPayload = {
   notes?: string;
 };
 
-/**
- * PLACEHOLDER: this does NOT save anything yet.
- * Replace the body with your real booking endpoint, for example:
- *
- *   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings`, {
- *     method: "POST",
- *     headers: { "Content-Type": "application/json" },
- *     body: JSON.stringify(payload),
- *   });
- *   return { ok: res.ok };
- */
+/** Booking creation requires a saved address, selected services, and a server preview. */
 export async function submitBooking(payload: BookingPayload): Promise<{ ok: boolean }> {
   void payload;
-  await new Promise((r) => setTimeout(r, 700));
-  return { ok: true };
+  // Do not show a confirmation until the D4H booking/preview flow is connected.
+  return { ok: false };
 }

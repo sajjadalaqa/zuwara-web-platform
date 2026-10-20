@@ -46,7 +46,7 @@ function ProviderCard({ p, name, title }: { p: Provider; name: string; title?: s
         ) : (
           <span className={styles.initials} aria-hidden="true">{initials(name)}</span>
         )}
-        <span className={styles.badge}>{t("verified")}</span>
+        <span className={styles.badge}>{t("providerBadge")}</span>
       </div>
       <div className={styles.info}>
         <h2 className={styles.name}>{name}</h2>

@@ -12,8 +12,8 @@ export async function markReadAction(id: string): Promise<ActionResult> {
   return res;
 }
 
-export async function markAllReadAction(): Promise<ActionResult> {
-  const res = await markAllRead();
+export async function markAllReadAction(through: number): Promise<ActionResult> {
+  const res = await markAllRead(through);
   if (res.ok) revalidatePath("/", "layout");
   return res;
 }

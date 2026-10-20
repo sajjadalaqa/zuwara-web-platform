@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useParams } from "next/navigation";
+import { usePathname, useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   Bell, Check, ChevronDown, ChevronRight, Globe, LayoutGrid, LogOut, Plus, User, X,
@@ -10,6 +10,7 @@ import {
 import { navGroups, allItems, bottomKeys } from "./nav";
 import type { DashboardUser } from "./user";
 import s from "./dashboard.module.css";
+import { logoutAction } from "@/lib/auth/actions";
 
 const LOGO = "/brand/zuwara-logo.png";
 
@@ -57,12 +58,15 @@ export default function DashboardShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const params = useParams<{ locale?: string }>();
   const isAr = params?.locale === "ar";
   const prefix = isAr ? "/ar" : "";
-  const [sheet, setSheet] = useState(false);
-  const lang = useDropdown();
-  const account = useDropdown();
+  const [sheetState, setSheetState] = useState({ pathname, open: false });
+  const sheet = sheetState.pathname === pathname && sheetState.open;
+  const setSheet = (open: boolean) => setSheetState({ pathname, open });
+  const { open: langOpen, setOpen: setLangOpen, ref: langRef } = useDropdown();
+  const { open: accountOpen, setOpen: setAccountOpen, ref: accountRef } = useDropdown();
 
   const rel = pathname.replace(/^\/(ar|en)(?=\/|$)/, "") || "/";
   const isActive = (h: string) =>
@@ -81,13 +85,22 @@ export default function DashboardShell({
     return () => { document.body.style.overflow = ""; };
   }, [sheet]);
 
-  useEffect(() => { setSheet(false); }, [pathname]);
 
-  const handleLogout = () => {
-    // TODO (backend): await signOut(); router.push("/login-page");
+
+  const [logoutError, setLogoutError] = useState("");
+  const [loggingOut, setLoggingOut] = useState(false);
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true); setLogoutError("");
+    try {
+      const result = await logoutAction();
+      if (result.ok) { router.replace(`${prefix}/login-page`); router.refresh(); }
+      else setLogoutError(result.error);
+    } catch { setLogoutError("Unable to sign out. Please try again."); }
+    finally { setLoggingOut(false); }
   };
 
-  const Tab = ({ i }: { i: (typeof bottom)[number] }) => {
+  const renderTab = (i: (typeof bottom)[number]) => {
     const Icon = i.icon;
     return (
       <Link href={href(i.href)} className={`${s.tab} ${isActive(i.href) ? s.tabActive : ""}`}>
@@ -110,24 +123,24 @@ export default function DashboardShell({
           {bell}
 
           {/* Language dropdown */}
-          <div className={`${s.dropWrap} ${s.hideMobile}`} ref={lang.ref}>
+          <div className={`${s.dropWrap} ${s.hideMobile}`} ref={langRef}>
             <button
               type="button"
               className={s.pill}
-              onClick={() => lang.setOpen((o) => !o)}
-              aria-expanded={lang.open}
+              onClick={() => setLangOpen((o) => !o)}
+              aria-expanded={langOpen}
             >
               <Globe size={17} />
               <span>{isAr ? "العربية" : "English"}</span>
-              <ChevronDown size={15} className={lang.open ? s.flip : ""} />
+              <ChevronDown size={15} className={langOpen ? s.flip : ""} />
             </button>
-            {lang.open && (
+            {langOpen && (
               <div className={s.menu}>
-                <Link href={enHref} className={s.menuItem} onClick={() => lang.setOpen(false)}>
+                <Link href={enHref} className={s.menuItem} onClick={() => setLangOpen(false)}>
                   <span>English</span>
                   {!isAr && <Check size={16} />}
                 </Link>
-                <Link href={arHref} className={s.menuItem} onClick={() => lang.setOpen(false)}>
+                <Link href={arHref} className={s.menuItem} onClick={() => setLangOpen(false)}>
                   <span>العربية</span>
                   {isAr && <Check size={16} />}
                 </Link>
@@ -136,26 +149,26 @@ export default function DashboardShell({
           </div>
 
           {/* Account dropdown */}
-          <div className={s.dropWrap} ref={account.ref}>
+          <div className={s.dropWrap} ref={accountRef}>
             <button
               type="button"
               className={s.userChip}
-              onClick={() => account.setOpen((o) => !o)}
-              aria-expanded={account.open}
+              onClick={() => setAccountOpen((o) => !o)}
+              aria-expanded={accountOpen}
             >
               <Avatar user={user} className={s.avatar} />
               <span className={s.userText}>
                 <b>{user.name}</b>
                 <small>{user.email}</small>
               </span>
-              <ChevronDown size={16} className={`${s.userChev} ${account.open ? s.flip : ""}`} />
+              <ChevronDown size={16} className={`${s.userChev} ${accountOpen ? s.flip : ""}`} />
             </button>
-            {account.open && (
+            {accountOpen && (
               <div className={s.menu}>
-                <Link href={href("/dashboard/profile")} className={s.menuItem} onClick={() => account.setOpen(false)}>
+                <Link href={href("/dashboard/profile")} className={s.menuItem} onClick={() => setAccountOpen(false)}>
                   <span className={s.menuLabel}><User size={16} />{isAr ? "ملفي الشخصي" : "My Profile"}</span>
                 </Link>
-                <Link href={href("/dashboard/notifications")} className={s.menuItem} onClick={() => account.setOpen(false)}>
+                <Link href={href("/dashboard/notifications")} className={s.menuItem} onClick={() => setAccountOpen(false)}>
                   <span className={s.menuLabel}><Bell size={16} />{isAr ? "الإشعارات" : "Notifications"}</span>
                 </Link>
                 <button type="button" className={`${s.menuItem} ${s.menuDanger}`} onClick={handleLogout}>
@@ -209,17 +222,17 @@ export default function DashboardShell({
 
       {/* ===== Content ===== */}
       <div className={s.main}>
-        <div className={s.content}>{children}</div>
+        <div className={s.content}>{logoutError && <p role="alert">{logoutError}</p>}{children}</div>
       </div>
 
       {/* ===== Mobile bottom nav ===== */}
       <nav className={s.bottomNav} aria-label="Primary">
-        <Tab i={bottom[0]} />
-        <Tab i={bottom[1]} />
+        {renderTab(bottom[0])}
+        {renderTab(bottom[1])}
         <Link href={href("/provider")} className={s.bookBtn} aria-label={isAr ? "احجز" : "Book"}>
           <Plus size={26} />
         </Link>
-        <Tab i={bottom[2]} />
+        {renderTab(bottom[2])}
         <button className={s.tab} onClick={() => setSheet(true)} type="button">
           <LayoutGrid size={21} />
           <span>{isAr ? "المزيد" : "More"}</span>

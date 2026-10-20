@@ -49,10 +49,10 @@ export default async function NotificationsPage({
   const dateFmt = new Intl.DateTimeFormat(loc, { day: "numeric", month: "short", timeZone: TZ });
   const dayKey = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(d);
   const todayKey = dayKey(new Date());
-  const yesterdayKey = dayKey(new Date(Date.now() - 24 * 3600 * 1000));
+  const yesterdayKey = dayKey(new Date(new Date().getTime() - 24 * 3600 * 1000));
 
   const ago = (iso: string) => {
-    const min = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+    const min = Math.floor((new Date().getTime() - new Date(iso).getTime()) / 60000);
     if (min < 1) return t.justNow;
     if (min < 60) return rtf.format(-min, "minute");
     const h = Math.floor(min / 60);
@@ -81,7 +81,7 @@ export default async function NotificationsPage({
           <h2>{t.title}</h2>
           <p>{t.subtitle}</p>
         </div>
-        <MarkAllButton label={t.markAll} disabled={data.counts.unread === 0} />
+        <MarkAllButton through={data.readAllThrough} label={t.markAll} disabled={data.counts.unread === 0} />
       </header>
 
       <nav className={s.tabs} aria-label="Filter">

@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -8,29 +7,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_INDEXABLE, SITE_URL } from "@/data/site";
-import "../globals.css";
 import SiteChrome from "./SiteChrome";
-
-// Font paths now start with "../" because this file moved into [locale]
-const manrope = localFont({
-  src: [
-    { path: "../fonts/Manrope-Regular.ttf", weight: "400", style: "normal" },
-    { path: "../fonts/Manrope-Medium.ttf", weight: "500", style: "normal" },
-    { path: "../fonts/Manrope-SemiBold.ttf", weight: "600", style: "normal" },
-    { path: "../fonts/Manrope-Bold.ttf", weight: "700", style: "normal" },
-  ],
-  variable: "--font-manrope",
-  display: "swap",
-});
-
-const notoArabic = localFont({
-  src: [
-    { path: "../fonts/NotoNaskhArabic-Regular.ttf", weight: "400", style: "normal" },
-    { path: "../fonts/NotoNaskhArabic-Bold.ttf", weight: "700", style: "normal" },
-  ],
-  variable: "--font-arabic",
-  display: "swap",
-});
+import LocaleDocument from "./LocaleDocument";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -82,9 +60,8 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} className={`${manrope.variable} ${notoArabic.variable}`}>
-      <body>
-        <NextIntlClientProvider>
+    <NextIntlClientProvider>
+          <LocaleDocument locale={locale} />
           <JsonLd
             data={{
               "@context": "https://schema.org",
@@ -99,8 +76,6 @@ export default async function LocaleLayout({
           <SiteChrome><Header /></SiteChrome>
 <main id="main-content">{children}</main>
 <SiteChrome><Footer /></SiteChrome>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    </NextIntlClientProvider>
   );
 }

@@ -72,9 +72,12 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const n = new Date();
-    setToday({ y: n.getFullYear(), m: n.getMonth(), d: n.getDate(), mins: n.getHours() * 60 + n.getMinutes() });
-    setView({ y: n.getFullYear(), m: n.getMonth() });
+    const frame = requestAnimationFrame(() => {
+      const n = new Date();
+      setToday({ y: n.getFullYear(), m: n.getMonth(), d: n.getDate(), mins: n.getHours() * 60 + n.getMinutes() });
+      setView({ y: n.getFullYear(), m: n.getMonth() });
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => { cardRef.current?.scrollIntoView({ block: "start" }); }, [step]);
