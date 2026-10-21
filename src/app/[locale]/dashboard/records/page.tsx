@@ -4,7 +4,7 @@ import {
   FolderOpen, Image as ImageIcon, Plus, Stethoscope,
 } from "lucide-react";
 import { fullDate, number } from "../appointments/format";
-import DeleteRecordButton from "./DeleteRecordButton";
+
 import SearchBar from "./SearchBar";
 import { categoryIcon } from "./categories";
 import { copy } from "./copy";
@@ -24,7 +24,7 @@ const catTone = {
   other: s.tAmber,
 } as const;
 
-type SearchParams = { category?: string; q?: string; page?: string };
+type SearchParams = { source?: string; category?: string; q?: string; page?: string };
 
 export default async function RecordsPage({
   params,
@@ -45,13 +45,14 @@ export default async function RecordsPage({
   const q = (sp.q ?? "").slice(0, 80);
   const requestedPage = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
 
-  const data = await getRecords({ category, q, page: requestedPage }, locale);
+  const source = sp.source === "d4h" ? "d4h" : "zuwara";
+  const data = await getRecords({ source, category, q, page: requestedPage }, locale);
   const pages = Math.max(1, Math.ceil(data.total / data.pageSize));
   const hasPrev = data.page > 1;
   const hasNext = data.page < pages;
 
   const href = (opts: { category?: CategoryFilter; page?: number }) => {
-    const u = new URLSearchParams();
+    const u = new URLSearchParams({ source });
     const c = opts.category ?? category;
     if (c !== "all") u.set("category", c);
     if (q) u.set("q", q);
@@ -76,9 +77,13 @@ export default async function RecordsPage({
         </Link>
       </header>
 
+      <nav className={s.tabs} aria-label={isAr ? "مصدر التقارير" : "Report source"}>
+        <Link className={s.tab + (source === "zuwara" ? " " + s.tabActive : "")} href={prefix + "/dashboard/records?source=zuwara"}>{isAr ? "تقارير الاستشارات" : "Consultation reports"}</Link>
+        <Link className={s.tab + (source === "d4h" ? " " + s.tabActive : "")} href={prefix + "/dashboard/records?source=d4h"}>{isAr ? "نتائج الزيارات المنزلية" : "Home-service results"}</Link>
+      </nav>
       {!nothingAtAll && (
         <>
-          <SearchBar q={q} category={category} placeholder={t.search} clearLabel={t.clear} />
+          <SearchBar source={source} q={q} category={category} placeholder={t.search} clearLabel={t.clear} />
 
           <nav className={s.tabs} aria-label="Categories">
             {ORDER.map((c) => (
@@ -125,7 +130,7 @@ export default async function RecordsPage({
                       <h3>{r.title}</h3>
                       <p>{t.categories[r.category]}</p>
                     </div>
-                    <DeleteRecordButton id={r.id} t={t} />
+
                   </div>
 
                   {r.notes && <p className={s.desc}>{r.notes}</p>}
@@ -133,7 +138,7 @@ export default async function RecordsPage({
                   <div className={s.meta}>
                     <span><CalendarDays size={13} />{fullDate(`${r.recordDate}T12:00:00Z`, locale)}</span>
                     {r.provider && <span><Stethoscope size={13} />{r.provider}</span>}
-                    <span><FileIcon size={13} />{formatSize(r.fileSize, locale)}</span>
+                    <span><FileIcon size={13} />{r.fileSize === null ? "PDF" : formatSize(r.fileSize, locale)}</span>
                   </div>
 
                   <div className={s.bottom}>

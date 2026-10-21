@@ -1,0 +1,6 @@
+﻿.call { padding: 24px; border: 1px solid #eadcf3; border-radius: 20px; background: white; color: #28143b; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.video { aspect-ratio: 4/3; background: #241338; border-radius: 16px; overflow: hidden; }
+.call button { border: 0; border-radius: 12px; padding: 12px 24px; background: #71359d; color: white; cursor: pointer; }
+.call button:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 650px) { .grid { grid-template-columns: 1fr; } }

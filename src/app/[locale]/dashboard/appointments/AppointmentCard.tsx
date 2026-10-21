@@ -8,7 +8,7 @@ import s from "./appointments.module.css";
 
 const typeIcon = { consultation: Video, visit: Home, instant: Zap } as const;
 
-const statusTone = {
+const statusTone = { reopened: s.stAccepted, reassigned: s.stAccepted, unpaid: s.stPending,
   pending: s.stPending,
   accepted: s.stAccepted,
   completed: s.stCompleted,
@@ -16,7 +16,7 @@ const statusTone = {
   declined: s.stDeclined,
 } as const;
 
-const payTone = {
+const payTone = { unknown: s.payUnpaid,
   paid: s.payPaid,
   unpaid: s.payUnpaid,
   refunded: s.payRefunded,
@@ -62,7 +62,7 @@ export default function AppointmentCard({
 
         <div className={s.meta}>
           <span><TypeIcon size={14} />{t.types[a.type]}</span>
-          <span><Clock size={14} />{timeStr(a.startsAt, locale)} · {a.durationMin} {t.min}</span>
+          <span><Clock size={14} />{timeStr(a.startsAt, locale)} · {a.durationMin ?? "—"} {t.min}</span>
           {a.address && <span><MapPin size={14} />{a.address}</span>}
           <span><Hash size={14} />{a.number}</span>
         </div>

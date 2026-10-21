@@ -151,4 +151,5 @@
 @media (max-width: 720px) {
   .pick { grid-template-columns: 1fr; }
   .pickCol + .pickCol { border-inline-start: 0; border-block-start: 1px solid var(--p100); }
-}
+}.field select { width: 100%; min-height: 46px; padding: 12px; border: 1px solid #e8dcf3; border-radius: 12px; background: white; color: #241335; font: inherit; }
+.field input:disabled, .field textarea:disabled, .field select:disabled { opacity: .65; }

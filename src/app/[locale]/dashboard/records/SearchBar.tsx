@@ -7,8 +7,9 @@ import type { CategoryFilter } from "./types";
 import s from "./records.module.css";
 
 export default function SearchBar({
-  q, category, placeholder, clearLabel,
+  q, category, placeholder, clearLabel, source,
 }: {
+  source: "zuwara" | "d4h";
   q: string;
   category: CategoryFilter;
   placeholder: string;
@@ -23,7 +24,7 @@ export default function SearchBar({
   useEffect(() => {
     if (first.current) { first.current = false; return; }
     const id = setTimeout(() => {
-      const u = new URLSearchParams();
+      const u = new URLSearchParams({ source });
       if (category !== "all") u.set("category", category);
       if (value.trim()) u.set("q", value.trim());
       const qs = u.toString();

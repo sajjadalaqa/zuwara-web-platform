@@ -14,7 +14,7 @@ import s from "./detail.module.css";
 
 const typeIcon = { consultation: Video, visit: Home, instant: Zap } as const;
 
-const statusTone = {
+const statusTone = { reopened: s.stAccepted, reassigned: s.stAccepted, unpaid: s.stPending,
   pending: s.stPending,
   accepted: s.stAccepted,
   completed: s.stCompleted,
@@ -22,7 +22,7 @@ const statusTone = {
   declined: s.stDeclined,
 } as const;
 
-const payTone = { paid: s.payPaid, unpaid: s.payUnpaid, refunded: s.payRefunded } as const;
+const payTone = { unknown: s.payUnpaid, paid: s.payPaid, unpaid: s.payUnpaid, refunded: s.payRefunded } as const;
 
 export default async function AppointmentDetailPage({
   params,
@@ -39,16 +39,16 @@ export default async function AppointmentDetailPage({
   if (!a) notFound();
 
   const TypeIcon = typeIcon[a.type];
-  const cancellable = a.status === "pending" || a.status === "accepted";
-  const hasCall = a.type !== "visit" && a.status === "accepted";
-  const canReview = a.status === "completed";
+  const cancellable = a.cancellable === true;
+  const hasCall = Boolean(a.meetingUrl) || a.videoUnavailable;
+  const canReview = false;
   const initial = a.provider.name.replace(/^(Dr\.?|د\.)\s*/i, "").charAt(0).toUpperCase();
   const stamp = (iso: string) => `${fullDate(iso, locale)} · ${timeStr(iso, locale)}`;
 
   const rows = [
     { icon: Hash, label: t.reference, value: a.number },
     { icon: TypeIcon, label: t.type, value: base.types[a.type] },
-    { icon: Timer, label: t.duration, value: `${a.durationMin} ${t.min}` },
+    { icon: Timer, label: t.duration, value: `${a.durationMin ?? "—"} ${t.min}` },
     ...(a.address ? [{ icon: MapPin, label: t.location, value: a.address }] : []),
     ...(a.notes ? [{ icon: FileText, label: t.notes, value: a.notes }] : []),
   ];
@@ -72,7 +72,7 @@ export default async function AppointmentDetailPage({
             <h1>{fullDate(a.startsAt, locale)}</h1>
             <p>
               <Clock size={14} />
-              {timeStr(a.startsAt, locale)} · {a.durationMin} {t.min}
+              {timeStr(a.startsAt, locale)} · {a.durationMin ?? "—"} {t.min}
             </p>
           </div>
         </div>
@@ -122,7 +122,7 @@ export default async function AppointmentDetailPage({
                   startsAt={a.startsAt}
                   durationMin={a.durationMin}
                   url={a.meetingUrl}
-                  labels={{ join: t.join, soon: t.joinSoon, ended: t.joinEnded, none: t.joinNone }}
+                  labels={{ join: t.join, soon: t.joinSoon, ended: t.joinEnded, none: a.videoUnavailable ? isAr ? "المكالمة غير متاحة مؤقتاً. حاول مجدداً." : "Video is temporarily unavailable. Please retry." : t.joinNone }}
                 />
               </div>
             )}
@@ -134,11 +134,11 @@ export default async function AppointmentDetailPage({
               <h2>{t.history}</h2>
             </div>
             <ol className={s.steps}>
-              {a.timeline.map((step) => {
+              {a.timeline.map((step, index) => {
                 const bad = step.key === "cancelled" || step.key === "declined";
                 const ok = step.key === "completed";
                 return (
-                  <li key={step.key} className={s.step}>
+                  <li key={step.key + step.at + index} className={s.step}>
                     <span className={`${s.dot} ${bad ? s.dotBad : ok ? s.dotOk : ""}`} />
                     <div className={s.stepText}>
                       <b>{t.steps[step.key]}</b>
@@ -186,6 +186,8 @@ export default async function AppointmentDetailPage({
               <h2>{t.actions}</h2>
             </div>
             <div className={s.stack}>
+              {a.status === "unpaid" && <Link className={s.actPrimary} href={prefix + "/dashboard/appointments/" + id + "/pay"}>{isAr ? "متابعة الدفع" : "Continue payment"}</Link>}
+              {a.status !== "unpaid" && <Link className={s.actGhost} href={prefix + "/dashboard/appointments/" + id + "/chat"}>{isAr ? "محادثة الموعد" : "Appointment chat"}</Link>}
               {canReview && (
                 <Link href={`${prefix}/dashboard/reviews`} className={s.actPrimary}>
                   <Star size={16} />

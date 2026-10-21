@@ -8,8 +8,8 @@ export const copy = {
     out30: "Money out · 30 days",
     txTitle: "Transactions",
     results: "transactions",
-    tabs: { all: "All", topup: "Top-ups", payment: "Payments", refund: "Refunds" },
-    types: { topup: "Wallet top-up", payment: "Appointment payment", refund: "Refund" },
+    tabs: { credit: "Money in", debit: "Money out", all: "All", topup: "Top-ups", payment: "Payments", refund: "Refunds" },
+    types: { credit: "Wallet credit", debit: "Wallet debit", topup: "Wallet top-up", payment: "Appointment payment", refund: "Refund" },
     status: { completed: "Completed", pending: "Pending", failed: "Failed" },
     empty: {
       title: "No transactions yet",
@@ -42,8 +42,8 @@ export const copy = {
     out30: "الصادر · آخر 30 يوماً",
     txTitle: "المعاملات",
     results: "معاملة",
-    tabs: { all: "الكل", topup: "الشحن", payment: "المدفوعات", refund: "المستردات" },
-    types: { topup: "شحن المحفظة", payment: "دفع موعد", refund: "استرداد" },
+    tabs: { credit: "الوارد", debit: "الصادر", all: "الكل", topup: "الشحن", payment: "المدفوعات", refund: "المستردات" },
+    types: { credit: "إيداع في المحفظة", debit: "خصم من المحفظة", topup: "شحن المحفظة", payment: "دفع موعد", refund: "استرداد" },
     status: { completed: "مكتملة", pending: "قيد المعالجة", failed: "فاشلة" },
     empty: {
       title: "لا توجد معاملات بعد",

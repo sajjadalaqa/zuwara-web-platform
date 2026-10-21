@@ -1,8 +1,8 @@
-export const STATUSES = ["pending", "accepted", "completed", "cancelled", "declined"] as const;
+export const STATUSES = ["pending", "accepted", "completed", "cancelled", "declined", "reopened", "reassigned", "unpaid"] as const;
 export type AppointmentStatus = (typeof STATUSES)[number];
 export type StatusFilter = AppointmentStatus | "all";
 export type AppointmentType = "consultation" | "visit" | "instant";
-export type PaymentStatus = "paid" | "unpaid" | "refunded";
+export type PaymentStatus = "paid" | "unpaid" | "refunded" | "unknown";
 
 export type Appointment = {
   id: string;
@@ -10,7 +10,7 @@ export type Appointment = {
   status: AppointmentStatus;
   type: AppointmentType;
   startsAt: string; // ISO 8601, UTC
-  durationMin: number;
+  durationMin: number | null;
   provider: { id: string; name: string; specialty: string; avatarUrl?: string };
   price: number;
   currency: string; // "SAR"
@@ -34,9 +34,11 @@ export type AppointmentsResult = {
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
-export type TimelineKey = "booked" | "accepted" | "completed" | "cancelled" | "declined";
+export type TimelineKey = "booked" | "accepted" | "completed" | "cancelled" | "declined" | "reopened" | "reassigned" | "unpaid";
 
 export type AppointmentDetail = Appointment & {
+  cancellable?: boolean;
+  videoUnavailable?: boolean;
   createdAt: string; // ISO 8601
   notes?: string;
   meetingUrl?: string; // video consultations, once the provider accepts

@@ -28,7 +28,7 @@ export default function LoginPage() {
   return <AuthLayout>
     <div className={s.cardHead}>
       <div><h2>Sign In</h2><p><strong>Welcome back.</strong> Sign in to manage your bookings and care.</p></div>
-      <Link href="/admin-login" className={s.pill}><Icon name="user" size={15} /> Admin Portal</Link>
+      
     </div>
     <form className={s.form} onSubmit={onSubmit} noValidate>
       <PhoneField label="Phone Number" dial={dial} number={phone} onDial={setDial} onNumber={setPhone} />

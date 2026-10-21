@@ -19,9 +19,9 @@ export function HealthcareFilters({ categories, values }: { categories: ZuwaraCa
     <label><span>Specialty</span><select name="category" defaultValue={values.category ?? ""}><option value="">All specialties</option>{categories.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}</select></label>
     <label><span>Duration</span><select name="duration" defaultValue={values.duration ?? ""}><option value="">All durations</option>{[15,30,45,60].map(value=><option value={value} key={value}>{value} minutes</option>)}</select></label>
     <label><span>Preferred date</span><input type="date" name="date" defaultValue={values.date}/></label>
-    <label><span>Consultation type</span><select name="consultation_type" defaultValue={values.consultationType ?? ""}><option value="">All types</option><option value="chat">Chat</option><option value="audio">Audio</option><option value="video">Video</option></select></label>
+    <label><span>Consultation type</span><select name="consultation_type" defaultValue={values.consultationType ?? ""}><option value="">All types</option><option value="online">Video consultation</option><option value="clinic">In person</option></select></label>
     <label><span>Consultant gender</span><select name="gender" defaultValue={values.gender ?? ""}><option value="">Any gender</option><option value="1">Male</option><option value="0">Female</option></select></label>
-    <label><span>Sort</span><select name="sort" defaultValue={values.sort ?? ""}><option value="">Most experienced with patients</option><option value="3">Highest rated</option><option value="1">Price: low to high</option><option value="2">Price: high to low</option></select></label>
+    <label><span>Sort</span><select name="sort" defaultValue={values.sort ?? ""}><option value="">Recommended</option><option value="3">Highest rated</option><option value="1">Price: low to high</option><option value="2">Price: high to low</option></select></label>
     <label className="filter-check"><input type="checkbox" name="available_today" value="1" defaultChecked={values.availableToday === "1"}/><span>Only show consultants with an available slot</span></label>
     <button type="submit" className="button button-primary filter-submit">Apply filters</button>
   </form>;

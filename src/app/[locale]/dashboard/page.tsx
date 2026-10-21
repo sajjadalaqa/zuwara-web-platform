@@ -4,12 +4,12 @@ import {
   ArrowRight, CalendarCheck, CalendarPlus, ChevronRight, FileText, Handshake,
   Heart, HeartPulse, MessageSquare, Stethoscope, Wallet, Zap,
 } from "lucide-react";
-import { mockStats, mockUser } from "./user";
+import { upcomingAppointmentCount } from "@/lib/api/zuwara/appointments";
 import s from "./overview.module.css";
 import { getProfile } from "./profile/service";
-import { getSavedCount } from "./saved/service";
+import { patientApi } from "@/lib/auth/session";
 import { getWalletSummary } from "./wallet/service";
-import { getRequestCounts } from "./requests/service";
+
 
 const copy = {
   en: {
@@ -75,26 +75,21 @@ export default async function DashboardHome({
   const p = isAr ? "/ar" : "";
   const nf = new Intl.NumberFormat(isAr ? "ar-SA" : "en-US");
 
-  // TODO (backend): replace with real data
-  const profile = await getProfile();
-const user = { ...mockUser, name: profile.fullName.split(" ")[0] };
-  const [savedProviders, wallet, requestCounts] = await Promise.all([
-  getSavedCount(),
-  getWalletSummary(),
-  getRequestCounts(),
-]);
-const stats = {
-  ...mockStats,
-  savedProviders,
-  walletBalance: wallet.balance,
-  serviceRequests: requestCounts.all,
-};
-
+  const [profile, wallet, appointments, patient] = await Promise.all([
+    getProfile(), getWalletSummary(), upcomingAppointmentCount(),
+    patientApi<{ summary: { favorite_consultants: number } }>("/patients/me"),
+  ]);
+  const user = { name: profile.fullName.split(" ")[0] };
+  const stats = {
+    upcomingAppointments: appointments,
+    savedProviders: patient.data.summary.favorite_consultants,
+    walletBalance: wallet.balance,
+  };
   const statCards = [
     { href: "/dashboard/appointments", icon: CalendarCheck, value: nf.format(stats.upcomingAppointments), label: t.stats.appointments, tone: s.tPurple },
     { href: "/dashboard/saved", icon: Heart, value: nf.format(stats.savedProviders), label: t.stats.saved, tone: s.tMint },
     { href: "/dashboard/wallet", icon: Wallet, value: `${t.currency} ${nf.format(stats.walletBalance)}`, label: t.stats.wallet, tone: s.tRose },
-    { href: "/dashboard/requests", icon: FileText, value: nf.format(stats.serviceRequests), label: t.stats.requests, tone: s.tIndigo },
+    { href: "/dashboard/requests", icon: FileText, value: "—", label: t.stats.requests, tone: s.tIndigo },
   ];
 
   const actions = [

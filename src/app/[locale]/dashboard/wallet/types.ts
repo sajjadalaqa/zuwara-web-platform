@@ -1,6 +1,6 @@
-export const TX_TYPES = ["topup", "payment", "refund"] as const;
-export type TxType = (typeof TX_TYPES)[number];
-export type TxFilter = TxType | "all";
+export const TX_TYPES = ["credit", "debit"] as const;
+export type TxType = (typeof TX_TYPES)[number] | "topup" | "payment" | "refund";
+export type TxFilter = (typeof TX_TYPES)[number] | "all";
 export type TxStatus = "completed" | "pending" | "failed";
 
 export type Transaction = {

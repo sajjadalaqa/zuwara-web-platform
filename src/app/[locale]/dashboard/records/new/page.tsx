@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { copy } from "../copy";
-import { todayInRiyadh } from "../validation";
-import RecordForm from "./RecordForm";
+
+
 import s from "../records.module.css";
 
 export default async function NewRecordPage({
@@ -30,7 +30,7 @@ export default async function NewRecordPage({
         </div>
       </header>
 
-      <RecordForm t={t} locale={locale} maxDate={todayInRiyadh()} backHref={backHref} />
+      <section className={s.card}><p>{isAr ? "رفع السجلات غير متاح حالياً. تتوفر تقارير مقدم الرعاية للعرض والتنزيل من صفحة السجلات." : "Record uploads are not available. You can view and download reports issued by your care provider from Records."}</p></section>
     </div>
   );
 }

@@ -63,7 +63,7 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
   const categoryHref = profile.categoryId && profile.categoryTitle ? `/healthcare/specialties/${specialtySlug(profile.categoryTitle, profile.categoryId)}` : "/healthcare/specialties";
   const durations = (profile.durationOptions ?? []).filter((item) => item.enabled);
   const activeDuration = profile.selectedDurationMinutes ?? selectedDuration ?? durations[0]?.minutes ?? null;
-  const bookingHref = `/login?next=${encodeURIComponent(`${canonical}?date=${profile.selectedDate}${activeDuration ? `&duration=${activeDuration}` : ""}`)}`;
+  const bookingHref = canonical + "/book";
   const about = profile.about ?? profile.educationalJourney;
 
   return <>

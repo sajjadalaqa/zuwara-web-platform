@@ -6,6 +6,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  logging: { serverFunctions: false, browserToTerminal: false },
   compress: true,
   images: {
     remotePatterns: [
@@ -28,7 +29,7 @@ const nextConfig: NextConfig = {
         { key: "X-Content-Type-Options", value: "nosniff" },
         { key: "X-Frame-Options", value: "DENY" },
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-        { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        { key: "Permissions-Policy", value: "camera=(self), microphone=(self), geolocation=()" },
         { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
         // Applies to every response (pages, images, files) and overrides page-level robots meta.
         ...(siteIndexable ? [] : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]),

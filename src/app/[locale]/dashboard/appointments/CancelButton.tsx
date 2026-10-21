@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
@@ -22,6 +22,7 @@ type Props = {
 
 export default function CancelButton({ id, labels, errors }: Props) {
   const router = useRouter();
+  const intentKey = useRef<string | null>(null);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
@@ -39,7 +40,7 @@ export default function CancelButton({ id, labels, errors }: Props) {
     setError("");
     start(async () => {
       try {
-        const res = await cancelAppointmentAction(id);
+        const res = await cancelAppointmentAction(id, intentKey.current ??= crypto.randomUUID());
         if (res.ok) {
           setOpen(false);
           router.refresh();

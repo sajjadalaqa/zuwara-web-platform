@@ -36,7 +36,7 @@ export const copy = {
     empty: {
       all: {
         title: "No records yet",
-        text: "Upload lab results, prescriptions and reports to keep them handy.",
+        text: "Reports issued by your care provider will appear here.",
         cta: "Upload record",
       },
       filtered: { title: "No records found", text: "Try another category or search term." },
@@ -115,7 +115,7 @@ export const copy = {
     empty: {
       all: {
         title: "لا توجد سجلات بعد",
-        text: "ارفع نتائج المختبر والوصفات والتقارير لتبقى في متناول يدك.",
+        text: "ستظهر هنا التقارير التي يصدرها مقدم الرعاية.",
         cta: "رفع سجل",
       },
       filtered: { title: "لا توجد سجلات", text: "جرّب تصنيفاً أو كلمة بحث أخرى." },

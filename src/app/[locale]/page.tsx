@@ -9,7 +9,8 @@ import { StatsCards } from "@/components/StatsCards";
 import { AboutSection } from "@/components/AboutSection";
 import { ServicesSection } from "@/components/ServicesSection";
 import { DoctorsCarousel } from "@/components/DoctorsCarousel";
-import { manualDoctors } from "@/data/manualDoctors";
+import { getZuwaraHomeData } from "@/lib/api/zuwara/home";
+import { doctorSlug } from "@/lib/api/zuwara/slugs";
 import { APP_STORE_URL, GOOGLE_PLAY_URL } from "@/data/site";
 import { ContactSection } from "@/components/ContactSection";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
@@ -105,7 +106,7 @@ export default async function Home({ params }: Props) {
       <StatsCards />
       <AboutSection />
       <ServicesSection />
-      <DoctorsCarousel doctors={manualDoctors} />
+      <DoctorsCarousel doctors={(await getZuwaraHomeData()).doctors.map(d => ({ ...d, role: d.designation, href: "/healthcare/doctors/" + doctorSlug(d.name, d.id) }))} />
 
       {/* ---------- How healthcare works ---------- */}
       <section className={j.section} aria-labelledby="healthcare-journey-heading">

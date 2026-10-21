@@ -1,3 +1,4 @@
+import RechargeStatus from "./RechargeStatus";
 import Link from "next/link";
 import {
   ArrowDownLeft, ArrowUpRight, ChevronLeft, ChevronRight, Receipt,
@@ -10,8 +11,8 @@ import { getTransactions, getWalletSummary } from "./service";
 import { TX_TYPES, type TxFilter } from "./types";
 import s from "./wallet.module.css";
 
-const typeIcon = { topup: ArrowDownLeft, payment: ArrowUpRight, refund: Undo2 } as const;
-const typeTone = { topup: s.iconIn, payment: s.iconOut, refund: s.iconRefund } as const;
+const typeIcon = { credit: ArrowDownLeft, debit: ArrowUpRight, topup: ArrowDownLeft, payment: ArrowUpRight, refund: Undo2 } as const;
+const typeTone = { credit: s.iconIn, debit: s.iconOut, topup: s.iconIn, payment: s.iconOut, refund: s.iconRefund } as const;
 const statusTone = { pending: s.stPending, failed: s.stFailed } as const;
 const ORDER: TxFilter[] = ["all", ...TX_TYPES];
 
@@ -94,6 +95,7 @@ export default async function WalletPage({
         </div>
       </section>
 
+      <RechargeStatus locale={locale} />
       {/* ===== Transactions ===== */}
       <section className={s.card}>
         <div className={s.cardHead}>

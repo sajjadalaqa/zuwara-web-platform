@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { submitBooking } from "./booking-api";
+import { homeSlotsAction, previewHomeAction, createHomeAction, payHomeAction } from "./booking-api";
+import type { HomeService, HomeAddress, HomeGroup } from "@/lib/api/d4h/bookings";
 import styles from "./booking.module.css";
 
 export type BookingProvider = {
@@ -37,14 +38,11 @@ const pad = (n: number) => String(n).padStart(2, "0");
 const keyOf = (y: number, m: number, d: number) => `${y}-${pad(m + 1)}-${pad(d)}`;
 type Ymd = { y: number; m: number; d: number };
 
-const SLOTS = Array.from({ length: 18 }, (_, i) => {
-  const mins = 9 * 60 + i * 30; // 09:00 to 17:30
-  return { value: `${pad(Math.floor(mins / 60))}:${pad(mins % 60)}`, mins };
-});
+
 
 const initials = (n: string) => n.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
 
-export default function BookingFlow({ provider }: { provider: BookingProvider }) {
+export default function BookingFlow({ provider, services, addresses, identity }: { provider: BookingProvider; services: HomeService[]; addresses: HomeAddress[]; identity: { name: string; phone: string; email: string } }) {
   const t = useTranslations("bookPage");
   const locale = useLocale();
   const isAr = locale === "ar";
@@ -61,14 +59,34 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   const [visitType, setVisitType] = useState<"home" | "virtual">("home");
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
+  const [fullName, setFullName] = useState(identity.name);
+  const [phone, setPhone] = useState(identity.phone);
+  const [email, setEmail] = useState(identity.email);
+
   const [notes, setNotes] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [serviceId, setServiceId] = useState(services[0]?.id ?? 0);
+  const [addressId, setAddressId] = useState(addresses[0]?.id ?? 0);
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [slotLoading, setSlotLoading] = useState(false);
+  const [slotError, setSlotError] = useState(false);
+  const [quote, setQuote] = useState<{token:string;amountHalalas:number}|null>(null);
+  const [group, setGroup] = useState<HomeGroup|null>(null);
+  const [locked, setLocked] = useState(false);
+  const SLOTS = availableSlots.map(value => ({value,mins:Number(value.slice(0,2))*60+Number(value.slice(3,5))}));
+  useEffect(()=>{
+    if (!date || !serviceId) return;
+    let active=true;
+    Promise.resolve().then(()=>{
+      if(active){setSlotLoading(true);setSlotError(false);setAvailableSlots([]);}
+      return homeSlotsAction(Number(provider.id),serviceId,date);
+    }).then(rows=>{if(active){setAvailableSlots(rows);setSlotError(false);}})
+      .catch(()=>{if(active){setAvailableSlots([]);setSlotError(true);}})
+      .finally(()=>{if(active)setSlotLoading(false);});
+    return()=>{active=false;};
+  },[provider.id,serviceId,date]);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -123,7 +141,7 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
   };
 
   const slotDisabled = (mins: number) => Boolean(today && date === todayKey && mins < today.mins + 30);
-  const noSlots = Boolean(date) && SLOTS.every((s) => slotDisabled(s.mins));
+  const noSlots = Boolean(date) && !slotLoading && SLOTS.every((s) => slotDisabled(s.mins));
   const goToday = () => {
     if (!today) return;
     setView({ y: today.y, m: today.m });
@@ -136,32 +154,37 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
     const e: Record<string, string> = {};
     if (fullName.trim().length < 2) e.fullName = t("errRequired");
     if (!/^\+?[\d\s-]{7,}$/.test(phone.trim())) e.phone = t("errPhone");
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) e.email = t("errEmail");
-    if (visitType === "home" && address.trim().length < 5) e.address = t("errRequired");
+    if (email.trim() && !/^\S+@\S+\.\S+$/.test(email.trim())) e.email = t("errEmail");
+    if (visitType === "home" && !addresses.some(a=>a.id===addressId)) e.address = t("errRequired");
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
   const confirm = async () => {
-    if (!date || !time || !validate()) return;
-    setSending(true);
-    setFailed(false);
+    if (!date || !time || !validate() || sending) return;
+    setSending(true); setFailed(false);
     try {
-      const res = await submitBooking({
-        providerId: provider.id, date, time, visitType,
-        fullName: fullName.trim(), phone: phone.trim(), email: email.trim(),
-        address: visitType === "home" ? address.trim() : undefined,
-        notes: notes.trim() || undefined,
-      });
-      if (res.ok) setStep(3); else setFailed(true);
-    } catch {
-      setFailed(true);
-    } finally {
-      setSending(false);
-    }
+      if (!quote) {
+        const result=await previewHomeAction({providerId:Number(provider.id),serviceId,addressId,date,time,notes});
+        if(!result.ok)throw new Error("Visit preview unavailable");
+        setQuote(result.quote);return;
+      }
+      setLocked(true);
+      const result=await createHomeAction(quote.token);
+      if(!result.ok){if(!result.uncertain){setLocked(false);setQuote(null);}setFailed(true);return;}
+      setGroup(result.group);setStep(3);
+    }catch{setFailed(true);}finally{setSending(false);}
   };
-
-  const visitLabel = visitType === "home" ? t("atHome") : t("virtual");
+  const pay = async () => {
+    if(!group || sending || group.paid)return;
+    setSending(true);setFailed(false);
+    try{
+      const result=await payHomeAction(group.id);
+      if(!result.ok || !result.paid)throw new Error("Payment verification pending");
+      setGroup({...group,paid:true});
+    }catch{setFailed(true);}finally{setSending(false);}
+  };
+  const visitLabel = t("atHome");
   const steps = [t("step1"), t("step2"), t("step3")];
 
   return (
@@ -175,7 +198,7 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
         )}
 
         <header className={styles.head}>
-          <h1>{step === 3 ? t("successTitle") : t("title")}</h1>
+          <h1>{step === 3 ? group?.paid ? t("successTitle") : isAr ? "متابعة دفع الزيارة" : "Complete visit payment" : t("title")}</h1>
           {step !== 3 && <p>{t("subtitle")}</p>}
         </header>
 
@@ -197,6 +220,11 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
                         {/* ---------------- STEP 1 ---------------- */}
             {step === 1 && (
               <>
+                <div className={styles.form}><Field label={isAr ? "الخدمة" : "Service"}>
+                  <select value={serviceId} disabled={locked} onChange={e=>{setServiceId(Number(e.target.value));setTime(null);setQuote(null);}}>
+                    {services.map(service=><option key={service.id} value={service.id}>{isAr && service.nameAr ? service.nameAr : service.name}</option>)}
+                  </select>
+                </Field></div>
                 <div className={styles.pick}>
                   {/* Date */}
                   <section className={styles.pickCol} aria-label={t("selectDate")}>
@@ -234,7 +262,7 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
                                 className={`${styles.day} ${k === date ? styles.daySel : ""} ${k === todayKey ? styles.dayToday : ""}`}
                                 aria-pressed={k === date}
                                 aria-label={dateLabel(k)}
-                                onClick={() => { setDate(k); setTime(null); }}
+                                onClick={() => { setDate(k); setTime(null); setQuote(null); }}
                               >
                                 {d}
                               </button>
@@ -256,7 +284,7 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
 
                     {!date ? (
                       <p className={styles.hint}>{t("pickDateFirst")}</p>
-                    ) : noSlots ? (
+                    ) : slotError ? (<p className={styles.fail} role="alert">{isAr ? "تعذر تحميل الأوقات المتاحة. أعد المحاولة." : "Availability could not be loaded. Please retry."}</p>) : slotLoading ? (<p className={styles.hint}>{isAr ? "جارٍ تحميل الأوقات" : "Loading available times"}</p>) : noSlots ? (
                       <p className={styles.hint}>{t("noSlots")}</p>
                     ) : (
                       <div className={styles.slots} role="group" aria-label={t("selectTime")}>
@@ -265,7 +293,7 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
                             key={s.value} type="button" disabled={slotDisabled(s.mins)}
                             className={`${styles.slot} ${time === s.value ? styles.slotSel : ""}`}
                             aria-pressed={time === s.value}
-                            onClick={() => setTime(s.value)}
+                            onClick={() => {setTime(s.value);setQuote(null);}}
                           >
                             {timeLabel(s.value)}
                           </button>
@@ -288,12 +316,12 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
               <>
                 <h2 className={styles.h2}>{t("visitType")}</h2>
                 <div className={styles.visit} role="radiogroup" aria-label={t("visitType")}>
-                  {(["home", "virtual"] as const).map((v) => (
+                  {(["home"] as const).map((v) => (
                     <label key={v} className={visitType === v ? styles.visitOn : ""}>
-                      <input type="radio" name="visit" checked={visitType === v} onChange={() => setVisitType(v)} />
-                      <span className={styles.visitIcon}><Svg d={v === "home" ? I.home : I.video} size={22} /></span>
-                      <strong>{v === "home" ? t("atHome") : t("virtual")}</strong>
-                      <small>{v === "home" ? t("atHomeHint") : t("virtualHint")}</small>
+                      <input disabled={locked} type="radio" name="visit" checked={visitType === v} onChange={() => setVisitType(v)} />
+                      <span className={styles.visitIcon}><Svg d={I.home} size={22} /></span>
+                      <strong>{t("atHome")}</strong>
+                      <small>{t("atHomeHint")}</small>
                     </label>
                   ))}
                 </div>
@@ -301,54 +329,51 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
                 <h2 className={`${styles.h2} ${styles.gap}`}>{t("details")}</h2>
                 <div className={styles.form}>
                   <Field label={t("fullName")} error={errors.fullName}>
-                    <input value={fullName} onChange={(e) => setFullName(e.target.value)} autoComplete="name" aria-invalid={!!errors.fullName} />
+                    <input readOnly disabled={locked} value={fullName} onChange={(e) => setFullName(e.target.value)} autoComplete="name" aria-invalid={!!errors.fullName} />
                   </Field>
                   <div className={styles.two}>
                     <Field label={t("phone")} error={errors.phone}>
-                      <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" dir="ltr" inputMode="tel"
+                      <input readOnly disabled={locked} value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" dir="ltr" inputMode="tel"
                         autoComplete="tel" placeholder="+966 5X XXX XXXX" aria-invalid={!!errors.phone} />
                     </Field>
                     <Field label={t("email")} error={errors.email}>
-                      <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" dir="ltr"
+                      <input readOnly disabled={locked} value={email} onChange={(e) => setEmail(e.target.value)} type="email" dir="ltr"
                         autoComplete="email" aria-invalid={!!errors.email} />
                     </Field>
                   </div>
                   {visitType === "home" && (
                     <Field label={t("address")} error={errors.address}>
-                      <input value={address} onChange={(e) => setAddress(e.target.value)} autoComplete="street-address"
-                        placeholder={t("addressPh")} aria-invalid={!!errors.address} />
+                      <select disabled={locked} value={addressId} onChange={e=>{setAddressId(Number(e.target.value));setQuote(null);}}>
+                        {addresses.map(a=><option key={a.id} value={a.id}>{a.label}</option>)}
+                      </select>
                     </Field>
                   )}
                   <Field label={t("notes")} hint={t("notesHint")}>
-                    <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder={t("notesPh")} />
+                    <textarea disabled={locked} maxLength={4000} value={notes} onChange={(e) => {setNotes(e.target.value);setQuote(null);}} rows={4} placeholder={t("notesPh")} />
                   </Field>
                 </div>
 
                 {failed && <p className={styles.fail} role="alert">{t("errSubmit")}</p>}
 
                 <div className={styles.actions}>
-                  <button type="button" className={styles.ghost} onClick={() => setStep(1)} disabled={sending}>{t("backStep")}</button>
+                  <button type="button" className={styles.ghost} onClick={() => setStep(1)} disabled={sending || locked}>{t("backStep")}</button>
                   <button type="button" className={styles.primary} onClick={confirm} disabled={sending}>
-                    {sending ? t("confirming") : t("confirm")}
+                    {sending ? t("confirming") : locked ? isAr ? "إعادة محاولة الحجز نفسه" : "Retry this visit" : quote ? isAr ? "إنشاء الزيارة" : "Create visit" : isAr ? "مراجعة السعر" : "Review price"}
                   </button>
                 </div>
               </>
             )}
 
             {/* ---------------- STEP 3 ---------------- */}
-            {step === 3 && date && time && (
+            {step === 3 && group && (
               <div className={styles.success}>
                 <span className={styles.successIcon}><Svg d={I.check} size={34} /></span>
-                <p>{t("successText", { name })}</p>
-                <dl>
-                  <div><dt>{t("date")}</dt><dd>{dateLabel(date)}</dd></div>
-                  <div><dt>{t("time")}</dt><dd>{timeLabel(time)}</dd></div>
-                  <div><dt>{t("visit")}</dt><dd>{visitLabel}</dd></div>
-                </dl>
-                <div className={styles.actions}>
-                  <Link href={`/provider/${provider.id}`} className={styles.ghostLink}>{t("backToProvider")}</Link>
-                  <Link href="/" className={styles.primaryLink}>{t("goHome")}</Link>
-                </div>
+                <p>{group.paid ? t("successText", { name }) : isAr ? "تم إنشاء الزيارة. أكمل الدفع من المحفظة لتأكيدها." : "The visit was created. Complete wallet payment to confirm it."}</p>
+                <strong>{new Intl.NumberFormat(isAr?"ar-SA":"en-GB",{style:"currency",currency:"SAR"}).format(group.amountHalalas/100)}</strong>
+                <p>{isAr ? "مرجع الزيارة: " : "Visit reference: "}{group.id}</p>
+                {!group.paid && <button className={styles.primary} disabled={sending} onClick={pay}>{sending ? t("confirming") : isAr ? "الدفع من المحفظة" : "Pay from wallet"}</button>}
+                {failed && <p className={styles.fail} role="alert">{isAr ? "لم يتم تأكيد الدفع. أعد المحاولة لنفس الزيارة ولا تنشئ زيارة جديدة." : "Payment is not confirmed. Retry this same visit; do not create another booking."}</p>}
+                <Link href={"/provider/"+provider.id} className={styles.ghostLink}>{t("backToProvider")}</Link>
               </div>
             )}
           </div>
@@ -376,6 +401,7 @@ export default function BookingFlow({ provider }: { provider: BookingProvider })
                 <div><dt>{t("time")}</dt><dd>{time ? timeLabel(time) : t("notSelected")}</dd></div>
                 <div><dt>{t("visit")}</dt><dd>{visitLabel}</dd></div>
               </dl>
+              {quote && <p>{isAr ? "السعر التقديري: " : "Quoted total: "}{new Intl.NumberFormat(isAr?"ar-SA":"en-GB",{style:"currency",currency:"SAR"}).format(quote.amountHalalas/100)}</p>}
               <p className={styles.emergency}>{t("emergency")}</p>
             </aside>
           )}

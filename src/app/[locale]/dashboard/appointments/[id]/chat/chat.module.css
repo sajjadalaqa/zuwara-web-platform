@@ -1,0 +1,11 @@
+﻿.chat { background: white; border: 1px solid #eadcf3; border-radius: 20px; padding: 24px; color: #28143b; }
+.messages { display: grid; gap: 14px; max-height: 60vh; overflow: auto; padding: 12px 0; }
+.message, .own { padding: 14px; border-radius: 14px; background: #f7f3fb; max-width: 85%; overflow-wrap: anywhere; }
+.own { background: #eee2f7; margin-inline-start: auto; }
+.messages p { white-space: pre-wrap; }
+.messages small { display: block; opacity: .7; }
+.form { display: flex; gap: 12px; margin-top: 20px; }
+.form textarea { flex: 1; min-width: 0; border: 1px solid #dbc5e9; border-radius: 12px; padding: 12px; font: inherit; }
+.chat button { background: #71359d; border: 0; border-radius: 12px; color: white; padding: 12px 20px; cursor: pointer; }
+.chat button:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 600px) { .form { flex-direction: column; } }

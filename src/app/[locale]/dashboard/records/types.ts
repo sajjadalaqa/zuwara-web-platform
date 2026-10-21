@@ -13,11 +13,11 @@ export type MedicalRecord = {
   notes?: string;
   fileName: string;
   fileType: string; // "application/pdf" | "image/jpeg" | ...
-  fileSize: number; // bytes
+  fileSize: number | null; // bytes
   uploadedAt: string; // ISO 8601
 };
 
-export type RecordFilters = { category: CategoryFilter; q: string; page: number };
+export type RecordFilters = { source?: "zuwara" | "d4h"; category: CategoryFilter; q: string; page: number };
 
 export type RecordsResult = {
   items: MedicalRecord[];
