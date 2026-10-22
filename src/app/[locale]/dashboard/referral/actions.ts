@@ -1,11 +1,17 @@
 "use server";
+import { requireSession } from "@/lib/auth/session";
 
 import { revalidatePath } from "next/cache";
 import { redeemPoints } from "./service";
 import type { RedeemState } from "./types";
 import { validateRedeem } from "./validation";
 
-export async function redeemAction(_prev: RedeemState, fd: FormData): Promise<RedeemState> {
+export async function redeemAction(
+  _prev: RedeemState,
+  fd: FormData,
+): Promise<RedeemState> {
+  await requireSession();
+
   // TODO (backend): check the session on the server first.
   const raw = String(fd.get("points") ?? "");
 

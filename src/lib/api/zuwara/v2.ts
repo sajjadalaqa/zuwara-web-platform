@@ -19,7 +19,7 @@ export class ZuwaraV2Error extends Error {
   }
 }
 export async function zuwaraV2<T>(path: string, options: {
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
   token?: string;
   locale?: string;
@@ -30,12 +30,12 @@ export async function zuwaraV2<T>(path: string, options: {
   const response = await fetch(`${base}${path}`, {
     method: options.method ?? "GET",
     headers: {
-      Accept: "application/json", "Content-Type": "application/json",
+      Accept: "application/json", ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
       "X-Request-ID": randomUUID(), lang: options.locale === "ar" ? "ar" : "en",
       ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
       ...(options.idempotencyKey ? { "Idempotency-Key": options.idempotencyKey } : {}),
     },
-    ...(options.body !== undefined ? { body: JSON.stringify(options.body) } : {}),
+    ...(options.body !== undefined ? { body: options.body instanceof FormData ? options.body : JSON.stringify(options.body) } : {}),
     cache: "no-store", redirect: "error", signal: AbortSignal.timeout(15_000),
   });
   const payload = await response.json().catch(() => null);

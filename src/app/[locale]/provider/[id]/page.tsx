@@ -1,6 +1,7 @@
 // src/app/[locale]/provider/[id]/page.tsx
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { homeServices } from "@/lib/api/d4h/bookings";
 import ProviderDetail from "./ProviderDetail";
 import { getD4hProvider } from "@/lib/api/d4h/providers";
 
@@ -17,5 +18,6 @@ export default async function ProviderDetailPage({ params }: Props) {
   const { id, locale } = await params;
   const provider = await getD4hProvider(id, locale);
   if (!provider) notFound();
-  return <ProviderDetail provider={provider} />;
+  const services = await homeServices(Number(id)).catch(() => null);
+  return <ProviderDetail provider={provider} services={services} />;
 }

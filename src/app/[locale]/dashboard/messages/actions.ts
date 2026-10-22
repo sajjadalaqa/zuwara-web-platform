@@ -1,4 +1,5 @@
 "use server";
+import { requireSession } from "@/lib/auth/session";
 
 import { revalidatePath } from "next/cache";
 import { markConversationRead, sendMessage } from "./service";
@@ -10,8 +11,10 @@ import { validateMessage } from "./validation";
 
 export async function sendMessageAction(
   conversationId: string,
-  body: string
+  body: string,
 ): Promise<ActionResult> {
+  await requireSession();
+
   const error = validateMessage(body);
   if (error) return { ok: false, error };
 
@@ -20,7 +23,11 @@ export async function sendMessageAction(
   return res;
 }
 
-export async function markReadAction(conversationId: string): Promise<ActionResult> {
+export async function markReadAction(
+  conversationId: string,
+): Promise<ActionResult> {
+  await requireSession();
+
   const res = await markConversationRead(conversationId);
   if (res.ok) revalidatePath("/", "layout"); // refreshes the sidebar badge
   return res;

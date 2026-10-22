@@ -1,4 +1,4 @@
-﻿import "server-only";
+import "server-only";
 import { cache } from "react";
 import { getLocale } from "next-intl/server";
 import { readSession } from "@/lib/auth/session";
@@ -8,6 +8,8 @@ import type { ZuwaraCategory, ZuwaraDoctor } from "./types";
 export type V2Doctor = {
   id: number; doctor_number: string; name: string; name_ar: string | null; image_url: string | null;
   designation: string | null; designation_ar: string | null; experience_years: number; rating: number; patients_served: number;
+  photo?: string | null; biography?: string | null; rating_count?: number; reviews_count?: number; accepts_instant?: { public: boolean; private: boolean };
+  service_locations?: { id: number; title: string; title_ar: string | null; address: string | null; address_ar: string | null }[];
   starting_price: string; currency: string; category: { id: number; title: string; title_ar: string | null };
   classification: { title: string; title_ar: string | null } | null; consultation_types: string[];
   duration_options: { minutes: number; price: string; price_halalas: number }[];
@@ -21,8 +23,9 @@ export const discovery = cache(async <T,>(path: string) => {
 });
 export function doctorView(row: V2Doctor): ZuwaraDoctor {
   if (!Number.isSafeInteger(row.id) || row.id < 1 || !row.name || !Array.isArray(row.duration_options)) throw new Error("Invalid consultant.");
-  return { id: row.id, doctorNumber: row.doctor_number, name: row.name, nameAr: row.name_ar, imageUrl: row.image_url,
+  return { id: row.id, doctorNumber: row.doctor_number, name: row.name, nameAr: row.name_ar, imageUrl: row.photo ?? row.image_url,
     designation: row.designation, designationAr: row.designation_ar, experienceYears: row.experience_years, rating: row.rating,
+    reviewsCount: row.rating_count ?? row.reviews_count, acceptsInstant: row.accepts_instant?.public,
     happyClients: row.patients_served, startingPrice: row.starting_price, currency: row.currency,
     categoryId: row.category?.id ?? null, categoryTitle: row.category?.title ?? null, categoryTitleAr: row.category?.title_ar ?? null,
     classificationTitle: row.classification?.title ?? null, classificationTitleAr: row.classification?.title_ar ?? null,

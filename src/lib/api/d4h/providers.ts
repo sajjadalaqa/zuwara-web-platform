@@ -2,13 +2,13 @@ import "server-only";
 import { cache } from "react";
 import { d4hV2, D4hV2Error } from "./v2";
 
-export type D4hProvider = { id: number; name: string };
+export type D4hProvider = { id: number; name: string; bio?: string; image?: string; rating?: number; reviewsCount?: number };
 function provider(value: unknown): D4hProvider {
   if (!value || typeof value !== "object") throw new D4hV2Error(502, "INVALID_RESPONSE");
   const row = value as Record<string, unknown>;
   if (!Number.isSafeInteger(row.id) || Number(row.id) < 1 || typeof row.name !== "string" || !row.name.trim()) throw new D4hV2Error(502, "INVALID_RESPONSE");
-  // Public V2 intentionally exposes no contact, verification, rating, role or photo fields.
-  return { id: Number(row.id), name: row.name };
+  // Map only approved patient-facing fields; preserve real zero ratings/counts.
+  return { id: Number(row.id), name: row.name, ...(typeof row.biography==="string"?{bio:row.biography}:{}), ...(typeof row.photo==="string"&&/^https?:\/\//.test(row.photo)?{image:row.photo}:{}), ...(typeof row.rating==="number"&&row.rating>=0&&row.rating<=5?{rating:row.rating}:{}), ...(Number.isSafeInteger(row.rating_count)&&Number(row.rating_count)>=0?{reviewsCount:Number(row.rating_count)}:{}) };
 }
 export async function getD4hProviders(locale: string): Promise<D4hProvider[]> {
   const providers: D4hProvider[] = [];

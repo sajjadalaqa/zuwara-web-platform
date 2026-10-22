@@ -16,6 +16,8 @@ export type ZuwaraDoctor = {
   experienceYears: number;
   rating: number;
   happyClients: number;
+  reviewsCount?: number;
+  acceptsInstant?: boolean;
   startingPrice: string;
   currency: string;
   categoryId: number | null;
@@ -55,6 +57,7 @@ export type ZuwaraProfileItem = {
 };
 
 export type ZuwaraDoctorProfile = ZuwaraDoctor & {
+  serviceLocations?: { id: number; title: string; titleAr: string | null; address: string | null; addressAr: string | null }[];
   about: string | null;
   aboutAr: string | null;
   degrees: string | null;

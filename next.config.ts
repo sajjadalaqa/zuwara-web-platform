@@ -6,35 +6,63 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  experimental: { serverActions: { bodySizeLimit: "55mb" } },
   logging: { serverFunctions: false, browserToTerminal: false },
   compress: true,
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "dashboard.zuwara.sa", pathname: "/storage/**" },
-      { protocol: "https", hostname: "dashboard.zuwara.sa", pathname: "/asset/**" },
-      { protocol: "https", hostname: "dashboardvisit.zuwara.sa", pathname: "/storage/**" },
-      { protocol: "https", hostname: "dashboardvisit.zuwara.sa", pathname: "/images/**" },
+      {
+        protocol: "https",
+        hostname: "dashboard.zuwara.sa",
+        pathname: "/storage/**",
+      },
+      {
+        protocol: "https",
+        hostname: "dashboard.zuwara.sa",
+        pathname: "/asset/**",
+      },
+      {
+        protocol: "https",
+        hostname: "dashboardvisit.zuwara.sa",
+        pathname: "/storage/**",
+      },
+      {
+        protocol: "https",
+        hostname: "dashboardvisit.zuwara.sa",
+        pathname: "/images/**",
+      },
     ],
   },
   async redirects() {
     return [
       { source: "/privacy", destination: "/privacy-policy", permanent: true },
-      { source: "/ar/privacy", destination: "/ar/privacy-policy", permanent: true },
+      {
+        source: "/ar/privacy",
+        destination: "/ar/privacy-policy",
+        permanent: true,
+      },
     ];
   },
   async headers() {
-    return [{
-      source: "/:path*",
-      headers: [
-        { key: "X-Content-Type-Options", value: "nosniff" },
-        { key: "X-Frame-Options", value: "DENY" },
-        { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-        { key: "Permissions-Policy", value: "camera=(self), microphone=(self), geolocation=()" },
-        { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-        // Applies to every response (pages, images, files) and overrides page-level robots meta.
-        ...(siteIndexable ? [] : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]),
-      ],
-    }];
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(self), microphone=(self), geolocation=()",
+          },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          // Applies to every response (pages, images, files) and overrides page-level robots meta.
+          ...(siteIndexable
+            ? []
+            : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]),
+        ],
+      },
+    ];
   },
 };
 

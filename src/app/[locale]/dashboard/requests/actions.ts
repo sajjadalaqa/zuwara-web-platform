@@ -1,4 +1,5 @@
 "use server";
+import { requireSession } from "@/lib/auth/session";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -10,7 +11,12 @@ import { validateRequest } from "./validation";
 
 const str = (fd: FormData, key: string) => String(fd.get(key) ?? "");
 
-export async function createRequestAction(_prev: FormState, fd: FormData): Promise<FormState> {
+export async function createRequestAction(
+  _prev: FormState,
+  fd: FormData,
+): Promise<FormState> {
+  await requireSession();
+
   const input = {
     category: str(fd, "category"),
     title: str(fd, "title").trim(),
@@ -31,6 +37,8 @@ export async function createRequestAction(_prev: FormState, fd: FormData): Promi
 }
 
 export async function cancelRequestAction(id: string): Promise<ActionResult> {
+  await requireSession();
+
   const res = await cancelRequest(id);
   if (res.ok) revalidatePath("/", "layout");
   return res;
@@ -38,8 +46,10 @@ export async function cancelRequestAction(id: string): Promise<ActionResult> {
 
 export async function acceptOfferAction(
   requestId: string,
-  offerId: string
+  offerId: string,
 ): Promise<ActionResult> {
+  await requireSession();
+
   // TODO (backend): check the session, and that this request belongs to the signed-in user.
   const res = await acceptOffer(requestId, offerId);
   if (res.ok) revalidatePath("/", "layout");

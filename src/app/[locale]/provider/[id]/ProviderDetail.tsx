@@ -1,8 +1,10 @@
 "use client";
 
+import SaveProvider from "@/components/SaveProvider";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import type { HomeService } from "@/lib/api/d4h/bookings";
 import styles from "./provider-detail.module.css";
 
 export type ProviderInfo = {
@@ -50,7 +52,7 @@ function Stars({ value }: { value: number }) {
   );
 }
 
-export default function ProviderDetail({ provider: p }: { provider: ProviderInfo }) {
+export default function ProviderDetail({ provider: p, services }: { provider: ProviderInfo; services?: HomeService[] | null }) {
   const t = useTranslations("providerDetail");
   const isAr = useLocale() === "ar";
 
@@ -79,10 +81,12 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
   }, [open]);
 
   const rows: [string, React.ReactNode][] = [
-    [t("memberSince"), joined],
+    [isAr ? "اسم مقدم الخدمة" : "Provider name", name],
+    [isAr ? "رقم مقدم الخدمة" : "Provider reference", String(p.id)],
+    ...(p.joinedAt ? [[t("memberSince"), joined] as [string, React.ReactNode]] : []),
     ...(title ? ([[t("role"), title]] as [string, React.ReactNode][]) : []),
     ...(p.email ? ([[t("email"), <a key="m" href={`mailto:${p.email}`} dir="ltr">{p.email}</a>]] as [string, React.ReactNode][]) : []),
-    [t("bookings"), bookings === undefined ? "—" : t("bookingsDone", { count: bookings })],
+    ...(bookings !== undefined ? [[t("bookings"), bookings === undefined ? "—" : t("bookingsDone", { count: bookings })] as [string, React.ReactNode]] : []),
   ];
 
   return (
@@ -105,11 +109,11 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
               )}
             </div>
 
-            <h1 className={styles.name}>{name}</h1>
+            <h1 className={styles.name}>{name}</h1><SaveProvider id={p.id} source="d4h"/>
             {title && <p className={styles.role}>{title}</p>}
 
             <div className={styles.rating}>
-              <Stars value={rating ?? 0} />
+              {rating !== undefined ? <Stars value={rating} /> : null}
               <span>{reviews === undefined ? t("unavailable") : t("reviews", { count: reviews })}</span>
             </div>
 
@@ -149,9 +153,10 @@ export default function ProviderDetail({ provider: p }: { provider: ProviderInfo
 
             <section className={styles.panel}>
               <h2 className={styles.heading}><Icon d={ICON.heart} /> {t("about")}</h2>
-              {bio ? <p className={styles.bio}>{bio}</p> : <p className={styles.muted}>{t("unavailable")}</p>}
+              {bio ? <p className={styles.bio}>{bio}</p> : <p className={styles.muted}>{isAr ? "لا توجد نبذة شخصية متاحة." : "A biography has not been provided for this provider."}</p>}
             </section>
 
+            <section className={styles.panel}><h2 className={styles.heading}><Icon d={ICON.calendar} /> {isAr ? "خدمات الزيارة المنزلية" : "Home-visit services"}</h2>{services === null ? <p className={styles.muted}>{isAr ? "تعذر تحميل الخدمات. حاول مجدداً." : "Services could not be loaded. Please retry."}</p> : services?.length ? <dl className={styles.rows}>{services.map(service => <div className={styles.row} key={service.id}><dt>{isAr && service.nameAr ? service.nameAr : service.name}</dt><dd>{service.minutes} {isAr ? "دقيقة" : "minutes"}</dd></div>)}</dl> : <p className={styles.muted}>{isAr ? "لا توجد خدمات مدرجة حالياً." : "No home-visit services are currently listed for this provider."}</p>}</section>
             <section className={styles.panel}>
               <h2 className={styles.heading}><Icon d={ICON.calendar} /> {t("reviewsTitle")}</h2>
               <div className={styles.emptyReviews}>

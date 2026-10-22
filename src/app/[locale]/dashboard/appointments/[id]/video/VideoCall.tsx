@@ -5,7 +5,7 @@ import type { IAgoraRTCClient, IMicrophoneAudioTrack, ICameraVideoTrack } from "
 import type { VideoSession } from "@/lib/api/zuwara/video";
 import { startVideoAction, attendanceAction, videoEligibilityAction } from "./actions";
 import s from "./video.module.css";
-export default function VideoCall({ id, canJoin }: { id: string; canJoin: boolean }) {
+export default function VideoCall({ id, canJoin, followUpId }: { id: string; canJoin: boolean; followUpId?: string }) {
   const ar = useLocale() === "ar";
   const local = useRef<HTMLDivElement>(null), remote = useRef<HTMLDivElement>(null);
   const client = useRef<IAgoraRTCClient | null>(null), tracks = useRef<[IMicrophoneAudioTrack, ICameraVideoTrack] | null>(null);
@@ -39,7 +39,7 @@ export default function VideoCall({ id, canJoin }: { id: string; canJoin: boolea
   async function join() {
     setError(""); setState("joining"); const attempt = ++generation.current;
     try {
-      const result = await startVideoAction(id);
+      const result = await startVideoAction(id, followUpId);
       if (!result.ok) throw new Error("Session unavailable");
       if (!mounted.current || attempt !== generation.current) return;
       const sdk = (await import("agora-rtc-sdk-ng")).default;
@@ -62,7 +62,7 @@ export default function VideoCall({ id, canJoin }: { id: string; canJoin: boolea
       rtc.on("user-left", () => { void event("remote_participant_left"); });
       rtc.on("token-privilege-will-expire", async () => {
         try {
-          const renewed = await startVideoAction(id);
+          const renewed = await startVideoAction(id, followUpId);
           if (!renewed.ok || renewed.session.meeting_id !== session.current?.meeting_id || renewed.session.channel_name !== session.current.channel_name) throw new Error("Session ended");
           await rtc.renewToken(renewed.session.token); session.current = renewed.session;
         } catch { await leave(); if (mounted.current) setError(ar ? "انتهت الجلسة." : "The session ended."); }
@@ -82,7 +82,7 @@ export default function VideoCall({ id, canJoin }: { id: string; canJoin: boolea
         const ends = session.current?.context_ends_at;
         if (ends && Date.now() >= Date.parse(ends)) { void leave(); return; }
         if (rtc.connectionState === "CONNECTED") void event("heartbeat");
-        void videoEligibilityAction(id).then(status=>{if(status.ok && !status.canJoin && client.current===rtc)void leave();}).catch(()=>{});
+        void videoEligibilityAction(id, followUpId).then(status=>{if(status.ok && !status.canJoin && client.current===rtc)void leave();}).catch(()=>{});
       }, 30_000);
     } catch {
       if (attempt !== generation.current) return;

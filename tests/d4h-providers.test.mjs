@@ -40,15 +40,15 @@ test("provider pagination keeps real IDs, discards private fields, and distingui
       calls.push(path);
       if (path.includes("page=1")) return { success: true, data: [{ id: 6, name: "Andrew", email: "private@example.test", rating: 5 }], meta: { pagination: { has_more: true } } };
       if (path.includes("page=2")) return { success: true, data: [{ id: 6, name: "Andrew" }, { id: 60, name: "Ruth" }], meta: { pagination: { has_more: false } } };
-      if (path === "/providers/60") return { success: true, data: { id: 60, name: "Ruth", bank_account: "private" } };
+      if (path === "/providers/60") return { success: true, data: { id: 60, name: "Ruth", bank_account: "private", rating: 0, rating_count: 0, biography: "Public biography", photo: "https://dashboardvisit.zuwara.sa/images/user/user.png" } };
       if (path === "/providers/999") throw new D4hV2Error(404);
       throw new D4hV2Error(503);
     },
   };
   try {
     const api = await load("../src/lib/api/d4h/providers.ts", source => `const {cache,d4hV2,D4hV2Error} = globalThis.__d4hProviderTest;\n${source.replace(/^import .*;\r?$/gm, "")}`);
-    assert.deepEqual(await api.getD4hProviders("en"), [{ id: 6, name: "Andrew" }, { id: 60, name: "Ruth" }]);
-    assert.deepEqual(await api.getD4hProvider("60", "ar"), { id: 60, name: "Ruth" });
+    assert.deepEqual(await api.getD4hProviders("en"), [{ id: 6, name: "Andrew", rating: 5 }, { id: 60, name: "Ruth" }]);
+    assert.deepEqual(await api.getD4hProvider("60", "ar"), { id: 60, name: "Ruth", rating: 0, reviewsCount: 0, bio: "Public biography", image: "https://dashboardvisit.zuwara.sa/images/user/user.png" });
     assert.equal(await api.getD4hProvider("999", "en"), null);
     const count = calls.length;
     assert.equal(await api.getD4hProvider("not-an-id", "en"), null);

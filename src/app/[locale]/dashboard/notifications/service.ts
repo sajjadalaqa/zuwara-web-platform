@@ -1,3 +1,5 @@
+import { visitNotifications, visitMarkRead } from "@/lib/api/d4h/notifications";
+import { D4hV2Error } from "@/lib/api/d4h/v2";
 import { cache } from "react";
 import { patientApi } from "@/lib/auth/session";
 import { ZuwaraV2Error } from "@/lib/api/zuwara/v2";
@@ -13,7 +15,8 @@ function notification(card: Card): AppNotification {
     title: card.title ?? "", body: card.body ?? "", read: card.is_read, createdAt: card.created_at ?? "",
     href: card.target?.entity === "appointment" && Number.isSafeInteger(card.target.id) ? `/dashboard/appointments/${card.target.id}` : undefined };
 }
-export async function getNotifications(filters: NotificationFilters, locale: string): Promise<NotificationsResult> {
+export async function getNotifications(filters: NotificationFilters, locale: string, source: "zuwara" | "d4h" = "zuwara"): Promise<NotificationsResult> {
+  if (source === "d4h") return visitNotifications(filters, locale);
   const query = new URLSearchParams({ state: filters.filter, page: String(Math.max(1, filters.page)), per_page: String(PAGE_SIZE) });
   const payload = await patientApi<Card[]>(`/notifications?${query}`, { locale });
   if (!Array.isArray(payload.data) || !payload.meta?.pagination) throw new ZuwaraV2Error(502, "INVALID_RESPONSE");
@@ -31,10 +34,11 @@ export const getUnreadCount = cache(async (): Promise<number> => {
   const { data } = await patientApi<{ unread_count: number }>("/notifications/unread-count");
   return data.unread_count;
 });
-export async function markRead(id: string): Promise<ActionResult> {
+export async function markRead(id: string, read = true): Promise<ActionResult> {
+  if (id.startsWith("d4h:")) { try { await visitMarkRead(id.slice(4),read); return {ok:true}; } catch(error) { if(error instanceof D4hV2Error)return {ok:false,error:error.code};throw error; } }
   if (!/^[1-9]\d*$/.test(id)) return { ok: false, error: "not_found" };
   try {
-    await patientApi(`/notifications/${id}/read`, { method: "PUT", body: { read: true } });
+    await patientApi(`/notifications/${id}/read`, { method: "PUT", body: { read } });
     return { ok: true };
   } catch (error) {
     if (error instanceof ZuwaraV2Error) return { ok: false, error: error.code };

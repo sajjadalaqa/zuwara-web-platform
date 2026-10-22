@@ -17,13 +17,20 @@ export type Message = {
 export type Conversation = {
   id: string;
   provider: Provider;
-  lastMessage: string;
-  lastFrom: Sender;
-  lastAt: string; // ISO 8601
-  unreadCount: number;
+  lastMessage: string | null;
+  lastFrom: Sender | null;
+  lastAt: string | null; // ISO 8601
+  unreadCount: number | null;
+  appointmentNumber?: string;
+  appointmentAt?: string | null;
+  appointmentStatus?: string;
 };
 
-export type ConversationDetail = Conversation & { messages: Message[] }; // oldest first
+export type ConversationDetail = Conversation & {
+  messages: Message[];
+  nextCursor?: string | null;
+  canSend?: boolean;
+}; // oldest first
 
 // The server returns codes; the UI translates them (see copy.ts).
 export type ErrorCode = "required" | "too_long" | "not_found" | "generic";

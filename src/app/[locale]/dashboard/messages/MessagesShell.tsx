@@ -12,7 +12,7 @@ export type ListItem = {
   avatarUrl?: string;
   preview: string;
   time: string;
-  unread: number;
+  unread: number | null;
 };
 
 type Labels = {
@@ -26,7 +26,10 @@ type Labels = {
 };
 
 const initialOf = (name: string) =>
-  name.replace(/^(Dr\.?|د\.)\s*/i, "").charAt(0).toUpperCase();
+  name
+    .replace(/^(Dr\.?|د\.)\s*/i, "")
+    .charAt(0)
+    .toUpperCase();
 
 export default function MessagesShell({
   items,
@@ -41,21 +44,30 @@ export default function MessagesShell({
   const activeId = params?.id;
   const prefix = params?.locale === "ar" ? "/ar" : "";
   const [q, setQ] = useState("");
+  const [failedAvatars, setFailedAvatars] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     if (!term) return items;
-    return items.filter((i) => `${i.name} ${i.preview}`.toLowerCase().includes(term));
+    return items.filter((i) =>
+      `${i.name} ${i.preview}`.toLowerCase().includes(term),
+    );
   }, [items, q]);
 
   // No conversations at all: one friendly empty card instead of a split view.
   if (items.length === 0 && !activeId) {
     return (
       <div className={s.emptyWrap}>
-        <span className={s.phIcon}><MessagesSquare size={28} /></span>
+        <span className={s.phIcon}>
+          <MessagesSquare size={28} />
+        </span>
         <h3>{labels.emptyTitle}</h3>
         <p>{labels.emptyText}</p>
-        <Link href={`${prefix}/provider`} className={s.cta}>{labels.emptyCta}</Link>
+        <Link href={`${prefix}/provider`} className={s.cta}>
+          {labels.emptyCta}
+        </Link>
       </div>
     );
   }
@@ -75,7 +87,12 @@ export default function MessagesShell({
               aria-label={labels.search}
             />
             {q && (
-              <button type="button" className={s.clear} onClick={() => setQ("")} aria-label={labels.clear}>
+              <button
+                type="button"
+                className={s.clear}
+                onClick={() => setQ("")}
+                aria-label={labels.clear}
+              >
                 <X size={14} />
               </button>
             )}
@@ -90,13 +107,21 @@ export default function MessagesShell({
               <li key={i.id}>
                 <Link
                   href={`${prefix}/dashboard/messages/${i.id}`}
-                  className={`${s.item} ${i.id === activeId ? s.itemActive : ""} ${i.unread > 0 ? s.unread : ""}`}
+                  className={`${s.item} ${i.id === activeId ? s.itemActive : ""} ${(i.unread ?? 0) > 0 ? s.unread : ""}`}
                   aria-current={i.id === activeId ? "page" : undefined}
                 >
                   <span className={s.avatar}>
-                    {i.avatarUrl ? (
+                    {i.avatarUrl && !failedAvatars.has(i.id) ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={i.avatarUrl} alt="" />
+                      <img
+                        src={i.avatarUrl}
+                        alt=""
+                        onError={() =>
+                          setFailedAvatars(
+                            (previous) => new Set([...previous, i.id]),
+                          )
+                        }
+                      />
                     ) : (
                       initialOf(i.name)
                     )}
@@ -108,7 +133,11 @@ export default function MessagesShell({
                     </span>
                     <span className={s.itemBottom}>
                       <p className={s.preview}>{i.preview}</p>
-                      {i.unread > 0 && <span className={s.badge}>{i.unread > 9 ? "9+" : i.unread}</span>}
+                      {(i.unread ?? 0) > 0 && (
+                        <span className={s.badge}>
+                          {(i.unread ?? 0) > 9 ? "9+" : i.unread}
+                        </span>
+                      )}
                     </span>
                   </span>
                 </Link>

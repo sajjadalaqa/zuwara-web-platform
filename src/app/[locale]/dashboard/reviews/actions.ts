@@ -1,4 +1,5 @@
 "use server";
+import { requireSession } from "@/lib/auth/session";
 
 import { revalidatePath } from "next/cache";
 import { deleteReview, saveReview } from "./service";
@@ -8,7 +9,12 @@ import { validateReview } from "./validation";
 // TODO (backend): check the session on the server in both actions, and make sure
 // the appointment belongs to the signed-in user and is completed.
 
-export async function saveReviewAction(_prev: FormState, fd: FormData): Promise<FormState> {
+export async function saveReviewAction(
+  _prev: FormState,
+  fd: FormData,
+): Promise<FormState> {
+  await requireSession();
+
   const appointmentId = String(fd.get("appointmentId") ?? "");
   const reviewId = String(fd.get("reviewId") ?? "") || undefined;
   const rating = Number(String(fd.get("rating") ?? "0"));
@@ -17,7 +23,8 @@ export async function saveReviewAction(_prev: FormState, fd: FormData): Promise<
 
   const errors = validateReview(rating, comment);
   if (Object.keys(errors).length) return { ok: false, errors, values };
-  if (!appointmentId) return { ok: false, errors: { _form: "not_found" }, values };
+  if (!appointmentId)
+    return { ok: false, errors: { _form: "not_found" }, values };
 
   const res = await saveReview({ appointmentId, reviewId, rating, comment });
   if (!res.ok) return { ok: false, errors: { _form: res.code }, values };
@@ -27,6 +34,8 @@ export async function saveReviewAction(_prev: FormState, fd: FormData): Promise<
 }
 
 export async function deleteReviewAction(id: string): Promise<ActionResult> {
+  await requireSession();
+
   const res = await deleteReview(id);
   if (!res.ok) return { ok: false, error: res.code };
   revalidatePath("/", "layout");

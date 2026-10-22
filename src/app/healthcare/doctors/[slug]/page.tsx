@@ -1,5 +1,6 @@
+import SaveProvider from "@/components/SaveProvider";
 import type { Metadata } from "next";
-import Image from "next/image";
+import { DoctorPhoto } from "@/components/healthcare/DoctorPhoto";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -22,7 +23,7 @@ function displayTime(value: string) {
   const minute = normalized.slice(2, 4);
   return Number.isFinite(hour) ? `${hour % 12 || 12}:${minute} ${hour >= 12 ? "PM" : "AM"}` : value;
 }
-function money(value: string | null, currency: string) { return value && Number(value) > 0 ? `${Number(value).toFixed(2)} ${currency}` : "Price in app"; }
+function money(value: string | null, currency: string) { return value !== null && value.trim() !== "" && Number.isFinite(Number(value)) && Number(value) >= 0 ? `${Number(value).toFixed(2)} ${currency}` : "Price in app"; }
 
 function ProfileList({ title, items }: { title: string; items: ZuwaraProfileItem[] }) {
   if (!items.length) return null;
@@ -79,15 +80,17 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
     <section className="doctor-profile-hero"><div className="container">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Healthcare", href: "/healthcare" }, { label: "Consultants", href: "/healthcare/doctors" }, { label: profile.name }]}/>
       <div className="doctor-profile-heading">
-        <div className="doctor-profile-photo">{profile.imageUrl ? <Image src={profile.imageUrl} alt={`Profile photo of ${profile.name}`} fill priority sizes="(max-width: 640px) 140px, 220px"/> : <span className="profile-fallback"><Icon name="user" size={52}/></span>}</div>
-        <div className="doctor-profile-intro"><div className="doctor-result-tags">{profile.categoryTitle ? <Link href={categoryHref}>{profile.categoryTitle}</Link> : null}{profile.classificationTitle ? <span>{profile.classificationTitle}</span> : null}</div><h1>{profile.name}</h1>{profile.nameAr ? <p className="doctor-profile-name-ar" lang="ar" dir="rtl">{profile.nameAr}</p> : null}<p>{profile.designation ?? profile.classificationTitle ?? "Healthcare consultant"}</p><div className="doctor-profile-metrics">{profile.rating > 0 ? <span><strong>★ {profile.rating.toFixed(1)}</strong> rating</span> : null}{profile.experienceYears > 0 ? <span><strong>{profile.experienceYears}</strong> years experience</span> : null}{profile.happyClients > 0 ? <span><strong>{profile.happyClients}</strong> completed consultations</span> : null}</div></div>
+        <div className="doctor-profile-photo"><DoctorPhoto src={profile.imageUrl} name={profile.name} priority sizes="(max-width: 640px) 140px, 220px"/></div>
+        <div className="doctor-profile-intro"><div className="doctor-result-tags">{profile.categoryTitle ? <Link href={categoryHref}>{profile.categoryTitle}</Link> : null}{profile.classificationTitle ? <span>{profile.classificationTitle}</span> : null}</div><h1>{profile.name}</h1><SaveProvider id={profile.id} source="zuwara"/>{profile.nameAr ? <p className="doctor-profile-name-ar" lang="ar" dir="rtl">{profile.nameAr}</p> : null}<p>{profile.designation ?? profile.classificationTitle ?? "Healthcare consultant"}</p><div className="doctor-profile-metrics">{Number.isFinite(profile.rating) && profile.rating >= 0 ? <span><strong>★ {profile.rating.toFixed(1)}</strong> rating</span> : null}{profile.reviewsCount !== undefined ? <span><strong>{profile.reviewsCount}</strong> reviews</span> : null}{profile.experienceYears > 0 ? <span><strong>{profile.experienceYears}</strong> years experience</span> : null}{profile.happyClients > 0 ? <span><strong>{profile.happyClients}</strong> completed consultations</span> : null}</div></div>
         <aside className="doctor-profile-price"><span>Consultations from</span><strong>{money(profile.startingPrice, profile.currency)}</strong><small>Final price depends on the selected duration.</small><a href="#availability" className="button button-primary">Check availability <Icon name="arrow" size={17}/></a></aside>
       </div>
     </div></section>
 
     <section className="content-section doctor-profile-content"><div className="container doctor-profile-grid">
       <main>
-        {about ? <section className="profile-detail-section"><h2>About the consultant</h2><p>{about}</p>{profile.aboutAr ? <p lang="ar" dir="rtl">{profile.aboutAr}</p> : null}</section> : null}
+        {about || profile.aboutAr ? <section className="profile-detail-section"><h2>About the consultant</h2>{about ? <p style={{whiteSpace:"pre-line"}}>{about}</p> : null}{profile.aboutAr ? <p lang="ar" dir="rtl">{profile.aboutAr}</p> : null}</section> : null}
+        <section className="profile-detail-section"><h2>Consultation options</h2><div className="doctor-result-tags">{profile.consultationTypes.map(type => <span key={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</span>)}{profile.acceptsInstant ? <span>Instant consultations available</span> : null}</div><dl className="profile-facts"><dt>Consultant number</dt><dd>{profile.doctorNumber}</dd>{durations.map(item => <div key={item.minutes}><dt>{item.minutes} minutes</dt><dd>{money(item.price, profile.currency)}</dd></div>)}</dl></section>
+        {profile.serviceLocations?.length ? <section className="profile-detail-section"><h2>Service locations</h2>{profile.serviceLocations.map(location => <div key={location.id}><h3>{location.title}</h3>{location.titleAr ? <p lang="ar" dir="rtl">{location.titleAr}</p> : null}{location.address ? <p style={{whiteSpace:"pre-line"}}>{location.address}</p> : null}{location.addressAr ? <p lang="ar" dir="rtl" style={{whiteSpace:"pre-line"}}>{location.addressAr}</p> : null}</div>)}</section> : null}
         <ProfileList title="Services" items={profile.services}/>
         <ProfileList title="Areas of expertise" items={profile.expertise}/>
         <ProfileList title="Professional experience" items={profile.experience}/>

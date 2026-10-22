@@ -1,79 +1,85 @@
-import { cache } from "react";
-import { getStore, scheduleReply, settleReplies, type StoredConversation } from "./mock"; // TODO (backend): delete this import
+import "server-only";
+import {
+  allAppointments,
+  startsAt,
+  type AppointmentResource,
+} from "@/lib/api/zuwara/appointments";
+import { chatHistory } from "@/lib/api/zuwara/chat";
+import { requireSession } from "@/lib/auth/session";
 import type { ActionResult, Conversation, ConversationDetail } from "./types";
-
-const summarize = (c: StoredConversation): Conversation => {
-  const last = c.messages[c.messages.length - 1];
+function conversation(row: AppointmentResource, locale: string): Conversation {
   return {
-    id: c.id,
-    provider: c.provider,
-    lastMessage: last?.body ?? "",
-    lastFrom: last?.from ?? "them",
-    lastAt: last?.createdAt ?? new Date(0).toISOString(),
-    unreadCount: c.unreadCount,
+    id: String(row.id),
+    provider: {
+      id: row.doctor ? String(row.doctor.id) : "",
+      name:
+        (locale === "ar" ? row.doctor?.name_ar : null) ||
+        row.doctor?.name ||
+        row.appointment_number,
+      specialty: "",
+      avatarUrl: row.doctor?.image_url || undefined,
+    },
+    lastMessage: null,
+    lastFrom: null,
+    lastAt: null,
+    unreadCount: null,
+    appointmentNumber: row.appointment_number,
+    appointmentAt: startsAt(row) || null,
+    appointmentStatus: row.status.key,
   };
-};
-
-export async function getConversations(locale: string): Promise<Conversation[]> {
-  // TODO (backend): replace the body with
-  // const res = await fetch(`${process.env.API_URL}/me/conversations`, {
-  //   headers: { Authorization: `Bearer ${await getToken()}`, "Accept-Language": locale },
-  //   cache: "no-store",
-  // });
-  // if (!res.ok) throw new Error("Failed to load conversations");
-  // return (await res.json()) as Conversation[];   // newest first
-  // (Add ?page= and a "load more" button later if users have hundreds of chats.)
-  void locale;
-  settleReplies();
-  return getStore().conversations
-    .map(summarize)
-    .sort((a, b) => +new Date(b.lastAt) - +new Date(a.lastAt));
 }
-
-// Used by the sidebar badge. cache() = one fetch per request.
-export const getUnreadMessagesCount = cache(async (): Promise<number> => {
-  // TODO (backend): GET `${API_URL}/me/conversations/unread-count`
-  settleReplies();
-  return getStore().conversations.reduce((n, c) => n + c.unreadCount, 0);
-});
-
+export async function getConversations(
+  locale: string,
+): Promise<Conversation[]> {
+  const rows = await allAppointments();
+  return rows
+    .filter((row) => row.status.code !== 7)
+    .sort(
+      (a, b) =>
+        (startsAt(b) || b.created_at).localeCompare(
+          startsAt(a) || a.created_at,
+        ) || b.id - a.id,
+    )
+    .map((row) => conversation(row, locale));
+}
+export async function getUnreadMessagesCount(): Promise<number | null> {
+  await requireSession();
+  return null;
+}
 export async function getConversation(
   id: string,
-  locale: string
+  locale: string,
 ): Promise<ConversationDetail | null> {
-  // TODO (backend): replace the body with
-  // const res = await fetch(`${process.env.API_URL}/conversations/${id}`, {
-  //   headers: { Authorization: `Bearer ${await getToken()}`, "Accept-Language": locale },
-  //   cache: "no-store",
-  // });
-  // if (res.status === 404) return null;            // shows the not-found screen
-  // if (!res.ok) throw new Error("Failed to load conversation");
-  // return (await res.json()) as ConversationDetail; // messages oldest first
-  void locale;
-  settleReplies();
-  const c = getStore().conversations.find((x) => x.id === id);
-  return c ? { ...summarize(c), messages: structuredClone(c.messages) } : null;
+  if (!/^[1-9]\d*$/.test(id)) return null;
+  const row = (await allAppointments()).find(
+    (row) => String(row.id) === id && row.status.code !== 7,
+  );
+  if (!row) return null;
+  const page = await chatHistory(id);
+  return {
+    ...conversation(row, locale),
+    messages: page.messages.map((message) => ({
+      id: message.id,
+      from: message.sender.role === "patient" ? "me" : "them",
+      body: message.deleted ? "Message deleted" : message.text || "",
+      createdAt: message.created_at || "",
+    })),
+    nextCursor: page.nextCursor,
+    canSend: page.canSend,
+  };
 }
-
-export async function sendMessage(id: string, body: string): Promise<ActionResult> {
-  // TODO (backend): POST `${API_URL}/conversations/${id}/messages` { body }
-  // 404 -> { ok:false, error:"not_found" }
-  const c = getStore().conversations.find((x) => x.id === id);
-  if (!c) return { ok: false, error: "not_found" };
-  c.messages.push({
-    id: `m_${Date.now()}`,
-    from: "me",
-    body: body.trim(),
-    createdAt: new Date().toISOString(),
-  });
-  scheduleReply(id); // mock only
-  return { ok: true };
+// Text delivery is available only through the appointment chat actions with a stable retry key.
+export async function sendMessage(
+  id: string,
+  body: string,
+): Promise<ActionResult> {
+  void id;
+  void body;
+  await requireSession();
+  return { ok: false, error: "generic" };
 }
-
 export async function markConversationRead(id: string): Promise<ActionResult> {
-  // TODO (backend): POST `${API_URL}/conversations/${id}/read`
-  const c = getStore().conversations.find((x) => x.id === id);
-  if (!c) return { ok: false, error: "not_found" };
-  c.unreadCount = 0;
-  return { ok: true };
+  void id;
+  await requireSession();
+  return { ok: false, error: "generic" };
 }

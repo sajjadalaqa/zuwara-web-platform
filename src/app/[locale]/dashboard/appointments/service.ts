@@ -63,6 +63,6 @@ export const getAppointment = cache(async (id: string, locale: string): Promise<
     }
     return { ...view(row, locale), videoUnavailable, createdAt: row.created_at, notes: row.problem ?? undefined, cancellable: cancellation.eligible,
       meetingUrl: canJoin ? (locale === "ar" ? "/ar" : "") + "/dashboard/appointments/" + id + "/video" : undefined,
-      timeline, payment: { method: "—", subtotal: subtotal / 100, fee: decimalHalalas(row.amount.tax) / 100, total: halalas(row.amount.payable_halalas) / 100 } };
+      timeline, payment: { method: "—", subtotal: decimalHalalas(row.amount.subtotal) / 100, discount: decimalHalalas(row.amount.discount) / 100, fee: decimalHalalas(row.amount.tax) / 100, total: halalas(row.amount.payable_halalas) / 100 } };
   } catch (error) { if (error instanceof ZuwaraV2Error && error.status === 404) return null; throw error; }
 });

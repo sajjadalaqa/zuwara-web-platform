@@ -22,7 +22,7 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: clamp(14px, 1.8vw, 28px);
+  gap: clamp(12px, 1.2vw, 22px);
   margin-left: auto;                          /* pushes the links to the right */
   margin-right: clamp(8px, 2vw, 28px);        /* space before the language pill and button */
 }
@@ -317,4 +317,11 @@
     margin-top: 8px;
     font-size: 15px;
   }
+}
+/* Fit the additional healthcare link before the mobile-menu breakpoint. */
+@media (min-width: 1101px) and (max-width: 1240px) {
+ .nav { gap: 12px; margin-right: 8px; }
+ .nav > a { font-size: 12px; }
+ .wrap { gap: 12px; }
+ .cta { padding-inline: 14px; }
 }

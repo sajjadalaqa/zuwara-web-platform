@@ -1,8 +1,8 @@
 ﻿"use server";
 import { attendance, videoSession, videoStatus } from "@/lib/api/zuwara/video";
 import { ZuwaraV2Error } from "@/lib/api/zuwara/v2";
-export async function startVideoAction(id: string) {
-  try { return { ok: true as const, session: await videoSession(id) }; }
+export async function startVideoAction(id: string, followUpId?: string) {
+  try { return { ok: true as const, session: await videoSession(id, followUpId) }; }
   catch (error) { if (error instanceof ZuwaraV2Error) return { ok: false as const }; throw error; }
 }
 export async function attendanceAction(meetingId: string, token: string, type: string, eventId: string) {
@@ -10,8 +10,8 @@ export async function attendanceAction(meetingId: string, token: string, type: s
   catch (error) { if (error instanceof ZuwaraV2Error) return { ok: false }; throw error; }
 }
 
-export async function videoEligibilityAction(id: string) {
-  try { return { ok: true as const, canJoin: (await videoStatus(id)).can_join }; }
+export async function videoEligibilityAction(id: string, followUpId?: string) {
+  try { return { ok: true as const, canJoin: (await videoStatus(id, followUpId)).can_join }; }
   catch(error) { if(error instanceof ZuwaraV2Error)return{ok:false as const};throw error; }
 }
 

@@ -46,6 +46,7 @@ export type AppointmentDetail = Appointment & {
   payment: {
     method: string;
     subtotal: number;
+    discount?: number;
     fee: number;
     total: number;
     paidAt?: string;

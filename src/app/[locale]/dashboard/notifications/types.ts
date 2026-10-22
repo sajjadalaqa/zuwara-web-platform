@@ -21,6 +21,7 @@ export type NotificationsResult = {
   pageSize: number;
   counts: Record<NotificationFilter, number>;
   readAllThrough: number;
+  displayedIds?: string[];
 };
 
 export type ActionResult = { ok: true } | { ok: false; error: string };

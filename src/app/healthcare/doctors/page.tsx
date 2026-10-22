@@ -45,7 +45,7 @@ export default async function DoctorsPage({ searchParams }: { searchParams: Sear
   const selectedCategory = result.categories.find((item) => item.id === categoryId);
 
   return <>
-    <section className="healthcare-list-hero"><div className="container"><Breadcrumbs items={[{label:"Home",href:"/"},{label:"Healthcare",href:"/healthcare"},{label:"Consultants"}]}/><div><span className="eyebrow">Healthcare consultants</span><h1>{selectedCategory ? `${selectedCategory.title} consultants` : "Find the right consultant."}</h1><p>Compare real profiles, enabled consultation durations, and date-based schedule states returned by Zuwara.</p></div></div></section>
+    <section className="healthcare-list-hero"><div className="container"><Breadcrumbs items={[{label:"Home",href:"/"},{label:"Healthcare",href:"/healthcare"},{label:"Consultants"}]}/><div><span className="eyebrow">Healthcare consultants</span><h1>{selectedCategory ? `${selectedCategory.title} consultants` : "Find the right consultant."}</h1><p>Find your specialist, explore consultation options and choose a time that fits your day.</p></div></div></section>
     <section className="content-section doctor-directory"><div className="container doctor-directory-grid">
       <aside><HealthcareFilters categories={result.categories} values={values}/></aside>
       <div className="doctor-results">

@@ -11,7 +11,8 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
   const [time, setTime] = useState(""), [patient, setPatient] = useState<number | null>(null), [problem, setProblem] = useState("");
   const [method, setMethod] = useState<BookingInput["payment_method"]>("wallet"), [type, setType] = useState(doctor.consultation_types[0] ?? "online");
   const [slots, setSlots] = useState<string[]>([]), [busy, setBusy] = useState(false), [error, setError] = useState("");
-  const [quote, setQuote] = useState<{ token: string; payableHalalas: number; currency: string } | null>(null);
+  const [couponCode,setCouponCode]=useState("");
+  const [quote, setQuote] = useState<{ token: string; payableHalalas: number; currency: string; breakdown?: { service:number;discount:number;subtotal:number;tax:number } } | null>(null);
   const [uncertain, setUncertain] = useState(false), request = useRef(0);
   useEffect(() => {
     let active = true; const sequence = ++request.current;
@@ -23,7 +24,7 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
   async function preview(e: React.FormEvent) {
     e.preventDefault(); if (busy || !time) return; setBusy(true); setError("");
     try {
-      const result = await previewAction({ doctor_id: doctor.id, patient_id: patient, date, time, duration_minutes: duration, consultation_type: type, problem, payment_method: method });
+      const result = await previewAction({ doctor_id: doctor.id, patient_id: patient, date, time, duration_minutes: duration, consultation_type: type, problem, payment_method: method, ...(couponCode.trim()?{coupon_code:couponCode.trim()}:{}) });
       if (!result.ok) throw new Error(); setQuote(result.quote);
     } catch { setError(ar ? "تعذر حساب السعر. تحقق من اختياراتك وحاول مجدداً." : "Unable to preview this booking. Check your selection and try again."); }
     finally { setBusy(false); }
@@ -55,12 +56,13 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
         <label>{ar ? "نوع الاستشارة" : "Consultation type"}<select disabled={busy || uncertain} value={type} onChange={e=>{setType(e.target.value);setQuote(null);}}>{doctor.consultation_types.map(t=><option key={t} value={t}>{t === "online" ? ar ? "مرئية" : "Video consultation" : ar ? "حضورية" : "In person"}</option>)}</select></label>
         <label>{ar ? "ملاحظاتك" : "Your notes"}<textarea required maxLength={4000} value={problem} disabled={busy || uncertain} onChange={e=>{setProblem(e.target.value);setQuote(null);}} /></label>
         <label>{ar ? "طريقة الدفع" : "Payment method"}<select disabled={busy || uncertain} value={method} onChange={e=>{setMethod(e.target.value as BookingInput["payment_method"]);setQuote(null);}}><option value="wallet">{ar ? "المحفظة" : "Wallet"}</option><option value="myfatoorah">MyFatoorah</option><option value="tamara">Tamara</option></select></label>
+        <label>Coupon code (optional)<input maxLength={100} value={couponCode} disabled={busy || uncertain} onChange={e=>{setCouponCode(e.target.value);setQuote(null);}}/></label>
         <button className={s.primary} disabled={busy || !time || uncertain}>{ar ? "مراجعة السعر" : "Review price"}</button>
       </form>
       {error && <p className={s.fail} role="alert">{error}</p>}
     </section><aside className={s.summary}>
       <h2>{ar ? "ملخص الحجز" : "Booking summary"}</h2><p>{doctor.name}</p><p>{date} {time ? time.slice(0,2)+":"+time.slice(2) : ""}</p>
-      {quote && <><strong>{new Intl.NumberFormat(ar ? "ar-SA" : "en-GB", { style: "currency", currency: quote.currency }).format(quote.payableHalalas / 100)}</strong>
+      {quote && <>{quote.breakdown?<div><p>Service: {(quote.breakdown.service/100).toFixed(2)} {quote.currency}</p><p>Discount: {(quote.breakdown.discount/100).toFixed(2)} {quote.currency}</p><p>Subtotal: {(quote.breakdown.subtotal/100).toFixed(2)} {quote.currency}</p><p>Tax: {(quote.breakdown.tax/100).toFixed(2)} {quote.currency}</p></div>:null}<strong>{new Intl.NumberFormat(ar ? "ar-SA" : "en-GB", { style: "currency", currency: quote.currency }).format(quote.payableHalalas / 100)}</strong>
         <p>{ar ? "اختيار الوقت لا يحجزه حتى يؤكد الخادم الحجز." : "The selected time is not reserved until the server confirms the booking."}</p>
         <button className={s.primary} disabled={busy} onClick={confirm}>{busy ? ar ? "جارٍ المعالجة" : "Please wait" : uncertain ? ar ? "إعادة المحاولة" : "Retry this booking" : ar ? "تأكيد الحجز والدفع" : "Confirm booking and payment"}</button></>}
     </aside></div>

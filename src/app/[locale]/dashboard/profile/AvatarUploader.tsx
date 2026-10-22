@@ -8,21 +8,27 @@ import { ALLOWED_AVATAR_TYPES, MAX_AVATAR_BYTES } from "./validation";
 import s from "./profile.module.css";
 
 export default function AvatarUploader({
-  name, avatarUrl, t,
+  name,
+  avatarUrl,
+  t,
+  readOnly = false,
 }: {
   name: string;
   avatarUrl?: string;
   t: Copy;
+  readOnly?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, start] = useTransition();
   const [error, setError] = useState("");
+  const [failedImage, setFailedImage] = useState<string | null>(null);
 
   const onPick = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
-    if (!ALLOWED_AVATAR_TYPES.includes(file.type)) return setError(t.errors.bad_type);
+    if (!ALLOWED_AVATAR_TYPES.includes(file.type))
+      return setError(t.errors.bad_type);
     if (file.size > MAX_AVATAR_BYTES) return setError(t.errors.too_large);
 
     setError("");
@@ -46,9 +52,13 @@ export default function AvatarUploader({
     <div className={s.avatarCol}>
       <div className={s.avatarWrap}>
         <div className={s.avatarCircle}>
-          {avatarUrl ? (
+          {avatarUrl && failedImage !== avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={avatarUrl} alt={name} />
+            <img
+              src={avatarUrl}
+              alt={name}
+              onError={() => setFailedImage(avatarUrl || null)}
+            />
           ) : (
             name.trim().charAt(0).toUpperCase()
           )}
@@ -58,7 +68,7 @@ export default function AvatarUploader({
           type="button"
           className={s.camBtn}
           onClick={() => inputRef.current?.click()}
-          disabled={busy}
+          disabled={busy || readOnly}
           aria-label={t.avatar.change}
         >
           <Camera size={14} />
@@ -66,6 +76,7 @@ export default function AvatarUploader({
         <input
           ref={inputRef}
           type="file"
+          disabled={readOnly}
           accept="image/jpeg,image/png,image/webp"
           hidden
           onChange={onPick}
@@ -73,11 +84,20 @@ export default function AvatarUploader({
       </div>
 
       {avatarUrl && (
-        <button type="button" className={s.removeBtn} onClick={onRemove} disabled={busy}>
+        <button
+          type="button"
+          className={s.removeBtn}
+          onClick={onRemove}
+          disabled={busy || readOnly}
+        >
           {t.avatar.remove}
         </button>
       )}
-      {error && <p className={s.avatarError} role="alert">{error}</p>}
+      {error && (
+        <p className={s.avatarError} role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

@@ -1,8 +1,14 @@
 "use server";
+import { requireSession } from "@/lib/auth/session";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { changePassword, deleteAccount, setAvatar, updateProfile } from "./service";
+import {
+  changePassword,
+  deleteAccount,
+  setAvatar,
+  updateProfile,
+} from "./service";
 import { initialFormState } from "./types";
 import type { FormState, ServiceResult } from "./types";
 import {
@@ -12,16 +18,22 @@ import {
   validateProfile,
 } from "./validation";
 
-// TODO (backend): every action below must check the session on the server first.
-
 const str = (fd: FormData, key: string) => String(fd.get(key) ?? "");
 
 const failure = (
   r: Extract<ServiceResult, { ok: false }>,
-  values?: Record<string, string>
-): FormState => ({ ok: false, errors: { [r.field ?? "_form"]: r.code }, values });
+  values?: Record<string, string>,
+): FormState => ({
+  ok: false,
+  errors: { [r.field ?? "_form"]: r.code },
+  values,
+});
 
-export async function updateProfileAction(_prev: FormState, fd: FormData): Promise<FormState> {
+export async function updateProfileAction(
+  _prev: FormState,
+  fd: FormData,
+): Promise<FormState> {
+  await requireSession();
   const values = {
     fullName: str(fd, "fullName").trim(),
     phone: str(fd, "phone").trim(),
@@ -40,7 +52,11 @@ export async function updateProfileAction(_prev: FormState, fd: FormData): Promi
   return { ok: true, values };
 }
 
-export async function changePasswordAction(_prev: FormState, fd: FormData): Promise<FormState> {
+export async function changePasswordAction(
+  _prev: FormState,
+  fd: FormData,
+): Promise<FormState> {
+  await requireSession();
   const current = str(fd, "current");
   const next = str(fd, "next");
   const confirm = str(fd, "confirm");
@@ -54,12 +70,15 @@ export async function changePasswordAction(_prev: FormState, fd: FormData): Prom
 }
 
 export async function uploadAvatarAction(fd: FormData): Promise<FormState> {
+  await requireSession();
   const file = fd.get("avatar");
   if (!(file instanceof File) || file.size === 0) {
     return { ok: false, errors: { avatar: "generic" } };
   }
-  if (!ALLOWED_AVATAR_TYPES.includes(file.type)) return { ok: false, errors: { avatar: "bad_type" } };
-  if (file.size > MAX_AVATAR_BYTES) return { ok: false, errors: { avatar: "too_large" } };
+  if (!ALLOWED_AVATAR_TYPES.includes(file.type))
+    return { ok: false, errors: { avatar: "bad_type" } };
+  if (file.size > MAX_AVATAR_BYTES)
+    return { ok: false, errors: { avatar: "too_large" } };
 
   const res = await setAvatar(file);
   if (!res.ok) return { ok: false, errors: { avatar: res.code } };
@@ -69,13 +88,18 @@ export async function uploadAvatarAction(fd: FormData): Promise<FormState> {
 }
 
 export async function removeAvatarAction(): Promise<FormState> {
+  await requireSession();
   const res = await setAvatar(null);
   if (!res.ok) return { ok: false, errors: { avatar: res.code } };
   revalidatePath("/", "layout");
   return { ok: true };
 }
 
-export async function deleteAccountAction(_prev: FormState, fd: FormData): Promise<FormState> {
+export async function deleteAccountAction(
+  _prev: FormState,
+  fd: FormData,
+): Promise<FormState> {
+  await requireSession();
   const password = str(fd, "password");
   const locale = str(fd, "locale");
   if (!password) return { ok: false, errors: { password: "required" } };

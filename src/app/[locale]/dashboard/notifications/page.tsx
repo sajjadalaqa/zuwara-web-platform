@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BellOff, CheckCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import ReadToggle from "./ReadToggle";
 import MarkAllButton from "./MarkAllButton";
 import NotificationItem from "./NotificationItem";
 import { copy } from "./copy";
@@ -10,7 +11,7 @@ import s from "./notifications.module.css";
 const TZ = "Asia/Riyadh";
 const ORDER: NotificationFilter[] = ["all", "unread"];
 
-type SearchParams = { filter?: string; page?: string };
+type SearchParams = { filter?: string; page?: string; source?: string };
 
 export default async function NotificationsPage({
   params,
@@ -28,15 +29,17 @@ export default async function NotificationsPage({
   const nf = new Intl.NumberFormat(isAr ? "ar-SA" : "en-US");
 
   const filter: NotificationFilter = sp.filter === "unread" ? "unread" : "all";
+  const source = sp.source === "d4h" ? "d4h" : "zuwara";
   const requestedPage = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
 
-  const data = await getNotifications({ filter, page: requestedPage }, locale);
+  const data = await getNotifications({ filter, page: requestedPage }, locale, source);
   const pages = Math.max(1, Math.ceil(data.total / data.pageSize));
   const hasPrev = data.page > 1;
   const hasNext = data.page < pages;
 
   const href = (opts: { filter?: NotificationFilter; page?: number }) => {
     const u = new URLSearchParams();
+    if (source === "d4h") u.set("source","d4h");
     const f = opts.filter ?? filter;
     if (f !== "all") u.set("filter", f);
     if (opts.page && opts.page > 1) u.set("page", String(opts.page));
@@ -52,6 +55,7 @@ export default async function NotificationsPage({
   const yesterdayKey = dayKey(new Date(new Date().getTime() - 24 * 3600 * 1000));
 
   const ago = (iso: string) => {
+    if (!Number.isFinite(Date.parse(iso))) return "?";
     const min = Math.floor((new Date().getTime() - new Date(iso).getTime()) / 60000);
     if (min < 1) return t.justNow;
     if (min < 60) return rtf.format(-min, "minute");
@@ -64,7 +68,7 @@ export default async function NotificationsPage({
 
   const groups: { label: string; items: AppNotification[] }[] = [];
   for (const n of data.items) {
-    const key = dayKey(new Date(n.createdAt));
+    const key = Number.isFinite(Date.parse(n.createdAt)) ? dayKey(new Date(n.createdAt)) : "unknown";
     const label =
       key === todayKey ? t.groups.today : key === yesterdayKey ? t.groups.yesterday : t.groups.earlier;
     const last = groups[groups.length - 1];
@@ -81,9 +85,10 @@ export default async function NotificationsPage({
           <h2>{t.title}</h2>
           <p>{t.subtitle}</p>
         </div>
-        <MarkAllButton through={data.readAllThrough} label={t.markAll} disabled={data.counts.unread === 0} />
+        <MarkAllButton through={data.readAllThrough} label={source === "d4h" ? "Mark displayed read" : t.markAll} displayedIds={data.displayedIds} disabled={source === "d4h" ? !data.items.some(item=>!item.read) : data.counts.unread === 0} />
       </header>
 
+      <nav className={s.tabs} aria-label="Notification source"><Link className={s.tab} href={prefix+"/dashboard/notifications"}>Zuwara</Link><Link className={s.tab} href={prefix+"/dashboard/notifications?source=d4h"}>Home visits (D4H)</Link></nav>
       <nav className={s.tabs} aria-label="Filter">
         {ORDER.map((f) => (
           <Link
@@ -123,6 +128,7 @@ export default async function NotificationsPage({
                       read={n.read}
                       href={n.href ? `${prefix}${n.href}` : undefined}
                     />
+                    <ReadToggle id={n.id} read={n.read}/>
                   </li>
                 ))}
               </ul>

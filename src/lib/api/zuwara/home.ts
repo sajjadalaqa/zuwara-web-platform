@@ -4,7 +4,7 @@ import type { ZuwaraHomeData } from "./types";
 import { ZuwaraV2Error } from "./v2";
 export async function getZuwaraHomeData(): Promise<ZuwaraHomeData> {
   try {
-    const [categories, doctors] = await Promise.all([consultantCategories(), discovery<V2Doctor[]>("/consultants?per_page=6")]);
+    const [categories, doctors] = await Promise.all([consultantCategories().catch(() => []), discovery<V2Doctor[]>("/consultants?per_page=6")]);
     if (!Array.isArray(doctors.data)) throw new Error("Invalid consultant list.");
     return { categories, doctors: doctors.data.map(doctorView), available: true };
   } catch (error) {

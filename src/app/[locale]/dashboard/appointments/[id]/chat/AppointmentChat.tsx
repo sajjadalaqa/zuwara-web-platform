@@ -4,7 +4,7 @@ import { useLocale } from "next-intl";
 import type { ChatPage, ChatMessage } from "@/lib/api/zuwara/chat";
 import { chatHistoryAction, sendChatAction } from "./actions";
 import s from "./chat.module.css";
-export default function AppointmentChat({ id, initial }: { id: string; initial: ChatPage }) {
+export default function AppointmentChat({ id, initial, followUpId }: { id: string; initial: ChatPage; followUpId?: string }) {
   const ar = useLocale() === "ar";
   const [messages, setMessages] = useState(initial.messages), [cursor, setCursor] = useState(initial.nextCursor);
   const [canSend, setCanSend] = useState(initial.canSend), [text, setText] = useState(""), [busy, setBusy] = useState(false), [error, setError] = useState("");
@@ -17,16 +17,16 @@ export default function AppointmentChat({ id, initial }: { id: string; initial: 
     const timer = setInterval(async () => {
       if (document.visibilityState !== "visible" || loading.current || sending.current) return;
       loading.current = true;
-      try { const result = await chatHistoryAction(id); if (result.ok && active.current) { merge(result.page.messages); setCanSend(result.page.canSend); } }
+      try { const result = await chatHistoryAction(id, undefined, followUpId); if (result.ok && active.current) { merge(result.page.messages); setCanSend(result.page.canSend); } }
       catch { /* Keep the last visible history; explicit reload is available. */ }
       finally { loading.current = false; }
     }, 15000);
     return () => { active.current = false; clearInterval(timer); };
-  }, [id]);
+  }, [id, followUpId]);
   async function loadMore() {
     if (!cursor || loading.current) return;
     loading.current = true; setBusy(true); setError("");
-    try { const result = await chatHistoryAction(id, cursor); if (!result.ok) throw new Error(); merge(result.page.messages); setCursor(result.page.nextCursor); }
+    try { const result = await chatHistoryAction(id, cursor, followUpId); if (!result.ok) throw new Error(); merge(result.page.messages); setCursor(result.page.nextCursor); }
     catch { setError(ar ? "تعذر تحميل الرسائل." : "Unable to load messages."); }
     finally { loading.current = false; setBusy(false); }
   }
@@ -35,7 +35,7 @@ export default function AppointmentChat({ id, initial }: { id: string; initial: 
     const command = intent.current ??= { text, key: crypto.randomUUID() };
     sending.current = true; setBusy(true); setError("");
     try {
-      const result = await sendChatAction(id, command.text, command.key);
+      const result = await sendChatAction(id, command.text, command.key, followUpId);
       if (!result.ok) { if (!result.uncertain) intent.current = null; throw new Error(); }
       merge([result.message]); intent.current = null; setRetry(false); setText("");
     } catch { setRetry(Boolean(intent.current)); setError(ar ? "لم يتم تأكيد الإرسال. أعد المحاولة دون تغيير الرسالة." : "Delivery was not confirmed. Retry the same message."); }

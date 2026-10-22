@@ -3,10 +3,10 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCheck } from "lucide-react";
-import { markAllReadAction } from "./actions";
+import { markDisplayedReadAction, markAllReadAction } from "./actions";
 import s from "./notifications.module.css";
 
-export default function MarkAllButton({ label, disabled, through }: { label: string; disabled: boolean; through: number }) {
+export default function MarkAllButton({ label, disabled, through, displayedIds }: { label: string; disabled: boolean; through: number; displayedIds?: string[] }) {
   const router = useRouter();
   const [pending, start] = useTransition();
 
@@ -17,7 +17,7 @@ export default function MarkAllButton({ label, disabled, through }: { label: str
       disabled={disabled || pending}
       onClick={() =>
         start(async () => {
-          const res = await markAllReadAction(through);
+          const res = displayedIds ? await markDisplayedReadAction(displayedIds) : await markAllReadAction(through);
           if (res.ok) router.refresh();
         })
       }

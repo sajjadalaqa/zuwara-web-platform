@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
-import { PageHero } from "@/components/PageHero";
 import { SafeImage } from "@/components/SafeImage";
 import { getZuwaraHomeData } from "@/lib/api/zuwara/home";
 import { doctorSlug, specialtySlug } from "@/lib/api/zuwara/slugs";
@@ -15,7 +14,7 @@ export const metadata: Metadata = {
 export default async function HealthcarePage() {
   const data = await getZuwaraHomeData();
   return <>
-    <PageHero eyebrow="Zuwara Healthcare" title="Care choices, made clearer." description="Explore specialties and real consultant profiles from the Zuwara healthcare system. Booking remains connected to existing availability and payment logic." action={false}/>
+    <section className="page-hero"><div className="container page-hero-grid"><div><span className="eyebrow">Zuwara Healthcare</span><h1>Care that starts with you.</h1></div><div className="page-hero-copy"><p>Find a consultant who understands your needs. Explore specialties, compare profiles and choose a time that works for you.</p><div className="hero-actions"><Link href="/healthcare/doctors" className="button button-primary">Find a consultant <Icon name="arrow" size={18}/></Link><Link href="/healthcare/specialties" className="button button-secondary">Explore specialties</Link></div></div></div></section>
     <section className="content-section"><div className="container gateway-layout">
       <aside className="gateway-aside"><span className="eyebrow">Healthcare journeys</span><h2>Choose how you want to begin.</h2><nav><Link href="/healthcare/doctors">Consultants</Link><Link href="/healthcare/specialties">Specialties</Link><Link href="/services/therapy-sessions">Therapy</Link><Link href="/services/instant-consultations">Instant consultation</Link></nav></aside>
       <div>

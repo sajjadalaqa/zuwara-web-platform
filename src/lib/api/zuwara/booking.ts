@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { patientApi, requireSession } from "@/lib/auth/session";
 import { seal, unseal } from "@/lib/auth/seal";
 import { halalas } from "@/lib/api/pagination";
-export type BookingInput = { doctor_id: number; patient_id: number | null; date: string; time: string; duration_minutes: number; consultation_type: string; problem: string; payment_method: "wallet" | "myfatoorah" | "tamara" };
+export type BookingInput = { doctor_id: number; patient_id: number | null; date: string; time: string; duration_minutes: number; consultation_type: string; problem: string; payment_method: "wallet" | "myfatoorah" | "tamara"; coupon_id?: number; coupon_code?: string };
 export type BookingDoctor = { id: number; name: string; name_ar: string | null; consultation_types: string[]; duration_options: { minutes: number; price_halalas: number }[] };
 export async function bookingDoctor(id: string) {
   if (!/^[1-9]\d*$/.test(id)) throw new Error("Invalid consultant.");
@@ -16,20 +16,29 @@ function validate(input: BookingInput) {
       !Number.isSafeInteger(input.duration_minutes) || input.duration_minutes < 1 || input.duration_minutes > 480 ||
       !/^[a-z_]{1,30}$/.test(input.consultation_type) || typeof input.problem !== "string" || input.problem.length > 4000 ||
       !["wallet", "myfatoorah", "tamara"].includes(input.payment_method)) throw new Error("Invalid booking selection.");
+  if ((input.coupon_id !== undefined || input.coupon_code) && (!Number.isSafeInteger(input.coupon_id) || Number(input.coupon_id)<1 || typeof input.coupon_code!=="string" || !input.coupon_code.trim() || input.coupon_code.length>100)) throw new Error("Invalid coupon.");
   return { doctor_id: input.doctor_id, patient_id: input.patient_id, date: input.date, time: input.time,
-    duration_minutes: input.duration_minutes, consultation_type: input.consultation_type, problem: input.problem.trim(), payment_method: input.payment_method };
+    duration_minutes: input.duration_minutes, consultation_type: input.consultation_type, problem: input.problem.trim(), payment_method: input.payment_method, ...(input.coupon_id ? {coupon_id:input.coupon_id,coupon_code:input.coupon_code!.trim()} : {}) };
 }
 function secret() { const key = process.env.NEXT_SERVER_SESSION_SECRET; if (!key || key.length < 32) throw new Error("Missing session secret."); return key; }
 type Quote = { identity: string; input: BookingInput; key: string; expires: number; payable: number };
 export async function previewBooking(input: BookingInput) {
   const { user } = await requireSession();
-  const clean = validate(input);
-  const { data } = await patientApi<{ pricing: { payable: { halalas: number }; currency: string }; can_create: boolean; slot_reserved: boolean }>("/appointments/preview", { method: "POST", body: clean });
+  let resolved = input;
+  if (input.coupon_code && !input.coupon_id) {
+    const code=input.coupon_code.trim();if(code.length>100)throw new Error("Invalid coupon.");
+    const {data:coupons}=await patientApi<{id:number;code:string}[]>("/coupons?"+new URLSearchParams({code}));
+    const coupon=coupons.find(row=>row.code.toLocaleLowerCase()===code.toLocaleLowerCase());
+    if(!coupon)throw new Error("Coupon unavailable.");
+    resolved={...input,coupon_id:coupon.id,coupon_code:coupon.code};
+  }
+  const clean = validate(resolved);
+  const { data } = await patientApi<{ pricing: { service?: {halalas:number}; discount?: {halalas:number}; subtotal?: {halalas:number}; tax?: {halalas:number}; payable: { halalas: number }; currency: string }; can_create: boolean; slot_reserved: boolean }>("/appointments/preview", { method: "POST", body: clean });
   if (data.can_create !== true || data.slot_reserved !== false) throw new Error("Booking cannot be created.");
   const payable = halalas(data.pricing?.payable?.halalas);
   if (data.pricing.currency !== "SAR") throw new Error("Invalid quote currency.");
   const quote: Quote = { identity: user.id, input: clean, key: randomUUID(), expires: Date.now() + 30 * 60_000, payable };
-  return { token: seal(quote, secret(), "zuwara_booking"), payableHalalas: payable, currency: "SAR" };
+  return { token: seal(quote, secret(), "zuwara_booking"), payableHalalas: payable, currency: "SAR", breakdown: data.pricing.service && data.pricing.discount && data.pricing.subtotal && data.pricing.tax ? {service:halalas(data.pricing.service.halalas),discount:halalas(data.pricing.discount.halalas),subtotal:halalas(data.pricing.subtotal.halalas),tax:halalas(data.pricing.tax.halalas)} : undefined };
 }
 export async function createBooking(token: string) {
   const { user } = await requireSession();

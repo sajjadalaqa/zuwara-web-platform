@@ -11,6 +11,7 @@ const links = [
   ["home", "/"],
   ["services", "/home-services"],
   ["categories", "/categories"],
+  ["consultants", "/healthcare"],
   ["blogs", "/blog"],
   ["provider", "/provider"],
   ["contact", "/contact"],

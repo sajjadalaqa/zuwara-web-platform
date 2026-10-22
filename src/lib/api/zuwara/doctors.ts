@@ -16,7 +16,7 @@ export async function searchZuwaraDoctors(options: DoctorSearchOptions = {}): Pr
   const sort: Record<number, string> = { 1: "price_low", 2: "price_high", 3: "rating" };
   if (options.sortType && sort[options.sortType]) query.set("sort", sort[options.sortType]);
   try {
-    const [rows, categories] = await Promise.all([consultantDirectory(query), consultantCategories()]);
+    const [rows, categories] = await Promise.all([consultantDirectory(query), consultantCategories().catch(() => [])]);
     const date = options.date || (options.availableToday ? riyadhToday() : null);
     const scheduled = Boolean(date || options.durationMinutes);
     const doctors = [];
@@ -27,7 +27,9 @@ export async function searchZuwaraDoctors(options: DoctorSearchOptions = {}): Pr
         if (!scheduled) return doctor;
         const duration = options.durationMinutes ?? row.duration_options[0]?.minutes;
         if (!duration || !row.duration_options.some(d=>d.minutes === duration)) return null;
-        const { data } = await calendar(row.id, date ?? riyadhToday(), duration);
+        let data;
+        try { data = (await calendar(row.id, date ?? riyadhToday(), duration)).data; }
+        catch { return { ...doctor, scheduleStatus: "unavailable", scheduleMessage: "Availability could not be loaded. Please retry." }; }
         const day = data.dates[0];
         if (options.availableToday && !day?.is_available) return null;
         return { ...doctor, slots: slots(day?.slots ?? []), scheduleStatus: day?.status ?? "closed", scheduleMessage: null };
@@ -45,12 +47,13 @@ export async function getZuwaraDoctorProfile(id: number, date = riyadhToday(), d
   try {
     const { data: row } = await discovery<V2Doctor>("/consultants/" + id);
     const doctor = doctorView(row), selected = duration ?? row.duration_options[0]?.minutes ?? null;
-    const available = selected && row.duration_options.some(d=>d.minutes === selected) ? (await calendar(id, date, selected)).data : null;
+    let scheduleFailed = false;
+    const available = selected && row.duration_options.some(d=>d.minutes === selected) ? await calendar(id, date, selected).then(result => result.data).catch(() => { scheduleFailed = true; return null; }) : null;
     const day = available?.dates[0];
     const items = (rows: NonNullable<V2Doctor["services"]>) => rows.map(i=>({ id: i.id, title: i.title, titleAr: i.title_ar }));
-    return { ...doctor, about: row.about?.en ?? null, aboutAr: row.about?.ar ?? null, degrees: null, degreeAr: null,
+    return { ...doctor, serviceLocations: (row.service_locations ?? []).map(location => ({ id: location.id, title: location.title, titleAr: location.title_ar, address: location.address, addressAr: location.address_ar })), about: row.biography ?? row.about?.en ?? null, aboutAr: row.about?.ar ?? null, degrees: null, degreeAr: null,
       languagesSpoken: null, educationalJourney: null, educationalJourneyAr: null, selectedDate: date, selectedDurationMinutes: selected,
       scheduleAvailable: day?.is_available ?? false, services: items(row.services ?? []), experience: [], expertise: items(row.expertise ?? []), awards: [],
-      slots: slots(day?.slots ?? []), scheduleStatus: day?.status ?? "closed", scheduleMessage: null, durationAvailability: [] };
+      slots: slots(day?.slots ?? []), scheduleStatus: scheduleFailed ? "unavailable" : day?.status ?? "closed", scheduleMessage: scheduleFailed ? "Availability could not be loaded. Please retry." : null, durationAvailability: [] };
   } catch (error) { if (error instanceof ZuwaraV2Error && error.status === 404) return null; throw error; }
 }

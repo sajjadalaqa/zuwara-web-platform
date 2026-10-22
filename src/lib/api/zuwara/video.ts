@@ -1,18 +1,19 @@
 ﻿import "server-only";
+import { uuid } from "./care";
 import { patientApi } from "@/lib/auth/session";
 export type VideoSession = {
-  meeting_id: string; appointment_id: number; channel_name: string; agora_uid: number;
+  meeting_id: string; appointment_id: number; follow_up_id?: string | null; channel_name: string; agora_uid: number;
   token: string; app_id: string; expires_at: string; attendance_token: string;
   context_ends_at: string | null;
 };
-export async function videoStatus(id: string) {
+export async function videoStatus(id: string, followUpId?: string) {
   if (!/^[1-9]\d*$/.test(id)) throw new Error("Invalid appointment.");
-  return (await patientApi<{ can_join: boolean; context_ends_at: string | null }>("/appointments/" + id + "/video")).data;
+  return (await patientApi<{ can_join: boolean; context_ends_at: string | null }>("/appointments/" + id + "/video" + (followUpId ? "?follow_up_id="+uuid(followUpId) : ""))).data;
 }
-export async function videoSession(id: string): Promise<VideoSession> {
+export async function videoSession(id: string, followUpId?: string): Promise<VideoSession> {
   if (!/^[1-9]\d*$/.test(id)) throw new Error("Invalid appointment.");
-  const { data } = await patientApi<VideoSession>("/appointments/" + id + "/video/session", { method: "POST", body: {} });
-  if (data.appointment_id !== Number(id) || !data.meeting_id || !data.channel_name || !Number.isSafeInteger(data.agora_uid) ||
+  const { data } = await patientApi<VideoSession>("/appointments/" + id + "/video/session", { method: "POST", body: followUpId ? { follow_up_id: uuid(followUpId) } : {} });
+  if ((followUpId && data.follow_up_id?.toLowerCase() !== uuid(followUpId)) || data.appointment_id !== Number(id) || !data.meeting_id || !data.channel_name || !Number.isSafeInteger(data.agora_uid) ||
       !data.token || !data.app_id || !data.attendance_token || !(Date.parse(data.expires_at) > Date.now())) throw new Error("Invalid video session.");
   return data;
 }
