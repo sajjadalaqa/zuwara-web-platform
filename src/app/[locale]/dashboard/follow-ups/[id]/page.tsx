@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
 import { followUpDetails } from "@/lib/api/zuwara/care";
-import { CareLayout, Facts, Clinical, stamp, s } from "../../_care/ui";
+import { Facts, Clinical, stamp } from "../../_care/ui";
+import FollowUpLayout from "../FollowUpLayout";
+import s from "../follow-ups.module.css";
+import { ArrowLeft, CalendarClock, MessageCircle, Video, ArrowUpRight, Info } from "lucide-react";
 export default async function FollowUpPage({
   params,
 }: {
@@ -13,8 +16,8 @@ export default async function FollowUpPage({
     item = await followUpDetails(id);
   const query = "?follow_up_id=" + encodeURIComponent(item.id);
   return (
-    <CareLayout title="Follow-up details">
-      <section className={s.card}>
+    <FollowUpLayout ar={ar} detail><Link className={s.back} href={prefix+"/dashboard/follow-ups"}><ArrowLeft size={15}/>Back to follow-ups</Link><div className={s.detailGrid}>
+      <section className={s.detailPanel}><h2 className={s.detailTitle}><CalendarClock size={20}/>Session information</h2>
         <Facts
           rows={[
             ["Reference", item.id],
@@ -32,11 +35,11 @@ export default async function FollowUpPage({
             ["Can join", item.can_join],
           ]}
         />
-        <div className={s.actions}>
+</section><aside className={s.detailPanel}><h2 className={s.detailTitle}>Your appointment</h2>        <div className={s.actions}>
           <Link
             href={prefix + "/dashboard/appointments/" + item.appointment_id}
           >
-            Original appointment
+            Original appointment <ArrowUpRight size={16}/>
           </Link>
           <Link
             href={
@@ -47,11 +50,11 @@ export default async function FollowUpPage({
               query
             }
           >
-            Conversation
+            Conversation <MessageCircle size={16}/>
           </Link>
           {item.can_join ? (
             <Link
-              className={s.button}
+              className={s.join}
               href={
                 prefix +
                 "/dashboard/appointments/" +
@@ -60,15 +63,15 @@ export default async function FollowUpPage({
                 query
               }
             >
-              Join follow-up
+              Join follow-up <Video size={16}/>
             </Link>
           ) : null}
         </div>
-        <p className={s.notice}>
+        <p className={s.notice}><Info size={16}/>
           Scheduling, reopening and clinical completion are managed by your
           consultant.
         </p>
-      </section>
+      </aside></div><div className={s.summaries}>
       <Clinical
         title="Current clinical summary"
         data={item.effective_summary}
@@ -77,6 +80,6 @@ export default async function FollowUpPage({
       {item.follow_up_summary ? (
         <Clinical title="Follow-up summary" data={item.follow_up_summary} />
       ) : null}
-    </CareLayout>
+      </div></FollowUpLayout>
   );
 }

@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
+import { MessageCircle, Send, Paperclip } from "lucide-react";
 import type { ChatPage, ChatMessage } from "@/lib/api/zuwara/chat";
 import { chatHistoryAction, sendChatAction } from "./actions";
 import s from "./chat.module.css";
@@ -43,16 +44,17 @@ export default function AppointmentChat({ id, initial, followUpId }: { id: strin
   }
   const ordered = [...messages].sort((a,b) => (a.created_at ?? "").localeCompare(b.created_at ?? "") || a.id.localeCompare(b.id));
   return <section className={s.chat}>
+    <header className={s.chatHead}><span className={s.chatIcon}><MessageCircle size={22} /></span><div><h2>{ar ? "\u0645\u062d\u0627\u062f\u062b\u0629 \u0627\u0644\u0645\u0648\u0639\u062f" : "Appointment conversation"}</h2><p>{ar ? "\u0627\u0644\u0631\u0633\u0627\u0626\u0644 \u0648\u0627\u0644\u0645\u0631\u0641\u0642\u0627\u062a" : "Messages & attachments"}</p></div></header>
     {cursor && <button disabled={busy} onClick={loadMore}>{ar ? "تحميل المزيد" : "Load more history"}</button>}
     <div className={s.messages} aria-live="polite">{ordered.map(row => <article key={row.id} className={row.sender.role === "patient" ? s.own : s.message}>
       <strong>{row.sender.name}</strong><p>{row.deleted ? ar ? "تم حذف الرسالة" : "Message deleted" : row.text}</p>
-      {row.attachment_url && <a href={row.attachment_url} target="_blank" rel="noopener noreferrer">{ar ? "عرض المرفق" : "View attachment"}</a>}
+      {row.attachment_url && <a href={row.attachment_url} target="_blank" rel="noopener noreferrer"><Paperclip size={14} />{ar ? "عرض المرفق" : "View attachment"}</a>}
       {row.created_at && Number.isFinite(Date.parse(row.created_at)) && <small>{new Intl.DateTimeFormat(ar ? "ar-SA" : "en-GB", { dateStyle: "short", timeStyle: "short", timeZone: "Asia/Riyadh" }).format(new Date(row.created_at))}</small>}
     </article>)}</div>
     {error && <p role="alert">{error}</p>}
     {canSend ? <form onSubmit={send} className={s.form}>
-      <textarea aria-label={ar ? "رسالتك" : "Your message"} maxLength={4000} value={text} readOnly={busy || retry} onChange={e=>setText(e.target.value)} />
-      <button disabled={busy || !text.trim()}>{retry ? ar ? "إعادة المحاولة" : "Retry delivery" : ar ? "إرسال" : "Send"}</button>
+      <textarea rows={1} placeholder={ar ? "\u0627\u0643\u062a\u0628 \u0631\u0633\u0627\u0644\u062a\u0643..." : "Write your message..."} aria-label={ar ? "رسالتك" : "Your message"} maxLength={4000} value={text} readOnly={busy || retry} onChange={e=>setText(e.target.value)} />
+      <button disabled={busy || !text.trim()}><Send size={17} />{retry ? ar ? "إعادة المحاولة" : "Retry delivery" : ar ? "إرسال" : "Send"}</button>
     </form> : <p>{ar ? "هذه المحادثة للقراءة فقط." : "This conversation is read-only."}</p>}
   </section>;
 }

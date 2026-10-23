@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { SpecialtyImage } from "@/components/healthcare/SpecialtyImage";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -53,7 +53,7 @@ export default async function SpecialtyDetailPage({ params }: Props) {
       <div className="container">
         <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Healthcare", href: "/healthcare" }, { label: "Specialties", href: "/healthcare/specialties" }, { label: specialty.title }]}/>
         <div className="specialty-detail-heading">
-          <div className="specialty-detail-icon">{specialty.imageUrl ? <Image src={specialty.imageUrl} alt="" width={88} height={88}/> : <Icon name="heart" size={38}/>}</div>
+          <div className="specialty-detail-icon"><SpecialtyImage src={specialty.imageUrl}/></div>
           <div><span className="eyebrow">Healthcare specialty</span><h1>{specialty.title}</h1>{specialty.titleAr ? <p lang="ar" dir="rtl">{specialty.titleAr}</p> : null}</div>
         </div>
         <div className="specialty-detail-summary"><strong>{search.doctors.length}</strong><span>active {search.doctors.length === 1 ? "consultant" : "consultants"} currently listed in this specialty</span><Link href={`/healthcare/doctors?category=${specialty.id}`}>Refine results <Icon name="arrow" size={17}/></Link></div>

@@ -1,6 +1,5 @@
 import {
-  LayoutDashboard, CalendarCheck, Home, MessageSquare, Heart,
-  FileText, Star, Wallet, Gift, User, Bell, AlertCircle, HelpCircle,
+  LayoutDashboard, CalendarCheck, ClipboardList, MessageSquare, Heart, Brain, CalendarClock, Stethoscope, HousePlus, Files, FolderHeart, Star, Wallet, TicketPercent, UsersRound, MapPin, UserRound, Bell, MessageSquareWarning, CircleHelp
 } from "lucide-react";
 
 export type NavItem = {
@@ -17,20 +16,20 @@ export const navGroups: { en: string; ar: string; items: NavItem[] }[] = [
     items: [
       { key: "overview", en: "Overview", ar: "نظرة عامة", href: "/dashboard", icon: LayoutDashboard },
       { key: "appointments", en: "Appointments", ar: "المواعيد", href: "/dashboard/appointments", icon: CalendarCheck },
-      { key: "requests", en: "Service Requests", ar: "طلبات الخدمات", href: "/dashboard/requests", icon: Home },
+      { key: "requests", en: "Service Requests", ar: "طلبات الخدمات", href: "/dashboard/requests", icon: ClipboardList },
       { key: "messages", en: "Messages", ar: "الرسائل", href: "/dashboard/messages", icon: MessageSquare },
     ],
   },
   {
     en: "Care", ar: "الرعاية",
     items: [
-      { key: "saved", en: "Saved Providers", ar: "المزودون المحفوظون", href: "/dashboard/saved", icon: Heart },
-      { key: "therapy", en: "Therapy Plans", ar: "\u062e\u0637\u0637 \u0627\u0644\u0639\u0644\u0627\u062c", href: "/dashboard/therapy", icon: Heart },
-      { key: "rescheduling", en: "Rescheduling", ar: "\u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062c\u062f\u0648\u0644\u0629", href: "/dashboard/rescheduling", icon: CalendarCheck },
-      { key: "followups", en: "Follow-ups", ar: "\u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0627\u062a", href: "/dashboard/follow-ups", icon: CalendarCheck },
-      { key: "homevisits", en: "Home Visits", ar: "\u0627\u0644\u0632\u064a\u0627\u0631\u0627\u062a \u0627\u0644\u0645\u0646\u0632\u0644\u064a\u0629", href: "/dashboard/home-visits", icon: Home },
-      { key: "documents", en: "My Documents", ar: "\u0645\u0633\u062a\u0646\u062f\u0627\u062a\u064a", href: "/dashboard/documents", icon: FileText },
-      { key: "records", en: "Medical Records", ar: "السجلات الطبية", href: "/dashboard/records", icon: FileText },
+      { key: "saved", en: "Saved Consultants", ar: "\u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u064a\u0648\u0646 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0648\u0646", href: "/dashboard/saved", icon: Heart },
+      { key: "therapy", en: "Therapy Plans", ar: "\u062e\u0637\u0637 \u0627\u0644\u0639\u0644\u0627\u062c", href: "/dashboard/therapy", icon: Brain },
+      { key: "rescheduling", en: "Rescheduling", ar: "\u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062c\u062f\u0648\u0644\u0629", href: "/dashboard/rescheduling", icon: CalendarClock },
+      { key: "followups", en: "Follow-ups", ar: "\u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0627\u062a", href: "/dashboard/follow-ups", icon: Stethoscope },
+      { key: "homevisits", en: "Home Visits", ar: "\u0627\u0644\u0632\u064a\u0627\u0631\u0627\u062a \u0627\u0644\u0645\u0646\u0632\u0644\u064a\u0629", href: "/dashboard/home-visits", icon: HousePlus },
+      { key: "documents", en: "My Documents", ar: "\u0645\u0633\u062a\u0646\u062f\u0627\u062a\u064a", href: "/dashboard/documents", icon: Files },
+      { key: "records", en: "Medical Records", ar: "السجلات الطبية", href: "/dashboard/records", icon: FolderHeart },
       { key: "reviews", en: "Reviews", ar: "التقييمات", href: "/dashboard/reviews", icon: Star },
     ],
   },
@@ -38,18 +37,18 @@ export const navGroups: { en: string; ar: string; items: NavItem[] }[] = [
     en: "Payments", ar: "المدفوعات",
     items: [
       { key: "wallet", en: "Wallet & Payments", ar: "المحفظة والمدفوعات", href: "/dashboard/wallet", icon: Wallet },
-      { key: "benefits", en: "Coupons & Contracts", ar: "\u0627\u0644\u0645\u0632\u0627\u064a\u0627", href: "/dashboard/benefits", icon: Gift },
-      { key: "referral", en: "Referral & Loyalty", ar: "الإحالة والولاء", href: "/dashboard/referral", icon: Gift },
+      { key: "benefits", en: "Coupons & Contracts", ar: "\u0627\u0644\u0645\u0632\u0627\u064a\u0627", href: "/dashboard/benefits", icon: TicketPercent },
+      { key: "referral", en: "Referral & Loyalty", ar: "الإحالة والولاء", href: "/dashboard/referral", icon: UsersRound },
     ],
   },
   {
     en: "Account", ar: "الحساب",
     items: [
-      { key: "addresses", en: "Saved Addresses", ar: "\u0627\u0644\u0639\u0646\u0627\u0648\u064a\u0646 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0629", href: "/dashboard/addresses", icon: Home },
-      { key: "profile", en: "My Profile", ar: "ملفي الشخصي", href: "/dashboard/profile", icon: User },
+      { key: "addresses", en: "Saved Addresses", ar: "\u0627\u0644\u0639\u0646\u0627\u0648\u064a\u0646 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0629", href: "/dashboard/addresses", icon: MapPin },
+      { key: "profile", en: "My Profile", ar: "ملفي الشخصي", href: "/dashboard/profile", icon: UserRound },
       { key: "notifications", en: "Notifications", ar: "الإشعارات", href: "/dashboard/notifications", icon: Bell },
-      { key: "complaints", en: "Complaints", ar: "الشكاوى", href: "/dashboard/complaints", icon: AlertCircle },
-      { key: "help", en: "Help & FAQ", ar: "المساعدة والأسئلة", href: "/dashboard/help", icon: HelpCircle },
+      { key: "complaints", en: "Complaints", ar: "الشكاوى", href: "/dashboard/complaints", icon: MessageSquareWarning },
+      { key: "help", en: "Help & FAQ", ar: "المساعدة والأسئلة", href: "/dashboard/help", icon: CircleHelp },
     ],
   },
 ];

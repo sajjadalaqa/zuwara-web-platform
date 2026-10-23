@@ -1,26 +1,186 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
-import { SafeImage } from "@/components/SafeImage";
+import { CareHero } from "@/components/healthcare/CareHero";
+import { DoctorCard } from "@/components/healthcare/DoctorCard";
+import s from "@/components/healthcare/care-experience.module.css";
 import { getZuwaraHomeData } from "@/lib/api/zuwara/home";
-import { doctorSlug, specialtySlug } from "@/lib/api/zuwara/slugs";
-
+import { specialtySlug } from "@/lib/api/zuwara/slugs";
 export const metadata: Metadata = {
   title: "Healthcare",
-  description: "Explore real Zuwara healthcare specialties, consultants, therapy, and consultation journeys.",
+  description:
+    "Explore Zuwara specialties and find a consultant for your next step in care.",
   alternates: { canonical: "/healthcare" },
 };
-
 export default async function HealthcarePage() {
   const data = await getZuwaraHomeData();
-  return <>
-    <section className="page-hero"><div className="container page-hero-grid"><div><span className="eyebrow">Zuwara Healthcare</span><h1>Care that starts with you.</h1></div><div className="page-hero-copy"><p>Find a consultant who understands your needs. Explore specialties, compare profiles and choose a time that works for you.</p><div className="hero-actions"><Link href="/healthcare/doctors" className="button button-primary">Find a consultant <Icon name="arrow" size={18}/></Link><Link href="/healthcare/specialties" className="button button-secondary">Explore specialties</Link></div></div></div></section>
-    <section className="content-section"><div className="container gateway-layout">
-      <aside className="gateway-aside"><span className="eyebrow">Healthcare journeys</span><h2>Choose how you want to begin.</h2><nav><Link href="/healthcare/doctors">Consultants</Link><Link href="/healthcare/specialties">Specialties</Link><Link href="/services/therapy-sessions">Therapy</Link><Link href="/services/instant-consultations">Instant consultation</Link></nav></aside>
-      <div>
-        <section id="specialties" className="gateway-section"><div className="gateway-heading"><h2>Specialties</h2><Link href="/healthcare/specialties">View all specialties <Icon name="arrow" size={16}/></Link></div>{data.categories.length ? <div className="gateway-category-grid">{data.categories.map(item=><Link key={item.id} href={`/healthcare/specialties/${specialtySlug(item.title,item.id)}`}>{item.imageUrl?<SafeImage src={item.imageUrl} alt="" width={48} height={48} fallbackIcon="heart"/>:<Icon name="heart"/>}<div><strong>{item.title}</strong>{item.titleAr?<small lang="ar" dir="rtl">{item.titleAr}</small>:null}</div><Icon name="arrow" size={17}/></Link>)}</div>:<p className="gateway-empty">Healthcare specialties are temporarily unavailable.</p>}</section>
-        <section id="consultants" className="gateway-section"><div className="gateway-heading"><h2>Featured consultants</h2><Link href="/healthcare/doctors">View all consultants <Icon name="arrow" size={16}/></Link></div>{data.doctors.length?<div className="gateway-profile-list">{data.doctors.map(doctor=><article key={doctor.id}>{doctor.imageUrl?<SafeImage src={doctor.imageUrl} alt={`Profile photo of ${doctor.name}`} width={86} height={86}/>:<span className="profile-fallback"><Icon name="user"/></span>}<div><small>{doctor.categoryTitle ?? "Healthcare"}</small><h3>{doctor.name}</h3><p>{doctor.classificationTitle ?? doctor.designation ?? "Consultant"}</p></div><Link href={`/healthcare/doctors/${doctorSlug(doctor.name,doctor.id)}`}>View <Icon name="arrow" size={16}/></Link></article>)}</div>:<p className="gateway-empty">Consultant profiles are temporarily unavailable.</p>}</section>
-      </div>
-    </div></section>
-  </>;
+  return (
+    <>
+      <CareHero />
+      <section className={s.section}>
+        <div className={s.inner}>
+          <header className={s.sectionHead}>
+            <span className={s.pill}>
+              <Icon name="heart" size={14} /> FIND YOUR AREA OF CARE
+            </span>
+            <h2>
+              Different needs.
+              <br />
+              <em>Care for every chapter.</em>
+            </h2>
+            <p>
+              Start with what matters to you. Explore our specialties and find
+              your way to the right support.
+            </p>
+          </header>
+          {data.categories.length ? (
+            <div className={s.specialties}>
+              {data.categories.map((item, index) => (
+                <Link
+                  className={s.specialty}
+                  key={item.id}
+                  href={
+                    "/healthcare/specialties/" +
+                    specialtySlug(item.title, item.id)
+                  }
+                >
+                  <span>
+                    <Icon
+                      name={
+                        index % 4 === 0
+                          ? "heart"
+                          : index % 4 === 1
+                            ? "spark"
+                            : index % 4 === 2
+                              ? "user"
+                              : "home"
+                      }
+                      size={28}
+                    />
+                  </span>
+                  <h3>{item.title}</h3>
+                  {item.titleAr && (
+                    <small dir="rtl" lang="ar">
+                      {item.titleAr}
+                    </small>
+                  )}
+                  <Icon name="arrow" size={18} />
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className={s.empty}>
+              Specialties are temporarily unavailable. Please try again shortly.
+            </p>
+          )}
+          <div className={s.centerAction}>
+            <Link className={s.secondary} href="/healthcare/specialties">
+              Explore all specialties
+              <Icon name="arrow" size={17} />
+            </Link>
+          </div>
+        </div>
+      </section>
+      <section className={s.section + " " + s.sectionSoft}>
+        <div className={s.inner}>
+          <header className={s.sectionHead}>
+            <span className={s.pill}>
+              <Icon name="user" size={14} /> PEOPLE BEHIND YOUR CARE
+            </span>
+            <h2>
+              A connection that makes
+              <br />
+              <em>all the difference.</em>
+            </h2>
+            <p>
+              Meet our consultants. Get to know their specialties, explore
+              consultation options and take the next step at your pace.
+            </p>
+          </header>
+          {data.doctors.length ? (
+            <div className={s.featuredGrid}>
+              {data.doctors.map((doctor) => (
+                <DoctorCard key={doctor.id} doctor={doctor} />
+              ))}
+            </div>
+          ) : (
+            <p className={s.empty}>
+              Consultants are temporarily unavailable. Please try again shortly.
+            </p>
+          )}
+          <div className={s.centerAction}>
+            <Link href="/healthcare/doctors" className={s.primary}>
+              Meet all consultants
+              <Icon name="arrow" size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
+      <section className={s.section}>
+        <div className={s.inner}>
+          <header className={s.sectionHead}>
+            <span className={s.pill}>
+              <Icon name="calendar" size={14} /> A LITTLE GUIDANCE
+            </span>
+            <h2>
+              Your next step,
+              <br />
+              <em>made simple.</em>
+            </h2>
+            <p>
+              From finding a consultant to choosing your consultation,
+              everything starts here.
+            </p>
+          </header>
+          <div className={s.steps}>
+            {[
+              {
+                icon: "search" as const,
+                title: "Find your consultant",
+                body: "Explore specialties and profiles to find someone who fits your needs.",
+              },
+              {
+                icon: "calendar" as const,
+                title: "Choose your time",
+                body: "Check the available dates, durations and consultation options.",
+              },
+              {
+                icon: "heart" as const,
+                title: "Take your next step",
+                body: "Review your appointment details and complete your booking.",
+              },
+            ].map((step, index) => (
+              <article className={s.step} key={step.title}>
+                <span className={s.stepNumber}>0{index + 1}</span>
+                <Icon name={step.icon} size={30} />
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className={s.section + " " + s.sectionSoft}>
+        <div className={s.inner}>
+          <div className={s.banner}>
+            <div>
+              <h2>
+                You do not have to figure
+                <br />
+                it all out alone.
+              </h2>
+              <p>
+                Not sure where to begin? Our team can help you explore the care
+                options available on Zuwara.
+              </p>
+            </div>
+            <Link href="/contact" className={s.secondary}>
+              Talk to our team
+              <Icon name="arrow" size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  );
 }

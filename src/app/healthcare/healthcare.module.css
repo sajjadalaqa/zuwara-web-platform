@@ -7,8 +7,12 @@
   color: var(--care-ink);
   min-width: 0;
 }
-.root :global(.container) { width: min(1160px, calc(100% - 48px)); }
-.root :global(.content-section) { padding-block: 56px 76px; }
+.root :global(.container) {
+  width: min(1160px, calc(100% - 48px));
+}
+.root :global(.content-section) {
+  padding-block: 56px 76px;
+}
 .root :global(.page-hero),
 .root :global(.healthcare-list-hero),
 .root :global(.specialty-index-hero),
@@ -16,12 +20,19 @@
 .root :global(.doctor-profile-hero) {
   position: relative;
   overflow: hidden;
-  background: radial-gradient(ellipse at 92% 10%, #dfc9f170, transparent 48%), linear-gradient(120deg, #faf6ff, #f5edfb 68%, #fceff5);
+  background:
+    radial-gradient(ellipse at 92% 10%, #dfc9f170, transparent 48%),
+    linear-gradient(120deg, #faf6ff, #f5edfb 68%, #fceff5);
   border-bottom: 1px solid var(--care-border);
   padding-block: 38px 52px;
 }
-.root :global(.page-hero) { padding-block: 76px; }
-.root :global(.page-hero-grid) { gap: 48px; align-items: center; }
+.root :global(.page-hero) {
+  padding-block: 76px;
+}
+.root :global(.page-hero-grid) {
+  gap: 48px;
+  align-items: center;
+}
 .root :global(.page-hero h1),
 .root :global(.healthcare-list-hero h1),
 .root :global(.specialty-index-hero h1),
@@ -29,165 +40,997 @@
   font-size: clamp(34px, 4.4vw, 58px);
   line-height: 1.14;
   font-weight: 800;
-  letter-spacing: -.045em;
+  letter-spacing: -0.045em;
   max-width: 760px;
   margin-block: 16px;
   color: var(--care-ink);
 }
 .root :global(.page-hero-copy p),
 .root :global(.healthcare-list-hero p),
-.root :global(.specialty-index-hero p) { font-size: 16px; line-height: 1.85; color: var(--care-muted); max-width: 630px; }
-.root :global(.eyebrow) { color: var(--care-purple); font-size: 11px; letter-spacing: .12em; font-weight: 800; }
-.root :global(.breadcrumbs) { margin-block: 0 28px; }
-.root :global(.breadcrumbs ol) { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; list-style: none; padding: 0; margin: 0; }
-.root :global(.breadcrumbs li) { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--care-muted); }
-.root :global(.breadcrumbs li + li)::before { content: "/"; opacity: .45; }
-.root :global(.breadcrumbs a:hover) { color: var(--care-purple); }
-.root :global(.button) { min-height: 45px; border-radius: 12px; padding: 12px 18px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-align: center; }
-.root :global(.button-primary) { background: linear-gradient(135deg, #7134ac, #592382); box-shadow: 0 7px 18px -9px #612b9490; }
-.root :global(.button-secondary) { background: white; color: var(--care-purple); border: 1px solid #dac7e9; }
-.root a:focus-visible, .root button:focus-visible, .root input:focus-visible, .root select:focus-visible { outline: 3px solid #ad7bd5; outline-offset: 3px; }
-.root :global(.gateway-layout) { grid-template-columns: 240px minmax(0, 1fr); gap: 36px; }
-.root :global(.gateway-aside) { position: sticky; top: 92px; padding: 26px; border: 1px solid var(--care-border); border-radius: 24px; background: #fff; box-shadow: 0 10px 35px -22px #60308a50; }
-.root :global(.gateway-aside h2) { font-size: 24px; line-height: 1.35; margin-block: 15px 24px; }
-.root :global(.gateway-aside nav) { display: grid; gap: 8px; border: 0; }
-.root :global(.gateway-aside nav a) { min-height: 44px; padding: 12px 14px; border: 0; border-radius: 12px; background: #f7f1fc; color: #67308f; font-size: 13px; font-weight: 600; }
-.root :global(.gateway-aside nav a:hover) { background: #eee1f8; }
-.root :global(.gateway-section) { margin-bottom: 42px; }
-.root :global(.gateway-heading) { border: 0; gap: 16px; align-items: center; margin-bottom: 22px; padding: 0; }
-.root :global(.gateway-heading h2) { font-size: clamp(24px, 3vw, 30px); font-weight: 750; margin: 0; }
-.root :global(.gateway-heading > a), .root :global(.results-heading > a) { font-size: 12px; gap: 8px; min-height: 40px; }
-.root :global(.gateway-category-grid) { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; border: 0; }
-.root :global(.gateway-category-grid > a) { display: grid; grid-template-columns: 48px minmax(0,1fr) 18px; align-items: center; gap: 14px; padding: 22px; background: #fff; border: 1px solid var(--care-border); border-radius: 20px; min-height: 116px; }
-.root :global(.gateway-category-grid > a > svg:first-child) { padding: 12px; width: 48px; height: 48px; box-sizing: border-box; background: #f3e8fc; border-radius: 15px; color: var(--care-purple); }
-.root :global(.gateway-category-grid strong) { font-size: 14px; line-height: 1.5; }
-.root :global(.gateway-category-grid small) { display: block; margin-top: 5px; font-size: 12px; color: var(--care-muted); }
-.root :global(.gateway-profile-list) { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; border: 0; }
-.root :global(.gateway-profile-list article) { display: grid; grid-template-columns: 72px minmax(0,1fr); gap: 16px; padding: 22px; border: 1px solid var(--care-border); border-radius: 22px; background: white; align-items: center; min-width: 0; }
-.root :global(.gateway-profile-list article > img), .root :global(.gateway-profile-list .profile-fallback) { width: 72px; height: 82px; border-radius: 16px; object-fit: cover; background: #f2e8fa; }
-.root :global(.gateway-profile-list article > div) { min-width: 0; }
-.root :global(.gateway-profile-list small) { color: var(--care-purple); font-size: 10px; font-weight: 700; }
-.root :global(.gateway-profile-list h3) { font-size: 16px; font-weight: 750; margin-block: 7px 5px; overflow-wrap: anywhere; }
-.root :global(.gateway-profile-list p) { font-size: 12px; color: var(--care-muted); margin: 0; }
-.root :global(.gateway-profile-list article > a) { grid-column: 1/-1; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; background: #f6effc; color: var(--care-purple); border-radius: 11px; font-size: 12px; font-weight: 700; }
-.root :global(.doctor-directory-grid) { grid-template-columns: 264px minmax(0,1fr); gap: 28px; }
-.root :global(.doctor-directory-grid > aside) { top: 92px; }
-.root :global(.healthcare-filters) { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 17px 12px; padding: 24px; border: 1px solid var(--care-border); border-radius: 22px; background: white; box-shadow: 0 12px 36px -26px #60308a60; }
-.root :global(.filter-title) { grid-column: 1/-1; padding: 0 0 18px; border-bottom: 1px solid #f0e7f6; }
-.root :global(.filter-title strong) { font-size: 17px; margin-top: 7px; }
-.root :global(.filter-title span) { font-size: 9px; color: var(--care-purple); }
-.root :global(.filter-title > a) { font-size: 12px; }
-.root :global(.healthcare-filters label) { font-size: 10px; text-transform: none; letter-spacing: 0; line-height: 1.5; color: #62536f; }
-.root :global(.healthcare-filters input), .root :global(.healthcare-filters select),
-.root :global(.schedule-filter input), .root :global(.schedule-filter select) { border-radius: 10px; height: 45px; font-size: 12px; border-color: #e4d8ed; background: #fdfbff; min-width: 0; }
-.root :global(.filter-check input) { width: 18px; height: 18px; flex: 0 0 18px; }
-.root :global(.results-heading) { padding: 6px 0 22px; border: 0; align-items: center; }
-.root :global(.results-heading strong) { font-size: 20px; }
-.root :global(.results-heading span) { font-size: 12px; margin-top: 6px; }
-.root :global(.doctor-results-list) { display: grid; gap: 18px; }
-.root :global(.doctor-result-card) { display: grid; grid-template-columns: 114px minmax(0,1fr) 144px; gap: 22px; padding: 24px; border: 1px solid var(--care-border); border-radius: 24px; background: white; align-items: center; box-shadow: 0 8px 25px -20px #55227650; }
-.root :global(.doctor-result-photo) { width: 114px; height: 142px; min-height: 0; border-radius: 18px; background: linear-gradient(145deg,#f2e5fb,#e8ddf6); }
-.root :global(.doctor-result-photo img) { object-position: top; }
-.root :global(.doctor-result-main) { padding: 0; }
-.root :global(.doctor-result-main h2) { font-size: 19px; margin-block: 11px 5px; line-height: 1.4; overflow-wrap: anywhere; }
-.root :global(.doctor-name-ar) { max-width: 100%; width: auto; line-height: 1.5; }
-.root :global(.doctor-designation) { font-size: 12px; line-height: 1.6; }
-.root :global(.doctor-result-tags) { gap: 5px; margin-top: 8px; }
-.root :global(.doctor-result-tags span), .root :global(.doctor-result-tags a) { border-radius: 7px; padding: 5px 8px; font-size: 8px; letter-spacing: .025em; }
-.root :global(.doctor-result-meta) { gap: 6px 12px; font-size: 11px; margin-top: 12px; }
-.root :global(.doctor-result-action) { padding: 10px 0; padding-inline-start: 18px; border: 0; border-inline-start: 1px solid #eee4f5; min-width: 0; }
-.root :global(.doctor-result-action small) { font-size: 11px; }
-.root :global(.doctor-result-action strong) { font-size: 15px; line-height: 1.6; margin-block: 5px 15px; }
-.root :global(.doctor-result-action .button) { padding: 11px 12px; font-size: 12px; }
-.root :global(.specialty-index-grid) { gap: 22px; border: 0; grid-template-columns: repeat(2,minmax(0,1fr)); }
-.root :global(.specialty-index-grid > a) { position: relative; padding: 28px; gap: 20px; border: 1px solid var(--care-border); background: white; border-radius: 24px; grid-template-columns: 64px minmax(0,1fr) 24px; min-height: 160px; }
-.root :global(.specialty-index-grid > a:nth-child(even)) { padding: 28px; }
-.root :global(.specialty-number) { position: absolute; inset-block-start: 12px; inset-inline-end: 18px; color: #c7aed9; font-size: 11px; }
-.root :global(.specialty-index-icon) { background: #f4eafa; border-radius: 19px; width: 64px; height: 64px; color: var(--care-purple); }
-.root :global(.specialty-index-grid h2) { font-size: 21px; line-height: 1.4; }
-.root :global(.specialty-index-grid p) { font-size: 14px; }
-.root :global(.specialty-detail-heading) { gap: 24px; }
-.root :global(.specialty-detail-icon) { border-radius: 24px; background: white; border: 1px solid var(--care-border); }
-.root :global(.specialty-detail-summary) { background: #ffffffb0; border: 1px solid var(--care-border); border-radius: 16px; padding: 18px 24px; margin-top: 28px; gap: 16px; }
-.root :global(.specialty-detail-summary span) { font-size: 13px; }
-.root :global(.specialty-detail-summary a) { font-size: 12px; }
-.root :global(.doctor-profile-heading) { grid-template-columns: 180px minmax(0,1fr) 245px; gap: 30px; align-items: center; }
-.root :global(.doctor-profile-photo) { min-height: 210px; border-radius: 24px; border: 5px solid white; box-shadow: 0 14px 35px -22px #55227680; }
-.root :global(.doctor-profile-intro h1) { font-size: clamp(28px,3.5vw,43px); line-height: 1.2; font-weight: 800; letter-spacing: -.04em; overflow-wrap: anywhere; }
-.root :global(.doctor-profile-metrics) { gap: 16px; font-size: 12px; }
-.root :global(.doctor-profile-price) { border-radius: 24px; padding: 28px; background: linear-gradient(140deg,#753aaa,#3c155d); box-shadow: 0 14px 30px -18px #54227990; min-height: 210px; }
-.root :global(.doctor-profile-price > span), .root :global(.doctor-profile-price > small) { font-size: 12px; }
-.root :global(.doctor-profile-price > strong) { font-size: 24px; }
-.root :global(.doctor-profile-grid) { grid-template-columns: minmax(0,1fr) 370px; gap: 28px; }
-.root :global(.profile-detail-section) { padding: 28px; margin-bottom: 22px; border: 1px solid var(--care-border); border-radius: 22px; background: white; }
-.root :global(.profile-detail-section h2) { font-size: 23px; font-weight: 750; }
-.root :global(.profile-detail-section > p) { font-size: 14px; line-height: 1.9; }
-.root :global(.profile-detail-list strong), .root :global(.profile-facts dt), .root :global(.profile-facts dd) { font-size: 13px; }
-.root :global(.schedule-panel) { border-radius: 24px; padding: 28px; border-color: var(--care-border); box-shadow: 0 14px 35px -25px #60308a60; top: 92px; }
-.root :global(.schedule-panel h2) { font-size: 28px; font-weight: 750; }
-.root :global(.schedule-filter label), .root :global(.schedule-legend) { font-size: 11px; }
-.root :global(.schedule-slot) { border-radius: 10px; min-height: 60px; }
-.root :global(.schedule-slot span) { font-size: 12px; }
-.root :global(.schedule-slot small), .root :global(.schedule-empty p), .root :global(.schedule-disclaimer) { font-size: 11px; }
-.root :global(.directory-empty), .root :global(.data-state), .root :global(.gateway-empty) { border: 1px solid var(--care-border); border-radius: 22px; background: white; padding: 38px 24px; }
-.root :global(.slot-preview span) { border-radius: 8px; font-size: 11px; }
-@media (hover:hover) {
-  .root :global(.doctor-result-card), .root :global(.gateway-category-grid > a), .root :global(.gateway-profile-list article), .root :global(.specialty-index-grid > a) { transition: box-shadow .2s, border-color .2s, transform .2s; }
-  .root :global(.doctor-result-card:hover), .root :global(.gateway-category-grid > a:hover), .root :global(.gateway-profile-list article:hover), .root :global(.specialty-index-grid > a:hover) { border-color: #cfafe6; box-shadow: 0 14px 30px -20px #60308a70; transform: translateY(-2px); }
+.root :global(.specialty-index-hero p) {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--care-muted);
+  max-width: 630px;
 }
-@media (max-width:1100px) {
-  .root :global(.doctor-directory-grid) { grid-template-columns: 240px minmax(0,1fr); gap: 22px; }
-  .root :global(.doctor-result-card) { grid-template-columns: 90px minmax(0,1fr); gap: 18px; }
-  .root :global(.doctor-result-photo) { width: 90px; height: 116px; }
-  .root :global(.doctor-result-action) { grid-column: 1/-1; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 0 12px; border: 0; border-top: 1px solid #eee4f5; padding: 16px 0 0; }
-  .root :global(.doctor-result-action strong) { grid-column: 1; margin: 3px 0 0; }
-  .root :global(.doctor-result-action .button) { grid-column: 2; grid-row: 1/3; }
-  .root :global(.doctor-profile-heading) { grid-template-columns: 150px minmax(0,1fr); }
-  .root :global(.doctor-profile-price) { grid-column: 1/-1; min-height: 0; }
-  .root :global(.doctor-profile-grid) { grid-template-columns: minmax(0,1fr) 330px; }
-  .root :global(.gateway-layout) { grid-template-columns: 210px minmax(0,1fr); gap: 26px; }
-  .root :global(.gateway-profile-list) { grid-template-columns: 1fr; }
+.root :global(.eyebrow) {
+  color: var(--care-purple);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 800;
 }
-@media (max-width:760px) {
-  .root :global(.container) { width: calc(100% - 32px); }
-  .root :global(.content-section) { padding-block: 30px 48px; }
-  .root :global(.page-hero), .root :global(.healthcare-list-hero), .root :global(.specialty-index-hero), .root :global(.specialty-detail-hero), .root :global(.doctor-profile-hero) { padding-block: 26px 36px; }
-  .root :global(.page-hero-grid), .root :global(.doctor-directory-grid), .root :global(.gateway-layout), .root :global(.doctor-profile-grid) { grid-template-columns: minmax(0,1fr); gap: 26px; }
-  .root :global(.page-hero h1), .root :global(.healthcare-list-hero h1), .root :global(.specialty-index-hero h1) { font-size: clamp(30px,7vw,43px); margin-block: 12px; }
-  .root :global(.page-hero-copy p), .root :global(.healthcare-list-hero p), .root :global(.specialty-index-hero p) { font-size: 14px; }
-  .root :global(.breadcrumbs) { margin-bottom: 23px; }
-  .root :global(.doctor-directory-grid > aside), .root :global(.gateway-aside), .root :global(.schedule-panel) { position: static; }
-  .root :global(.gateway-aside) { padding: 22px; }
-  .root :global(.gateway-aside nav) { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .root :global(.gateway-aside h2) { font-size: 23px; margin-block: 10px 18px; }
-  .root :global(.healthcare-filters) { padding: 20px; gap: 16px 12px; }
-  .root :global(.healthcare-filters label) { font-size: 11px; }
-  .root :global(.doctor-result-card) { padding: 20px; }
-  .root :global(.doctor-result-main h2) { font-size: 18px; }
-  .root :global(.results-heading) { gap: 12px; flex-wrap: wrap; padding-bottom: 18px; }
-  .root :global(.gateway-profile-list), .root :global(.specialty-index-grid) { grid-template-columns: minmax(0,1fr); }
-  .root :global(.gateway-category-grid) { gap: 12px; }
-  .root :global(.gateway-category-grid > a) { grid-template-columns: 1fr auto; padding: 18px; gap: 12px; }
-  .root :global(.gateway-category-grid > a > svg:first-child), .root :global(.gateway-category-grid > a > img) { grid-column: 1; }
-  .root :global(.gateway-category-grid > a > div) { grid-row: 2; }
-  .root :global(.gateway-category-grid > a > svg:last-child) { grid-row: 2; }
-  .root :global(.gateway-category-grid strong) { font-size: 13px; }
-  .root :global(.gateway-heading) { align-items: start; flex-wrap: wrap; }
-  .root :global(.gateway-heading > a) { font-size: 11px; }
-  .root :global(.specialty-index-grid > a), .root :global(.specialty-index-grid > a:nth-child(even)) { padding: 24px; min-height: 140px; }
-  .root :global(.specialty-detail-summary) { flex-wrap: wrap; padding: 18px; }
-  .root :global(.doctor-profile-heading) { grid-template-columns: 100px minmax(0,1fr); gap: 18px; }
-  .root :global(.doctor-profile-photo) { min-height: 130px; }
-  .root :global(.doctor-profile-intro h1) { font-size: 26px; }
-  .root :global(.doctor-profile-metrics) { gap: 12px; margin-top: 16px; }
-  .root :global(.doctor-profile-price) { display: flex; padding: 24px; }
-  .root :global(.doctor-profile-price .button) { margin-top: 18px; }
-  .root :global(.profile-detail-section), .root :global(.schedule-panel) { padding: 23px; }
-  .root :global(.profile-detail-list) { grid-template-columns: 1fr; }
-  .root :global(.profile-detail-list > div:nth-child(even)) { border-left: 0; padding-inline-start: 0; }
+.root :global(.breadcrumbs) {
+  margin-block: 0 28px;
 }
-@media (prefers-reduced-motion:reduce) {
-  .root *, .root *::before, .root *::after { transition: none !important; animation: none !important; }
+.root :global(.breadcrumbs ol) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.root :global(.breadcrumbs li) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--care-muted);
+}
+.root :global(.breadcrumbs li + li)::before {
+  content: "/";
+  opacity: 0.45;
+}
+.root :global(.breadcrumbs a:hover) {
+  color: var(--care-purple);
+}
+.root :global(.button) {
+  min-height: 45px;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+.root :global(.button-primary) {
+  background: linear-gradient(135deg, #7134ac, #592382);
+  box-shadow: 0 7px 18px -9px #612b9490;
+}
+.root :global(.button-secondary) {
+  background: white;
+  color: var(--care-purple);
+  border: 1px solid #dac7e9;
+}
+.root a:focus-visible,
+.root button:focus-visible,
+.root input:focus-visible,
+.root select:focus-visible {
+  outline: 3px solid #ad7bd5;
+  outline-offset: 3px;
+}
+.root :global(.gateway-layout) {
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 36px;
+}
+.root :global(.gateway-aside) {
+  position: sticky;
+  top: 92px;
+  padding: 26px;
+  border: 1px solid var(--care-border);
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 10px 35px -22px #60308a50;
+}
+.root :global(.gateway-aside h2) {
+  font-size: 24px;
+  line-height: 1.35;
+  margin-block: 15px 24px;
+}
+.root :global(.gateway-aside nav) {
+  display: grid;
+  gap: 8px;
+  border: 0;
+}
+.root :global(.gateway-aside nav a) {
+  min-height: 44px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: #f7f1fc;
+  color: #67308f;
+  font-size: 13px;
+  font-weight: 600;
+}
+.root :global(.gateway-aside nav a:hover) {
+  background: #eee1f8;
+}
+.root :global(.gateway-section) {
+  margin-bottom: 42px;
+}
+.root :global(.gateway-heading) {
+  border: 0;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 22px;
+  padding: 0;
+}
+.root :global(.gateway-heading h2) {
+  font-size: clamp(24px, 3vw, 30px);
+  font-weight: 750;
+  margin: 0;
+}
+.root :global(.gateway-heading > a),
+.root :global(.results-heading > a) {
+  font-size: 12px;
+  gap: 8px;
+  min-height: 40px;
+}
+.root :global(.gateway-category-grid) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  border: 0;
+}
+.root :global(.gateway-category-grid > a) {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 14px;
+  padding: 22px;
+  background: #fff;
+  border: 1px solid var(--care-border);
+  border-radius: 20px;
+  min-height: 116px;
+}
+.root :global(.gateway-category-grid > a > svg:first-child) {
+  padding: 12px;
+  width: 48px;
+  height: 48px;
+  box-sizing: border-box;
+  background: #f3e8fc;
+  border-radius: 15px;
+  color: var(--care-purple);
+}
+.root :global(.gateway-category-grid strong) {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.root :global(.gateway-category-grid small) {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--care-muted);
+}
+.root :global(.gateway-profile-list) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  border: 0;
+}
+.root :global(.gateway-profile-list article) {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid var(--care-border);
+  border-radius: 22px;
+  background: white;
+  align-items: center;
+  min-width: 0;
+}
+.root :global(.gateway-profile-list article > img),
+.root :global(.gateway-profile-list .profile-fallback) {
+  width: 72px;
+  height: 82px;
+  border-radius: 16px;
+  object-fit: cover;
+  background: #f2e8fa;
+}
+.root :global(.gateway-profile-list article > div) {
+  min-width: 0;
+}
+.root :global(.gateway-profile-list small) {
+  color: var(--care-purple);
+  font-size: 10px;
+  font-weight: 700;
+}
+.root :global(.gateway-profile-list h3) {
+  font-size: 16px;
+  font-weight: 750;
+  margin-block: 7px 5px;
+  overflow-wrap: anywhere;
+}
+.root :global(.gateway-profile-list p) {
+  font-size: 12px;
+  color: var(--care-muted);
+  margin: 0;
+}
+.root :global(.gateway-profile-list article > a) {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  background: #f6effc;
+  color: var(--care-purple);
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.root :global(.doctor-directory-grid) {
+  grid-template-columns: 264px minmax(0, 1fr);
+  gap: 28px;
+}
+.root :global(.doctor-directory-grid > aside) {
+  top: 92px;
+}
+.root :global(.healthcare-filters) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px 12px;
+  padding: 24px;
+  border: 1px solid var(--care-border);
+  border-radius: 22px;
+  background: white;
+  box-shadow: 0 12px 36px -26px #60308a60;
+}
+.root :global(.filter-title) {
+  grid-column: 1/-1;
+  padding: 0 0 18px;
+  border-bottom: 1px solid #f0e7f6;
+}
+.root :global(.filter-title strong) {
+  font-size: 17px;
+  margin-top: 7px;
+}
+.root :global(.filter-title span) {
+  font-size: 9px;
+  color: var(--care-purple);
+}
+.root :global(.filter-title > a) {
+  font-size: 12px;
+}
+.root :global(.healthcare-filters label) {
+  font-size: 10px;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.5;
+  color: #62536f;
+}
+.root :global(.healthcare-filters input),
+.root :global(.healthcare-filters select),
+.root :global(.schedule-filter input),
+.root :global(.schedule-filter select) {
+  border-radius: 10px;
+  height: 45px;
+  font-size: 12px;
+  border-color: #e4d8ed;
+  background: #fdfbff;
+  min-width: 0;
+}
+.root :global(.filter-check input) {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+.root :global(.results-heading) {
+  padding: 6px 0 22px;
+  border: 0;
+  align-items: center;
+}
+.root :global(.results-heading strong) {
+  font-size: 20px;
+}
+.root :global(.results-heading span) {
+  font-size: 12px;
+  margin-top: 6px;
+}
+.root :global(.doctor-results-list) {
+  display: grid;
+  gap: 18px;
+}
+.root :global(.doctor-result-card) {
+  display: grid;
+  grid-template-columns: 114px minmax(0, 1fr) 144px;
+  gap: 22px;
+  padding: 24px;
+  border: 1px solid var(--care-border);
+  border-radius: 24px;
+  background: white;
+  align-items: center;
+  box-shadow: 0 8px 25px -20px #55227650;
+}
+.root :global(.doctor-result-photo) {
+  width: 114px;
+  height: 142px;
+  min-height: 0;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #f2e5fb, #e8ddf6);
+}
+.root :global(.doctor-result-photo img) {
+  object-position: top;
+}
+.root :global(.doctor-result-main) {
+  padding: 0;
+}
+.root :global(.doctor-result-main h2) {
+  font-size: 19px;
+  margin-block: 11px 5px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.root :global(.doctor-name-ar) {
+  max-width: 100%;
+  width: auto;
+  line-height: 1.5;
+}
+.root :global(.doctor-designation) {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.root :global(.doctor-result-tags) {
+  gap: 5px;
+  margin-top: 8px;
+}
+.root :global(.doctor-result-tags span),
+.root :global(.doctor-result-tags a) {
+  border-radius: 7px;
+  padding: 5px 8px;
+  font-size: 8px;
+  letter-spacing: 0.025em;
+}
+.root :global(.doctor-result-meta) {
+  gap: 6px 12px;
+  font-size: 11px;
+  margin-top: 12px;
+}
+.root :global(.doctor-result-action) {
+  padding: 10px 0;
+  padding-inline-start: 18px;
+  border: 0;
+  border-inline-start: 1px solid #eee4f5;
+  min-width: 0;
+}
+.root :global(.doctor-result-action small) {
+  font-size: 11px;
+}
+.root :global(.doctor-result-action strong) {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-block: 5px 15px;
+}
+.root :global(.doctor-result-action .button) {
+  padding: 11px 12px;
+  font-size: 12px;
+}
+.root :global(.specialty-index-grid) {
+  gap: 22px;
+  border: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.root :global(.specialty-index-grid > a) {
+  position: relative;
+  padding: 28px;
+  gap: 20px;
+  border: 1px solid var(--care-border);
+  background: white;
+  border-radius: 24px;
+  grid-template-columns: 64px minmax(0, 1fr) 24px;
+  min-height: 160px;
+}
+.root :global(.specialty-index-grid > a:nth-child(even)) {
+  padding: 28px;
+}
+.root :global(.specialty-number) {
+  position: absolute;
+  inset-block-start: 12px;
+  inset-inline-end: 18px;
+  color: #c7aed9;
+  font-size: 11px;
+}
+.root :global(.specialty-index-icon) {
+  background: #f4eafa;
+  border-radius: 19px;
+  width: 64px;
+  height: 64px;
+  color: var(--care-purple);
+}
+.root :global(.specialty-index-grid h2) {
+  font-size: 21px;
+  line-height: 1.4;
+}
+.root :global(.specialty-index-grid p) {
+  font-size: 14px;
+}
+.root :global(.specialty-detail-heading) {
+  gap: 24px;
+}
+.root :global(.specialty-detail-icon) {
+  border-radius: 24px;
+  background: white;
+  border: 1px solid var(--care-border);
+}
+.root :global(.specialty-detail-summary) {
+  background: #ffffffb0;
+  border: 1px solid var(--care-border);
+  border-radius: 16px;
+  padding: 18px 24px;
+  margin-top: 28px;
+  gap: 16px;
+}
+.root :global(.specialty-detail-summary span) {
+  font-size: 13px;
+}
+.root :global(.specialty-detail-summary a) {
+  font-size: 12px;
+}
+.root :global(.doctor-profile-heading) {
+  grid-template-columns: 180px minmax(0, 1fr) 245px;
+  gap: 30px;
+  align-items: center;
+}
+.root :global(.doctor-profile-photo) {
+  min-height: 210px;
+  border-radius: 24px;
+  border: 5px solid white;
+  box-shadow: 0 14px 35px -22px #55227680;
+}
+.root :global(.doctor-profile-intro h1) {
+  font-size: clamp(28px, 3.5vw, 43px);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+}
+.root :global(.doctor-profile-metrics) {
+  gap: 16px;
+  font-size: 12px;
+}
+.root :global(.doctor-profile-price) {
+  border-radius: 24px;
+  padding: 28px;
+  background: linear-gradient(140deg, #753aaa, #3c155d);
+  box-shadow: 0 14px 30px -18px #54227990;
+  min-height: 210px;
+}
+.root :global(.doctor-profile-price > span),
+.root :global(.doctor-profile-price > small) {
+  font-size: 12px;
+}
+.root :global(.doctor-profile-price > strong) {
+  font-size: 24px;
+}
+.root :global(.doctor-profile-grid) {
+  grid-template-columns: minmax(0, 1fr) 370px;
+  gap: 28px;
+}
+.root :global(.profile-detail-section) {
+  padding: 28px;
+  margin-bottom: 22px;
+  border: 1px solid var(--care-border);
+  border-radius: 22px;
+  background: white;
+}
+.root :global(.profile-detail-section h2) {
+  font-size: 23px;
+  font-weight: 750;
+}
+.root :global(.profile-detail-section > p) {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.root :global(.profile-detail-list strong),
+.root :global(.profile-facts dt),
+.root :global(.profile-facts dd) {
+  font-size: 13px;
+}
+.root :global(.schedule-panel) {
+  border-radius: 24px;
+  padding: 28px;
+  border-color: var(--care-border);
+  box-shadow: 0 14px 35px -25px #60308a60;
+  top: 92px;
+}
+.root :global(.schedule-panel h2) {
+  font-size: 28px;
+  font-weight: 750;
+}
+.root :global(.schedule-filter label),
+.root :global(.schedule-legend) {
+  font-size: 11px;
+}
+.root :global(.schedule-slot) {
+  border-radius: 10px;
+  min-height: 60px;
+}
+.root :global(.schedule-slot span) {
+  font-size: 12px;
+}
+.root :global(.schedule-slot small),
+.root :global(.schedule-empty p),
+.root :global(.schedule-disclaimer) {
+  font-size: 11px;
+}
+.root :global(.directory-empty),
+.root :global(.data-state),
+.root :global(.gateway-empty) {
+  border: 1px solid var(--care-border);
+  border-radius: 22px;
+  background: white;
+  padding: 38px 24px;
+}
+.root :global(.slot-preview span) {
+  border-radius: 8px;
+  font-size: 11px;
+}
+@media (hover: hover) {
+  .root :global(.doctor-result-card),
+  .root :global(.gateway-category-grid > a),
+  .root :global(.gateway-profile-list article),
+  .root :global(.specialty-index-grid > a) {
+    transition:
+      box-shadow 0.2s,
+      border-color 0.2s,
+      transform 0.2s;
+  }
+  .root :global(.doctor-result-card:hover),
+  .root :global(.gateway-category-grid > a:hover),
+  .root :global(.gateway-profile-list article:hover),
+  .root :global(.specialty-index-grid > a:hover) {
+    border-color: #cfafe6;
+    box-shadow: 0 14px 30px -20px #60308a70;
+    transform: translateY(-2px);
+  }
+}
+@media (max-width: 1100px) {
+  .root :global(.doctor-directory-grid) {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 22px;
+  }
+  .root :global(.doctor-result-card) {
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 18px;
+  }
+  .root :global(.doctor-result-photo) {
+    width: 90px;
+    height: 116px;
+  }
+  .root :global(.doctor-result-action) {
+    grid-column: 1/-1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0 12px;
+    border: 0;
+    border-top: 1px solid #eee4f5;
+    padding: 16px 0 0;
+  }
+  .root :global(.doctor-result-action strong) {
+    grid-column: 1;
+    margin: 3px 0 0;
+  }
+  .root :global(.doctor-result-action .button) {
+    grid-column: 2;
+    grid-row: 1/3;
+  }
+  .root :global(.doctor-profile-heading) {
+    grid-template-columns: 150px minmax(0, 1fr);
+  }
+  .root :global(.doctor-profile-price) {
+    grid-column: 1/-1;
+    min-height: 0;
+  }
+  .root :global(.doctor-profile-grid) {
+    grid-template-columns: minmax(0, 1fr) 330px;
+  }
+  .root :global(.gateway-layout) {
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 26px;
+  }
+  .root :global(.gateway-profile-list) {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .root :global(.container) {
+    width: calc(100% - 32px);
+  }
+  .root :global(.content-section) {
+    padding-block: 30px 48px;
+  }
+  .root :global(.page-hero),
+  .root :global(.healthcare-list-hero),
+  .root :global(.specialty-index-hero),
+  .root :global(.specialty-detail-hero),
+  .root :global(.doctor-profile-hero) {
+    padding-block: 26px 36px;
+  }
+  .root :global(.page-hero-grid),
+  .root :global(.doctor-directory-grid),
+  .root :global(.gateway-layout),
+  .root :global(.doctor-profile-grid) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+  .root :global(.page-hero h1),
+  .root :global(.healthcare-list-hero h1),
+  .root :global(.specialty-index-hero h1) {
+    font-size: clamp(30px, 7vw, 43px);
+    margin-block: 12px;
+  }
+  .root :global(.page-hero-copy p),
+  .root :global(.healthcare-list-hero p),
+  .root :global(.specialty-index-hero p) {
+    font-size: 14px;
+  }
+  .root :global(.breadcrumbs) {
+    margin-bottom: 23px;
+  }
+  .root :global(.doctor-directory-grid > aside),
+  .root :global(.gateway-aside),
+  .root :global(.schedule-panel) {
+    position: static;
+  }
+  .root :global(.gateway-aside) {
+    padding: 22px;
+  }
+  .root :global(.gateway-aside nav) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .root :global(.gateway-aside h2) {
+    font-size: 23px;
+    margin-block: 10px 18px;
+  }
+  .root :global(.healthcare-filters) {
+    padding: 20px;
+    gap: 16px 12px;
+  }
+  .root :global(.healthcare-filters label) {
+    font-size: 11px;
+  }
+  .root :global(.doctor-result-card) {
+    padding: 20px;
+  }
+  .root :global(.doctor-result-main h2) {
+    font-size: 18px;
+  }
+  .root :global(.results-heading) {
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-bottom: 18px;
+  }
+  .root :global(.gateway-profile-list),
+  .root :global(.specialty-index-grid) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .root :global(.gateway-category-grid) {
+    gap: 12px;
+  }
+  .root :global(.gateway-category-grid > a) {
+    grid-template-columns: 1fr auto;
+    padding: 18px;
+    gap: 12px;
+  }
+  .root :global(.gateway-category-grid > a > svg:first-child),
+  .root :global(.gateway-category-grid > a > img) {
+    grid-column: 1;
+  }
+  .root :global(.gateway-category-grid > a > div) {
+    grid-row: 2;
+  }
+  .root :global(.gateway-category-grid > a > svg:last-child) {
+    grid-row: 2;
+  }
+  .root :global(.gateway-category-grid strong) {
+    font-size: 13px;
+  }
+  .root :global(.gateway-heading) {
+    align-items: start;
+    flex-wrap: wrap;
+  }
+  .root :global(.gateway-heading > a) {
+    font-size: 11px;
+  }
+  .root :global(.specialty-index-grid > a),
+  .root :global(.specialty-index-grid > a:nth-child(even)) {
+    padding: 24px;
+    min-height: 140px;
+  }
+  .root :global(.specialty-detail-summary) {
+    flex-wrap: wrap;
+    padding: 18px;
+  }
+  .root :global(.doctor-profile-heading) {
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 18px;
+  }
+  .root :global(.doctor-profile-photo) {
+    min-height: 130px;
+  }
+  .root :global(.doctor-profile-intro h1) {
+    font-size: 26px;
+  }
+  .root :global(.doctor-profile-metrics) {
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .root :global(.doctor-profile-price) {
+    display: flex;
+    padding: 24px;
+  }
+  .root :global(.doctor-profile-price .button) {
+    margin-top: 18px;
+  }
+  .root :global(.profile-detail-section),
+  .root :global(.schedule-panel) {
+    padding: 23px;
+  }
+  .root :global(.profile-detail-list) {
+    grid-template-columns: 1fr;
+  }
+  .root :global(.profile-detail-list > div:nth-child(even)) {
+    border-left: 0;
+    padding-inline-start: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .root *,
+  .root *::before,
+  .root *::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
-.root :global(.doctor-profile-price .button) { background: #fff; color: #602d8c; box-shadow: none; }
+.root :global(.doctor-profile-price .button) {
+  background: #fff;
+  color: #602d8c;
+  box-shadow: none;
+}
+
+/* Portrait-led consultant cards, scoped to healthcare routes. */
+.root :global(.doctor-directory) {
+  background: linear-gradient(180deg, #fff, #faf6fe);
+  scroll-margin-top: 85px;
+}
+.root :global(.doctor-results-list) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+.root :global(.doctor-result-card) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  border-radius: 25px;
+  border: 1px solid #eadff3;
+  box-shadow: 0 10px 28px -22px #62308465;
+  overflow: hidden;
+  min-width: 0;
+}
+.root :global(.doctor-result-photo) {
+  width: 100%;
+  height: 220px;
+  min-height: 220px;
+  border-radius: 0;
+  background:
+    radial-gradient(ellipse at 50% 80%, #e4cef3, transparent 72%),
+    linear-gradient(135deg, #f8f2fc, #f0e4f8);
+  border-bottom: 1px solid #f0e7f7;
+}
+.root :global(.doctor-result-photo img) {
+  object-fit: contain;
+  object-position: center top;
+  padding: 14px 18px 0;
+  box-sizing: border-box;
+}
+.root :global(.doctor-result-photo .profile-fallback svg) {
+  width: 65px;
+  height: 65px;
+  opacity: 0.65;
+}
+.root :global(.doctor-result-main) {
+  padding: 20px 22px;
+  flex: 1;
+}
+.root :global(.doctor-result-main h2) {
+  font-size: 20px;
+  line-height: 1.4;
+  margin-block: 12px 6px;
+}
+.root :global(.doctor-result-tags) {
+  margin-top: 8px;
+}
+.root :global(.doctor-result-tags span),
+.root :global(.doctor-result-tags a) {
+  font-size: 9px;
+  font-weight: 700;
+  background: #f6edfc;
+  color: #8146a4;
+  border: 1px solid #efe1f8;
+  border-radius: 7px;
+}
+.root :global(.doctor-result-meta) {
+  border-top: 1px solid #f1e8f7;
+  padding-top: 13px;
+  margin-top: 14px;
+  gap: 7px 12px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.root :global(.doctor-result-action) {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3px;
+  border: 0;
+  border-top: 1px solid #eee4f5;
+  padding: 17px 22px 22px;
+  background: #fdfaff;
+}
+.root :global(.doctor-result-action small) {
+  font-size: 10px;
+  color: #8e7e99;
+}
+.root :global(.doctor-result-action strong) {
+  font-size: 19px;
+  color: #5e287e;
+  margin: 0 0 13px;
+  grid-column: auto;
+  line-height: 1.4;
+}
+.root :global(.doctor-result-action .button) {
+  width: 100%;
+  grid-column: auto;
+  grid-row: auto;
+  border-radius: 12px;
+  min-height: 45px;
+  font-size: 12px;
+}
+.root :global(.results-heading) {
+  margin-bottom: 5px;
+  padding: 0 0 21px;
+}
+.root :global(.results-heading strong) {
+  font-size: 24px;
+  letter-spacing: -0.035em;
+}
+.root :global(.healthcare-filters) {
+  border-top: 4px solid #8d52b2;
+  box-shadow: 0 15px 40px -27px #65308b65;
+}
+.root :global(.filter-title strong) {
+  font-size: 19px;
+}
+.root :global(.healthcare-filters label) {
+  font-size: 11px;
+}
+.root :global(.doctor-profile-intro > form) {
+  display: inline-grid;
+  width: max-content;
+  max-width: 100%;
+  margin-block: 10px;
+}
+.root :global(.doctor-profile-intro > form button) {
+  background: #fff;
+  color: #713a98;
+  border: 1px solid #d9bce9;
+  border-radius: 100px;
+  padding: 10px 18px;
+  font-size: 12px;
+  min-height: 39px;
+  box-shadow: none;
+}
+@media (max-width: 1000px) {
+  .root :global(.doctor-result-photo) {
+    height: 190px;
+    min-height: 190px;
+  }
+  .root :global(.doctor-result-main) {
+    padding: 17px;
+  }
+  .root :global(.doctor-result-main h2) {
+    font-size: 18px;
+  }
+  .root :global(.doctor-result-action) {
+    padding: 16px 17px 19px;
+  }
+}
+@media (max-width: 600px) {
+  .root :global(.doctor-results-list) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .root :global(.doctor-result-photo) {
+    height: 245px;
+    min-height: 245px;
+  }
+  .root :global(.doctor-result-main) {
+    padding: 22px;
+  }
+  .root :global(.doctor-result-main h2) {
+    font-size: 22px;
+  }
+  .root :global(.doctor-result-action) {
+    padding: 18px 22px 22px;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 900px) { .root :global(.doctor-results-list) { grid-template-columns: minmax(0, 1fr); } }
+
+/* Compact cards and inset page headers; no changes to data or actions. */
+.root :global(.content-section) { padding-block:32px 42px; }
+.root :global(.doctor-results-list) { gap:16px; }
+.root :global(.doctor-result-card) { display:grid; grid-template-columns:96px minmax(0,1fr); align-items:start; gap:0 16px; padding:16px; border-radius:17px; background:#fff; box-shadow:0 6px 18px -16px #68348650; }
+.root :global(.doctor-result-photo) { grid-column:1; grid-row:1; width:96px; height:128px; min-height:128px; border-radius:11px; overflow:hidden; border:1px solid #f0e8f6; background:#f6f0fa; }
+.root :global(.doctor-result-photo img) { padding:0; object-fit:cover; object-position:center 20%; }
+.root :global(.doctor-result-photo .profile-fallback svg) { width:34px; height:34px; }
+.root :global(.doctor-result-main) { grid-column:2; grid-row:1; padding:0; min-width:0; }
+.root :global(.doctor-result-main h2) { font-size:16px; margin-block:7px 3px; line-height:1.4; }
+.root :global(.doctor-designation),.root :global(.doctor-name-ar) { font-size:11px!important; line-height:1.5; }
+.root :global(.doctor-result-tags) { gap:4px; margin-top:4px; }
+.root :global(.doctor-result-tags span),.root :global(.doctor-result-tags a) { font-size:8px; padding:3px 5px; border-radius:5px; }
+.root :global(.doctor-result-meta) { gap:4px 9px; margin-top:8px; padding-top:8px; font-size:10px; line-height:1.5; }
+.root :global(.doctor-result-action) { grid-column:1/-1; grid-row:2; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:2px 10px; border:0; border-top:1px solid #f0e8f6; padding:11px 0 0; margin-top:12px; background:transparent; }
+.root :global(.doctor-result-action small) { grid-column:1; font-size:9px; }
+.root :global(.doctor-result-action strong) { grid-column:1; font-size:14px; margin:0; line-height:1.5; }
+.root :global(.doctor-result-action .button) { grid-column:2; grid-row:1/3; width:auto; min-height:38px; padding:9px 13px; font-size:11px; border-radius:9px; box-shadow:none; }
+.root :global(.results-heading) { padding-bottom:16px; }
+.root :global(.results-heading strong) { font-size:19px; }
+.root :global(.results-heading span),.root :global(.results-heading>a) { font-size:11px; }
+.root :global(.healthcare-filters) { padding:18px; border-radius:17px; gap:13px 10px; border-top-width:2px; }
+.root :global(.filter-title) { padding-bottom:13px; }
+.root :global(.filter-title strong) { font-size:16px; }
+.root :global(.healthcare-filters input),.root :global(.healthcare-filters select) { height:40px; font-size:11px; padding-inline:9px; border-radius:8px; }
+.root :global(.filter-check input) { height:17px; width:17px; }
+.root :global(.specialty-index-hero),.root :global(.specialty-detail-hero),.root :global(.doctor-profile-hero) { width:min(1160px,calc(100% - 48px)); margin:22px auto 0; padding:24px 0; border:1px solid #eadff2; border-radius:20px; }
+.root :global(.specialty-index-hero .container),.root :global(.specialty-detail-hero .container),.root :global(.doctor-profile-hero .container) { width:calc(100% - 48px); }
+.root :global(.breadcrumbs) { margin-bottom:18px; }
+.root :global(.specialty-index-hero h1),.root :global(.specialty-detail-hero h1) { font-size:clamp(28px,3vw,38px); line-height:1.2; margin-block:9px; }
+.root :global(.specialty-index-hero p) { font-size:13px; }
+.root :global(.specialty-detail-heading) { gap:18px; }
+.root :global(.specialty-detail-icon) { width:64px; height:64px; min-width:64px; border-radius:16px; display:grid; place-items:center; overflow:hidden; }
+.root :global(.specialty-detail-icon img) { width:100%; height:100%; object-fit:cover; }
+.root :global(.specialty-detail-icon .safe-image-fallback) { display:grid;place-items:center;width:100%;height:100%;background:#f1e5fa;color:#8450a7; }
+.root :global(.specialty-detail-heading > div > p) { margin:0; font-size:12px; }
+.root :global(.specialty-detail-summary) { padding:12px 16px; margin-top:18px; border-radius:12px; gap:12px; }
+.root :global(.specialty-detail-summary strong) { font-size:22px; }
+.root :global(.specialty-detail-summary span) { font-size:11px; }
+.root :global(.specialty-index-grid) { gap:16px; }
+.root :global(.specialty-index-grid>a),.root :global(.specialty-index-grid>a:nth-child(even)) { min-height:112px; padding:20px; gap:15px; border-radius:17px; grid-template-columns:48px minmax(0,1fr) 20px; }
+.root :global(.specialty-index-icon) { width:48px; height:48px; border-radius:12px; overflow:hidden; }
+.root :global(.specialty-index-icon img) { width:100%;height:100%;object-fit:cover; }
+.root :global(.specialty-index-icon .safe-image-fallback) { width:100%;height:100%;display:grid;place-items:center;background:#f1e5fa;color:#8450a7; }
+.root :global(.specialty-index-grid h2) { font-size:17px; }
+.root :global(.specialty-index-grid p) { font-size:12px; }
+.root :global(.doctor-profile-heading) { grid-template-columns:120px minmax(0,1fr) 220px; gap:24px; }
+.root :global(.doctor-profile-photo) { min-height:150px; border-radius:16px; }
+.root :global(.doctor-profile-intro h1) { font-size:32px; }
+.root :global(.doctor-profile-price) { min-height:160px; padding:22px; border-radius:17px; }
+.root :global(.doctor-profile-metrics) { margin-top:16px; padding-top:12px; gap:14px; font-size:11px; }
+.root :global(.profile-detail-section),.root :global(.schedule-panel) { padding:22px; border-radius:17px; }
+@media(max-width:1000px) { .root :global(.doctor-profile-heading) { grid-template-columns:110px minmax(0,1fr); } .root :global(.doctor-profile-price) { grid-column:1/-1;min-height:0; } }
+@media(max-width:600px) {
+.root :global(.specialty-index-hero),.root :global(.specialty-detail-hero),.root :global(.doctor-profile-hero) { width:calc(100% - 28px);margin-top:14px;padding-block:19px;border-radius:17px; }
+.root :global(.specialty-index-hero .container),.root :global(.specialty-detail-hero .container),.root :global(.doctor-profile-hero .container) { width:calc(100% - 32px); }
+.root :global(.content-section) { padding-block:24px 32px; }
+.root :global(.doctor-result-card) { grid-template-columns:82px minmax(0,1fr);gap:0 12px;padding:14px;border-radius:15px; }
+.root :global(.doctor-result-photo) { width:82px;height:112px;min-height:112px; }
+.root :global(.doctor-result-main h2) { font-size:15px; }
+.root :global(.doctor-result-meta) { font-size:9px;gap:3px 7px; }
+.root :global(.doctor-result-action .button) { min-height:38px;font-size:10px;padding-inline:11px; }
+.root :global(.specialty-detail-heading) { gap:13px; }
+.root :global(.specialty-detail-icon) { width:52px;height:52px;min-width:52px;border-radius:13px; }
+.root :global(.specialty-detail-hero h1) { font-size:26px; }
+.root :global(.specialty-detail-summary) { padding:11px 12px;gap:8px; }
+.root :global(.specialty-detail-summary span) { font-size:10px; }
+.root :global(.specialty-detail-summary a) { font-size:11px; }
+.root :global(.doctor-profile-heading) { grid-template-columns:82px minmax(0,1fr);gap:14px; }
+.root :global(.doctor-profile-photo) { min-height:110px; }
+.root :global(.doctor-profile-intro h1) { font-size:25px; }
+}

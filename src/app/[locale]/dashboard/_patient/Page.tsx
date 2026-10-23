@@ -1,3 +1,6 @@
+import SavedUI, { s as savedStyles } from "../saved/SavedUI";
+import { Heart } from "lucide-react";
+import RequestsUI, { RequestsLayout } from "../requests/RequestsUI";
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
 import { unstable_rethrow } from "next/navigation";
@@ -177,57 +180,7 @@ export default async function PatientFeature({
     if (feature === "saved") {
       const result = await favorites(backend, page);
       pagination = result.meta?.pagination;
-      content = (
-        <>
-          <section className={s.card}>
-            <h2>Save a provider</h2>
-            <p>
-              Use the reference shown on the consultant or provider profile.
-            </p>
-            <Form op="favorite-add" source={backend} label="Save provider">
-              <Field
-                name="id"
-                label={
-                  backend === "d4h"
-                    ? "Provider reference"
-                    : "Consultant reference"
-                }
-                type="number"
-                required
-                step="1"
-              />
-            </Form>
-          </section>
-          <div className={s.grid}>
-            {result.data.map((r) => (
-              <section className={s.card} key={r.id}>
-                <h2>{ar ? r.name_ar || r.name : r.name}</h2>
-                <Facts rows={[["Reference", r.id]]} />
-                <Link
-                  href={
-                    prefix +
-                    (backend === "d4h"
-                      ? "/provider/"
-                      : "/healthcare/doctors/") +
-                    r.id
-                  }
-                >
-                  View profile
-                </Link>
-                <Form
-                  op="favorite-remove"
-                  source={backend}
-                  id={r.id}
-                  label="Remove saved provider"
-                />
-              </section>
-            ))}
-          </div>
-          {!result.data.length && (
-            <Empty>No saved providers in this account.</Empty>
-          )}
-        </>
-      );
+      content = <SavedUI rows={result.data} backend={backend} prefix={prefix} base={base} ar={ar} />;
     } else if (feature === "reviews") {
       const result = await list<Review>(backend, "/reviews", page);
       pagination = result.meta?.pagination;
@@ -354,7 +307,7 @@ export default async function PatientFeature({
             </p>
             <Form
               op="document-upload"
-                uploadLimit={process.env.VERCEL ? 4000000 : 50*1024*1024}
+              uploadLimit={process.env.VERCEL ? 4000000 : 50 * 1024 * 1024}
               source={backend}
               label="Upload PDFs"
               uncertain
@@ -370,7 +323,10 @@ export default async function PatientFeature({
               </label>
               <BookingField />
               <label>
-                1 to 5 PDFs, up to 10 MB each{process.env.VERCEL ? " (4 MB total per upload on this site)" : ""}
+                1 to 5 PDFs, up to 10 MB each
+                {process.env.VERCEL
+                  ? " (4 MB total per upload on this site)"
+                  : ""}
                 <input
                   name="files[]"
                   type="file"
@@ -544,72 +500,14 @@ export default async function PatientFeature({
         catalogError = true;
       }
       content = (
-        <>
-          <section className={s.card}>
-            <h2>Create a custom service request</h2>
-            <p>
-              This submits a request for staff/provider processing. It does not
-              reserve a slot, create a booking, charge a wallet or accept an
-              offer.
-            </p>
-            {catalogError ? (
-              <p>Services could not be loaded. Please retry.</p>
-            ) : (
-              <Form
-                op="request"
-                source="d4h"
-                label="Submit custom request"
-                uncertain
-              >
-                <Field name="title" label="Title" max={150} required />
-                <Field
-                  name="description"
-                  label="Description"
-                  type="textarea"
-                  max={5000}
-                  required
-                />
-                <label>
-                  Services (choose up to 20)
-                  <select
-                    name="service_ids"
-                    multiple
-                    required
-                    className={s.input}
-                  >
-                    {services.map((r) => (
-                      <option value={r.id} key={r.id}>
-                        {r.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <Field
-                  name="preferred_date"
-                  label="Preferred date (optional)"
-                  type="date"
-                />
-              </Form>
-            )}
-          </section>
-          {result.data.map((r) => (
-            <section className={s.card} key={r.id}>
-              <h2>{r.title}</h2>
-              <p style={{ whiteSpace: "pre-wrap" }}>{r.description}</p>
-              <Facts
-                rows={[
-                  ["Reference", r.id],
-                  ["Status", r.status],
-                  ["Services", r.service_ids.join(", ")],
-                  ["Preferred date", r.preferred_date],
-                  ["Created", stamp(r.created_at, ar)],
-                ]}
-              />
-              <Link href={base + "/" + r.id}>View request</Link>
-            </section>
-          ))}
-          {!result.data.length && <Empty>No custom service requests.</Empty>}
-        </>
+        <RequestsUI
+          rows={result.data}
+          services={services}
+          catalogError={catalogError}
+          base={base}
+          ar={ar}
+          total={result.meta?.pagination?.total}
+        />
       );
     } else {
       type Profile = {
@@ -724,6 +622,25 @@ export default async function PatientFeature({
       </section>
     );
   }
+  if (feature === "saved") return <div className={savedStyles.page}><header className={savedStyles.header}><span className={savedStyles.heart}><Heart size={25}/></span><div><h1>{ar ? "\u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u064a\u0648\u0646 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0648\u0646" : "Saved consultants"}</h1><p>{ar ? "\u0627\u0644\u0631\u0639\u0627\u064a\u0629 \u0627\u0644\u062a\u064a \u062a\u0641\u0636\u0644\u0647\u0627\u060c \u0641\u064a \u0645\u0643\u0627\u0646 \u0648\u0627\u062d\u062f." : "The care you connect with, kept close for your next visit."}</p></div></header>{content}{pagination && <nav className={savedStyles.pagination} aria-label="Saved consultant pages">{pagination.current_page > 1 && <Link href={path(pagination.current_page-1)}>Previous</Link>}<span>Page {pagination.current_page}</span>{pagination.has_more && <Link href={path(pagination.current_page+1)}>Next</Link>}</nav>}</div>;
+  if (feature === "requests")
+    return (
+      <RequestsLayout ar={ar}>
+        {content}
+        {pagination && (
+          <nav className={s.actions} aria-label="Request pages">
+            {pagination.current_page > 1 && (
+              <Link href={path(pagination.current_page - 1)}>Previous</Link>
+            )}
+            <span>Page {pagination.current_page}</span>
+            {pagination.has_more && (
+              <Link href={path(pagination.current_page + 1)}>Next</Link>
+            )}
+          </nav>
+        )}
+      </RequestsLayout>
+    );
+
   return (
     <CareLayout title={titles[feature][ar ? 1 : 0]}>
       <nav className={s.actions}>

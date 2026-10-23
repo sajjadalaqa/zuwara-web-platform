@@ -9,8 +9,8 @@
 /* ---------- Frame (sized to fit between the header and the mobile bottom bar) ---------- */
 .wrap {
   display: grid; grid-template-columns: minmax(0, 1fr);
-  height: calc(100dvh - var(--header-h) - 100px); min-height: 420px; margin-bottom: -24px;
-  background: #fff; border: 1px solid var(--line); border-radius: 20px; overflow: hidden;
+  height: calc(100dvh - var(--header-h, 76px) - 100px); min-height: 420px; margin-bottom: -24px;
+  background: #fff; border: 1px solid var(--line); border-radius: 20px; overflow: hidden;box-shadow:0 12px 35px -25px #59317640;
 }
 .list { display: flex; flex-direction: column; min-height: 0; height: 100%; }
 .pane { display: flex; flex-direction: column; min-height: 0; height: 100%; }
@@ -22,7 +22,7 @@
 }
 
 /* ---------- Conversation list ---------- */
-.listHead { display: grid; gap: 10px; padding: 14px 14px 10px; }
+.listHead { display: grid; gap: 10px; padding: 22px 18px 16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#fff,#fcf9ff); }
 .listHead h2 { margin: 0; font-size: 19px; font-weight: 800; color: var(--p-900); }
 .search { position: relative; }
 .searchIcon {
@@ -39,15 +39,15 @@
 .clear {
   position: absolute; inset-inline-end: 8px; top: 50%; transform: translateY(-50%);
   display: grid; place-items: center; width: 24px; height: 24px;
-  border: 0; border-radius: 50%; background: var(--p-100); color: var(--p-700); cursor: pointer;
+  border: 0; border-radius: 22px; background:linear-gradient(135deg,#f0e3fa,#e9d9f5); color: var(--p-700);box-shadow:0 8px 24px -14px #71359d50; cursor: pointer;
 }
-.items { flex: 1; min-height: 0; margin: 0; padding: 0 6px 8px; overflow-y: auto; list-style: none; }
+.items { flex: 1; min-height: 0; margin: 0; padding: 10px;scrollbar-width:thin;scrollbar-color:#d9c7e7 transparent; overflow-y: auto; list-style: none; }
 .item {
-  display: flex; align-items: center; gap: 11px; padding: 10px; border-radius: 14px;
+  display: flex; align-items: center; gap: 11px; padding: 13px 11px; border-radius: 12px;border:1px solid transparent;margin-bottom:5px;
   color: inherit; text-decoration: none; transition: background 0.2s;
 }
 .item:hover { background: var(--p-50); }
-.itemActive, .itemActive:hover { background: var(--p-100); }
+.itemActive, .itemActive:hover { background: #f0e6f8;border-color:#e0ccef; }
 .avatar {
   flex: 0 0 42px; width: 42px; height: 42px; display: grid; place-items: center;
   border-radius: 50%; overflow: hidden; color: #fff; font-size: 15px; font-weight: 800;
@@ -60,10 +60,10 @@
   margin: 0; font-size: 14px; font-weight: 700; color: var(--ink);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.itemTop small { flex-shrink: 0; font-size: 11px; color: #9a90b3; }
+.itemTop small { flex-shrink: 0; font-size: 12px; color: #806b90; }
 .itemBottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .preview {
-  margin: 0; font-size: 12.5px; color: var(--muted);
+  margin: 0; font-size: 13px; color: var(--muted);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .unread .itemTop h3, .unread .preview { font-weight: 800; color: var(--p-900); }
@@ -147,7 +147,7 @@
 /* ---------- Empty states ---------- */
 .placeholder {
   display: none; flex: 1; place-content: center; justify-items: center; gap: 8px;
-  padding: 24px; text-align: center; background: #fbf8ff;
+  padding: 24px; text-align: center; background:radial-gradient(ellipse at center,#f1e6fa88,transparent 65%),#fcfaff;
 }
 .emptyWrap {
   display: grid; justify-items: center; gap: 8px; padding: 44px 20px; text-align: center;
@@ -178,8 +178,8 @@
 
 /* ---------- Tablet (the bottom bar is still visible) ---------- */
 @media (min-width: 640px) {
-  .wrap { height: calc(100dvh - var(--header-h) - 110px); margin-bottom: -44px; }
-  .listHead { padding: 16px 16px 12px; }
+  .wrap { height: calc(100dvh - var(--header-h, 76px) - 110px); margin-bottom: -44px; }
+  .listHead { padding: 22px 18px 16px; }
   .chatHead { padding: 12px 16px; }
   .body { padding: 18px 20px; }
   .row { max-width: 72%; }
@@ -189,8 +189,8 @@
 /* ---------- Desktop (split view) ---------- */
 @media (min-width: 1024px) {
   .wrap {
-    grid-template-columns: 340px minmax(0, 1fr);
-    height: calc(100dvh - var(--header-h) - 64px); min-height: 520px; margin-bottom: 0;
+    grid-template-columns: 360px minmax(0, 1fr);
+    height: calc(100dvh - var(--header-h, 76px) - 64px); min-height: 520px; margin-bottom: 0;
     border-radius: 22px;
   }
   .list { border-inline-end: 1px solid var(--line); }

@@ -31,5 +31,5 @@ export default async function ChatPage({ params, searchParams }: { params: Promi
       <p><a href={href + "/chat" + (followUpId ? "?follow_up_id="+encodeURIComponent(followUpId) : "")}>{ar ? "\u062d\u0627\u0648\u0644 \u0645\u062c\u062f\u062f\u0627\u064b" : "Try again"}</a></p><Link href={href}>{ar ? "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u0645\u0648\u0639\u062f" : "Back to appointment"}</Link>
     </section>;
   }
-  return <div><Link href={href}>{ar ? "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u0645\u0648\u0639\u062f" : "Back to appointment"}</Link><h1>{ar ? "\u0645\u062d\u0627\u062f\u062b\u0629 \u0627\u0644\u0645\u0648\u0639\u062f" : "Appointment chat"}</h1><AppointmentChat id={id} initial={initial} followUpId={followUpId} /></div>;
+  return <div className={s.page}><Link className={s.backLink} href={href}>{ar ? "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u0645\u0648\u0639\u062f" : "Back to appointment"}</Link><h1>{ar ? "\u0645\u062d\u0627\u062f\u062b\u0629 \u0627\u0644\u0645\u0648\u0639\u062f" : "Appointment chat"}</h1><AppointmentChat id={id} initial={initial} followUpId={followUpId} /></div>;
 }

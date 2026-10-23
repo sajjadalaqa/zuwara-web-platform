@@ -111,7 +111,18 @@
   font: inherit; font-weight: 600; cursor: pointer; transition: background .2s, color .2s;
 }
 .pager button svg { width: 16px; height: 16px; }
-.pager button:hover:not(:disabled) { background: var(--p50); }
+.pager button:hover:not(:disabled):not(.active) {
+  background: var(--p100);
+  border-color: var(--p600);
+  color: var(--p900);
+}
+
+.pager button.active,
+.pager button.active:hover {
+  background: var(--p600);
+  border-color: var(--p600);
+  color: #fff;
+}
 .pager button:disabled { opacity: .45; cursor: not-allowed; }
 .pager button.active { background: var(--p600); border-color: var(--p600); color: #fff; }
 
