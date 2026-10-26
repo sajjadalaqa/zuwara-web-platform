@@ -1,6 +1,16 @@
+import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { getLocale } from "next-intl/server";
 import "./globals.css";
+
+export const metadata: Metadata = {
+  icons: {
+    icon: "/brand/favicon.png",
+    shortcut: "/brand/favicon.png",
+    apple: "/brand/favicon.png",
+  },
+};
+
 const manrope = localFont({
   src: [
     { path: "./fonts/Manrope-Regular.ttf", weight: "400", style: "normal" },
