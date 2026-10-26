@@ -57,14 +57,9 @@
   position: relative; aspect-ratio: 16 / 10; overflow: hidden; display: grid; place-items: center;
   background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, .5) 0%, transparent 62%), linear-gradient(160deg, #e2d1f8, #cdb2f1);
 }
-/* Soft fade from the photo area into the card body (removes the hard edge) */
-.photo::after {
-  content: ""; position: absolute; inset-inline: 0; inset-block-end: 0; height: 45%;
-  background: linear-gradient(to bottom, rgba(244, 236, 253, 0), var(--soft));
-  pointer-events: none;
-}
-.photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform .5s ease; }
-.card:hover .photo img { transform: scale(1.05); }
+.photo::after { content: none; }
+.photo img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: contain; object-position: center; padding: 12px; }
+.card:hover .photo img { transform: none; }
 .initials {
   position: relative; z-index: 1;
   display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%;
@@ -219,4 +214,12 @@
 /* Small tablets: slightly shorter photo area */
 @media (min-width: 641px) and (max-width: 900px) {
   .photo { aspect-ratio: 16 / 9; }
+}
+/* Compact spacing when a provider has no role listed. */
+.roleEmpty { display: none; }
+.info { gap: 8px; }
+.cta { margin-block-start: 4px; }
+@media (max-width: 640px) {
+  .info { gap: 7px; }
+  .cta { margin-block-start: 3px; }
 }

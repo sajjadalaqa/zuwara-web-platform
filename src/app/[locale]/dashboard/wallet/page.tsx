@@ -66,12 +66,12 @@ export default async function WalletPage({
   return (
     <div className={s.page}>
       <header className={s.head}>
-        <h2>{t.title}</h2>
-        <p>{t.subtitle}</p>
+        <span className={s.headingIcon}><Wallet size={25} /></span><div><span className={s.eyebrow}>{isAr ? "أموالك، بكل وضوح" : "YOUR MONEY, AT A GLANCE"}</span><h1>{t.title}</h1>
+        <p>{t.subtitle}</p></div>
       </header>
 
       {/* ===== Balance ===== */}
-      <section className={s.hero}>
+      <section className={s.hero}><div className={s.heroDecoration} aria-hidden="true"><Wallet size={104} strokeWidth={1} /></div>
         <div className={s.heroTop}>
           <div>
             <p className={s.balLabel}>
@@ -99,14 +99,14 @@ export default async function WalletPage({
       {/* ===== Transactions ===== */}
       <section className={s.card}>
         <div className={s.cardHead}>
-          <h2>{t.txTitle}</h2>
+          <div className={s.transactionHeading}><span className={s.receiptIcon}><Receipt size={20}/></span><div><h2>{t.txTitle}</h2><p>{isAr ? "تابع حركة أموالك في مكان واحد." : "A clear view of every payment and refund."}</p></div></div>
           <span className={s.total}>{number(data.total, locale)} {t.results}</span>
         </div>
 
         <nav className={s.tabs} aria-label="Type">
           {ORDER.map((tp) => (
             <Link
-              key={tp}
+              key={tp} aria-current={tp === type ? "page" : undefined}
               href={href({ type: tp })}
               scroll={false}
               className={`${s.tab} ${tp === type ? s.tabActive : ""}`}

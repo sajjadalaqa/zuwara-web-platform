@@ -34,7 +34,7 @@ export default function Form({
     <form
       action={action}
       onSubmit={(e) => {
-        if (locked.current || state.uncertain || (uncertain && state.ok)) {
+        if (locked.current || state.uncertain || (uncertain && state.ok && op !== "avatar")) {
           e.preventDefault();
           return;
         }
@@ -58,7 +58,7 @@ export default function Form({
       <input type="hidden" name="source" value={source} />
       {id !== undefined && <input type="hidden" name="id" value={id} />}
       <fieldset
-        disabled={pending || state.uncertain || (uncertain && state.ok)}
+        disabled={pending || state.uncertain || (uncertain && state.ok && op !== "avatar")}
         style={{
           border: 0,
           padding: 0,

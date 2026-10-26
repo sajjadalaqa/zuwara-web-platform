@@ -12,11 +12,13 @@ export default function AvatarUploader({
   avatarUrl,
   t,
   readOnly = false,
+  uploadInputId,
 }: {
   name: string;
   avatarUrl?: string;
   t: Copy;
   readOnly?: boolean;
+  uploadInputId?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, start] = useTransition();
@@ -67,8 +69,14 @@ export default function AvatarUploader({
         <button
           type="button"
           className={s.camBtn}
-          onClick={() => inputRef.current?.click()}
-          disabled={busy || readOnly}
+          onClick={() => {
+            if (uploadInputId) {
+              document.getElementById(uploadInputId)?.click();
+            } else {
+              inputRef.current?.click();
+            }
+          }}
+          disabled={busy || (readOnly && !uploadInputId)}
           aria-label={t.avatar.change}
         >
           <Camera size={14} />

@@ -124,3 +124,72 @@
   .pageBtn { padding: 9px 14px; font-size: 13px; }
   .pageInfo { font-size: 13px; }
 }
+/* Notifications presentation */
+.page{--ink:#4a3457;--muted:#8e789b;--line:#eee4f5;gap:22px;color:#3c2948;padding-bottom:25px}
+.page *{box-sizing:border-box}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:28px 36px;border:1px solid #e5d6ee;border-radius:24px;background:radial-gradient(ellipse at right top,#e6d2f7,transparent 65%),linear-gradient(110deg,#fff,#f8f1ff);overflow:hidden}
+.eyebrow{font-size:9px;font-weight:700;letter-spacing:1.6px;color:#9870ad}
+.hero h1{font-size:32px;line-height:1.3;font-weight:750;letter-spacing:-.8px;margin:10px 0;color:#3b2548}
+.hero p{font-size:13px;line-height:1.8;color:#977fa4;margin:0}
+.heroBadges{display:flex;gap:10px;flex-wrap:wrap;margin-top:19px}
+.heroBadges>span{display:flex;align-items:center;gap:7px;background:#ffffffa6;border:1px solid #e9daf3;border-radius:8px;padding:7px 11px;color:#9163a8;font-size:10px}
+.badgeDot{width:6px;height:6px;border-radius:50%;background:#a373bd;box-shadow:0 0 0 3px #f0e3f9}
+.heroArt{position:relative;display:grid;place-items:center;width:118px;height:120px;background:#fff;color:#a36cbe;border:1px solid #ecdcf5;border-radius:24px;box-shadow:8px 8px 0 #dac1eb;transform:rotate(9deg);margin-inline-end:23px;flex-shrink:0}
+.heroArt>span{position:absolute;top:24px;right:26px;width:13px;height:13px;border-radius:50%;background:#c5a1dc;border:3px solid white}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.tabs{padding:5px;gap:7px;background:#eee5f7;border:1px solid #e6d8f0;border-radius:12px}
+.tab{min-height:42px;padding:10px 17px;border:0;border-radius:9px;font-size:12px;font-weight:600;color:#9365aa;background:transparent;gap:9px}
+.tab:hover{background:#e7d9f1;color:#88529f}
+.tabActive,.tabActive:hover{background:linear-gradient(110deg,#7939a8,#62258f);color:white;box-shadow:0 4px 10px #63288b20}
+.count{font-size:9px;font-weight:600;background:#e5d8f0;color:#9a70af}
+.markAll{min-height:40px;padding:10px 14px;border:1px solid #e6d6ef;border-radius:9px;background:white;color:#9564ad;font-size:11px;font-weight:600;gap:8px}
+.markAll:disabled{opacity:.45;cursor:default}
+.card{border-radius:21px;border:1px solid #e4d6ed;box-shadow:0 5px 20px #4f276005}
+.group{padding:14px 23px;background:#faf6fe;border-color:#ede3f5;font-size:9px;font-weight:600;letter-spacing:1.4px;color:#a385b4}
+.list>li{border-top:1px solid #f0e8f6;padding-bottom:14px;position:relative}
+.list>li:first-child{border-top:0}
+.item{gap:14px;padding:22px 23px 12px;border:0;background:transparent;min-width:0}
+.item:hover{background:#fbf7ff}
+.unread{background:#fbf8ff}
+.icon{width:44px;height:44px;flex-basis:44px;border-radius:13px}
+.tPurple{--tint:#f1e6fa;--tone:#9b67b7}
+.tMint{--tint:#eaf7f1;--tone:#67a68d}
+.tRose{--tint:#fceef3;--tone:#c68ca6}
+.tIndigo{--tint:#eff0fd;--tone:#969dcc}
+.tAmber{--tint:#fff6e6;--tone:#c5a064}
+.text{gap:7px;min-width:0}
+.text h3{font-size:13px;line-height:1.6;font-weight:600;color:#81618f;overflow-wrap:anywhere}
+.unread .text h3{font-weight:650;color:#744d86}
+.text p{font-size:12px;line-height:1.9;color:#a187af;overflow-wrap:anywhere;-webkit-line-clamp:3}
+.time{font-size:10px;font-weight:400;color:#b198bd}
+.meta{gap:11px;padding-top:3px}
+.dot{width:6px;height:6px;background:#b18bc9;box-shadow:0 0 0 3px #f1e5f9}
+.list>li>div{padding-inline:81px 23px}
+.list>li>div>.markAll{padding:5px 9px;font-size:9px;min-height:27px;border:1px solid #ede1f4;background:#fdfaff;color:#b191c1;border-radius:6px}
+.list>li>div>p{font-size:10px;line-height:1.8;color:#b9859a}
+.empty{padding:44px 25px;border:1px dashed #d9c4e7;border-radius:21px;gap:14px;background:#ffffffb3}
+.emptyIcon{width:76px;height:76px;border-radius:22px;background:#f1e6fa;color:#ab80c0;box-shadow:0 0 0 8px #f8f2fc;margin:8px 0 14px}
+.empty h3{font-size:18px;font-weight:650;color:#8d689e}
+.empty p{font-size:12px;line-height:1.9;color:#ad93b9}
+.pager{gap:15px;padding-top:2px}
+.pageBtn{padding:10px 14px;border-radius:10px;font-size:11px;font-weight:500;color:#a075b3;border-color:#e7d8f0}
+.pageInfo{font-size:11px;font-weight:400;color:#ac8ebc}
+.page :is(a,button):focus-visible{outline:3px solid #ba92d2;outline-offset:3px}
+@media(max-width:650px){.page{gap:18px}.hero{padding:25px 21px;gap:12px;border-radius:20px}.hero h1{font-size:27px}.hero p{font-size:12px}.eyebrow{font-size:8px;letter-spacing:1.2px}.heroArt{width:78px;height:88px;margin-inline-end:5px;border-radius:17px}.heroArt>svg{width:38px;height:38px}.heroArt>span{top:18px;right:13px;width:11px;height:11px}.heroBadges{gap:7px;margin-top:17px}.heroBadges>span{font-size:9px;padding:6px 8px}.toolbar{gap:13px}.tab{font-size:11px;padding:9px 13px;min-height:38px}.markAll{font-size:10px;min-height:37px;padding:9px 11px}.group{padding:13px 17px;font-size:8px}.item{padding:19px 17px 11px;gap:11px;flex-wrap:wrap}.icon{width:37px;height:37px;flex-basis:37px;border-radius:11px}.text h3{font-size:12px}.text p{font-size:11px}.time{font-size:9px}.list>li>div{padding-inline:65px 17px}.list>li{padding-bottom:13px}.empty{padding:35px 22px}.empty h3{font-size:16px}.empty p{font-size:11px}}
+@media(max-width:420px){.meta{width:100%;display:flex;align-items:center;justify-content:space-between;padding-inline-start:48px}.toolbar>.markAll{margin-inline-start:auto}.hero h1{font-size:25px}}
+@media(prefers-reduced-motion:reduce){.item,.markAll,.tab{transition:none}.skel{animation:none}}
+/* Keep notification actions beside their message. */
+.list>li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px;padding:0 23px 0 0}
+.item{padding:22px 0 22px 23px}
+.list>li>div{padding:0;max-width:125px;text-align:end}
+.list>li>div>.markAll{white-space:nowrap;min-height:32px;padding:7px 10px;font-size:10px}
+:global(html[dir="rtl"]) .list>li{padding:0 0 0 23px}
+:global(html[dir="rtl"]) .item{padding:22px 23px 22px 0}
+@media(max-width:650px){
+ .list>li{gap:10px;padding:0 17px 0 0}
+ .item{padding:19px 0 19px 17px}
+ .list>li>div{padding:0;max-width:100px}
+ .list>li>div>.markAll{font-size:9px;min-height:30px;padding:6px 8px}
+ :global(html[dir="rtl"]) .list>li{padding:0 0 0 17px}
+ :global(html[dir="rtl"]) .item{padding:19px 17px 19px 0}
+}

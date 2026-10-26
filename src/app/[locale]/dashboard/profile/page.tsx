@@ -1,4 +1,4 @@
-import { BadgeCheck, CalendarDays, ShieldCheck, UserRound } from "lucide-react";
+import { BadgeCheck, CalendarDays, ShieldCheck, UserRound, Camera, MapPin, ArrowUpRight, Info } from "lucide-react";
 import Link from "next/link";
 import AvatarUploader from "./AvatarUploader";
 import ProfileEditor from "./ProfileEditor";
@@ -32,14 +32,15 @@ export default async function ProfilePage({
   return (
     <div className={s.page}>
       <header className={s.head}>
-        <h2>{t.title}</h2>
-        <p>{t.subtitle}</p>
+        <span className={s.headingIcon}><UserRound size={25}/></span><div><span className={s.eyebrow}>{isAr ? "حسابك، بكل عناية" : "YOUR ACCOUNT, THOUGHTFULLY ORGANIZED"}</span><h1>{t.title}</h1>
+        <p>{t.subtitle}</p></div>
       </header>
 
       <section className={s.hero}>
         <AvatarUploader
           name={profile.fullName}
           avatarUrl={profile.avatarUrl}
+          uploadInputId="profile-photo-input"
           t={t}
           readOnly
         />
@@ -60,18 +61,8 @@ export default async function ProfilePage({
               {t.memberSince} {since}
             </span>
           </div>
-          <p className={s.heroHint}>{readOnlyNotice}</p>
-          <Form op="avatar" label="Upload profile photo" uncertain>
-            <label>
-              JPEG, PNG or WebP, up to 2 MB
-              <input
-                type="file"
-                name="image"
-                accept="image/jpeg,image/png,image/webp"
-                required
-              />
-            </label>
-          </Form>
+          <p className={s.heroHint}><Info size={13}/>{isAr ? "رقم هاتفك للقراءة فقط. تُحفظ التغييرات في حساب المريض الخاص بك." : readOnlyNotice}</p>
+
         </div>
       </section>
 
@@ -88,15 +79,26 @@ export default async function ProfilePage({
           </div>
           <ProfileEditor />
           <p>
-            <Link href={prefix + "/dashboard/addresses"}>
+            <Link className={s.addressLink} href={prefix + "/dashboard/addresses"}><MapPin size={15}/>
               {isAr
                 ? "\u0627\u0644\u0639\u0646\u0627\u0648\u064a\u0646 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0629"
-                : "View saved addresses"}
+                : "View saved addresses"}<ArrowUpRight size={15}/>
             </Link>
           </p>
         </section>
 
-        <div className={s.side}>
+        <div className={s.side}><section className={s.card}><div className={s.cardHead}><span className={s.cardIcon}><Camera size={20}/></span><div><h2>{isAr ? "الصورة الشخصية" : "Profile photo"}</h2><p>{isAr ? "أضف لمسة شخصية إلى حسابك." : "Add a personal touch to your account."}</p></div></div><div className={s.photoForm}>          <Form op="avatar" label={isAr ? "رفع الصورة الشخصية" : "Upload profile photo"} uncertain>
+            <label>
+              <span>{isAr ? "JPEG أو PNG أو WebP، حتى ٢ ميجابايت" : "JPEG, PNG or WebP, up to 2 MB"}</span>
+              <input
+                type="file"
+                name="image"
+                id="profile-photo-input"
+                accept="image/jpeg,image/png,image/webp"
+                required
+              />
+            </label>
+          </Form></div></section>
           <section className={s.card}>
             <div className={s.cardHead}>
               <span className={s.cardIcon}>

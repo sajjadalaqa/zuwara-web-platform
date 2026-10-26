@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  ChevronDown, Clock, LifeBuoy, Mail, MessageCircle, Phone, SearchX,
+  ChevronDown, Clock, LifeBuoy, Mail, MessageCircle, Phone, SearchX, BookOpen, Send,
 } from "lucide-react";
 import { number } from "../appointments/format";
 import ContactForm from "./ContactForm";
@@ -82,18 +82,18 @@ export default async function HelpPage({
     <div className={s.page}>
       {/* ===== Hero + search ===== */}
       <section className={s.hero}>
-        <span className={s.heroIcon}><LifeBuoy size={22} /></span>
+        <div className={s.heroCopy}>
         <p className={s.eyebrow}>{t.eyebrow}</p>
-        <h2>{t.heroTitle}</h2>
+        <h1>{t.heroTitle}</h1>
         <p className={s.heroText}>{t.heroText}</p>
-        <SearchBar q={q} category={category} placeholder={t.search} clearLabel={t.clear} />
+        <SearchBar q={q} category={category} placeholder={t.search} clearLabel={t.clear} /></div><div className={s.heroArt} aria-hidden="true"><LifeBuoy size={60} strokeWidth={1.2}/></div>
       </section>
 
       {/* ===== Category chips ===== */}
       <nav className={s.tabs} aria-label="Categories">
         {ORDER.map((c) => (
           <Link
-            key={c}
+            key={c} aria-current={c === category ? "page" : undefined}
             href={href(c)}
             scroll={false}
             className={`${s.tab} ${c === category ? s.tabActive : ""}`}
@@ -106,7 +106,7 @@ export default async function HelpPage({
 
       <div className={s.layout}>
         {/* ===== FAQ ===== */}
-        <div className={s.main}>
+        <div className={s.main}><div className={s.faqHeading}><span className={s.sectionIcon}><BookOpen size={22}/></span><div><span className={s.sectionEyebrow}>{isAr ? "إجابات في متناول يدك" : "ANSWERS AT YOUR FINGERTIPS"}</span><h2>{isAr ? "الأسئلة الشائعة" : "Frequently asked questions"}</h2></div></div>
           {data.items.length === 0 ? (
             <div className={s.empty}>
               <span className={s.emptyIcon}><SearchX size={26} /></span>
@@ -140,7 +140,7 @@ export default async function HelpPage({
         <aside className={s.side} id="contact">
           <section className={s.card}>
             <div className={s.cardHead}>
-              <h2>{t.contact.title}</h2>
+              <div className={s.titleRow}><span className={s.sectionIcon}><MessageCircle size={21}/></span><h2>{t.contact.title}</h2></div>
               <p>{t.contact.text}</p>
             </div>
 
@@ -172,7 +172,7 @@ export default async function HelpPage({
 
           <section className={s.card}>
             <div className={s.cardHead}>
-              <h2>{t.form.title}</h2>
+              <div className={s.titleRow}><span className={s.sectionIcon}><Send size={20}/></span><h2>{t.form.title}</h2></div>
             </div>
             <ContactForm t={t} />
           </section>

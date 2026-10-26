@@ -190,3 +190,87 @@
 @media (min-width: 1100px) {
   .balance { font-size: 44px; }
 }
+/* Wallet presentation */
+.page {
+  --ink: #352540;
+  --muted: #927c9f;
+  --line: #eee5f5;
+  gap: 23px;
+  padding-bottom: 25px;
+  color: var(--ink);
+}
+.page *, .dialog * { box-sizing: border-box; }
+.head { display: flex; align-items: center; gap: 15px; padding: 5px 0 2px; }
+.headingIcon { display: grid; place-items: center; width: 55px; height: 55px; flex-shrink: 0; color: #8d51ad; background: #eee3f8; border: 1px solid #e6d7f0; border-radius: 16px; }
+.eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 1.7px; color: #a083b2; }
+.head h1 { margin: 6px 0; font-size: 29px; line-height: 1.25; font-weight: 750; letter-spacing: -.7px; color: #33203f; }
+.head p { font-size: 12px; color: #a18bac; line-height: 1.8; margin: 0; }
+.hero { padding: 23px 30px; gap: 18px; border-radius: 24px; background: radial-gradient(ellipse at 100% 0%, #a66bd0 0%, transparent 60%), linear-gradient(115deg,#42186c,#7035a0 65%,#8c50b7); box-shadow: 0 14px 30px -15px #713c9a66; border: 1px solid #ffffff20; }
+.hero::after { width: 360px; height: 360px; inset-block-start: -180px; inset-inline-end: -90px; border: 1px solid #ffffff12; background: #ffffff05; }
+.hero::before { content: ""; width: 260px; height: 260px; border: 1px solid #ffffff13; border-radius: 50%; position: absolute; inset-block-end: -180px; inset-inline-start: 35%; }
+.heroDecoration { position: absolute; inset-inline-end: 15%; top: 30px; color: #ffffff0d; transform: rotate(-15deg); pointer-events: none; }
+.heroTop { align-items: center; gap: 23px; }
+.balLabel { font-size: 12px; font-weight: 500; letter-spacing: .2px; color: #e4d3f2; opacity: 1; gap: 9px; }
+.balLabel svg { width: 18px; height: 18px; }
+.balance { font-size: clamp(32px,3.2vw,48px); letter-spacing: -1.4px; margin-top: 8px; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.addBtn { font-size: 12px; font-weight: 650; min-height: 44px; padding: 12px 19px; border-radius: 11px; box-shadow: 0 5px 15px #35134f16; text-decoration: none; justify-content: center; }
+.mini { max-width: 550px; gap: 16px; }
+.miniItem { padding: 12px 16px; border-radius: 13px; gap: 6px; background: #ffffff0d; border: 1px solid #ffffff26; }
+.miniItem small { gap: 7px; font-size: 10px; font-weight: 400; color: #e4d6ef; opacity: 1; }
+.miniItem small svg { width: 16px; height: 16px; }
+.miniItem:first-child small svg { color: #99e2c2; }
+.miniItem:last-child small svg { color: #e5c3fa; }
+.miniItem b { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.3px; }
+.card { border-radius: 22px; border-color: #e6dbee; box-shadow: 0 5px 24px #4e246704; }
+.cardHead { padding: 23px 25px 19px; gap: 14px; }
+.transactionHeading { display: flex; align-items: center; gap: 12px; }
+.receiptIcon { display: grid; place-items: center; flex-shrink: 0; width: 43px; height: 43px; background: #f4edfa; border-radius: 12px; color: #9a66b8; }
+.cardHead h2 { font-size: 17px; font-weight: 700; letter-spacing: -.3px; color: #3a2848; }
+.transactionHeading p { font-size: 11px; color: #aa93b5; margin: 5px 0 0; line-height: 1.7; }
+.total { color: #9575a7; background: #f5eefb; padding: 7px 10px; border: 1px solid #eee3f5; border-radius: 8px; font-size: 10px; font-weight: 500; white-space: nowrap; }
+.tabs { gap: 8px; padding: 0 25px 20px; }
+.tab { font-size: 12px; font-weight: 600; border: 1px solid #eee5f5; border-radius: 10px; background: #fbf8ff; color: #91739f; padding: 10px 15px; gap: 8px; }
+.tabActive,.tabActive:hover { background: linear-gradient(110deg,#7e3dae,#61258f); color: white; border-color: transparent; box-shadow: 0 4px 9px #62248b21; }
+.count { height: 19px; font-size: 9px; font-weight: 600; }
+.row { padding: 20px 25px; gap: 15px; border-color: #f0e9f6; }
+.txIcon { flex-basis: 44px; width: 44px; height: 44px; border-radius: 13px; }
+.iconIn { color: #29957a; background: #e9f8f2; }
+.iconOut { color: #9461b1; background: #f3eafa; }
+.iconRefund { color: #7087bd; background: #eff3fd; }
+.txText { gap: 5px; }
+.txText h3 { font-size: 13px; font-weight: 650; color: #4d365d; }
+.txText p { font-size: 10px; color: #a18aae; line-height: 1.6; }
+.txText small { font-size: 10px; color: #b7a4c1; }
+.amt { gap: 7px; }
+.amt b { font-size: 14px; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -.2px; }
+.plus { color: #29957a; }.minus { color: #604372; }
+.chip { font-size: 9px; font-weight: 500; padding: 4px 8px; }
+.pager { gap: 16px; padding-top: 2px; }
+.pageBtn { border-radius: 10px; padding: 10px 15px; font-size: 11px; font-weight: 600; min-height: 41px; }
+.pageInfo { font-size: 11px; font-weight: 500; color: #a08aaf; }
+.empty { padding: 45px 24px; gap: 13px; }.emptyIcon { border-radius: 18px; background: #f3eafa; width: 67px; height: 67px; }.empty h3 { font-size: 18px; font-weight: 650; }.empty p { font-size: 12px; line-height: 1.9; }
+.rechargeCard { background: #fffcf7; border: 1px solid #efe4d1; border-radius: 19px; padding: 20px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.rechargeCard .cardHead { padding: 0; gap: 10px; flex-wrap: wrap; }
+.rechargeHeading { display: flex; align-items: center; gap: 12px; }
+.statusIcon { display: grid; place-items: center; width: 43px; height: 43px; background: #fff3dc; color: #bf9549; border: 1px solid #f6e6c7; border-radius: 12px; flex-shrink: 0; }
+.statusEyebrow { font-size: 8px; letter-spacing: 1.4px; color: #bfa575; font-weight: 600; }
+.rechargeCard h2 { font-size: 13px; font-weight: 600; color: #8b6c36; margin: 5px 0 0; line-height: 1.6; }
+.rechargeCard .addBtn { font-size: 11px; border: 1px solid #eadcf3; color: #8e60a6; background: white; box-shadow: none; min-height: 38px; padding: 9px 13px; }
+.rechargeCard p { margin: 0; font-size: 12px; line-height: 1.8; color: #a38b61; }
+.dialog { width: min(100%,420px); padding: 31px 28px 25px; gap: 13px; border: 1px solid #eadff3; border-radius: 23px; }
+.dialogIcon { width: 61px; height: 61px; border-radius: 18px; background: #f2e8fa; color: #8c50ac; }
+.dialog h4 { font-size: 21px; font-weight: 700; color: #4a305c; }
+.dialog p { font-size: 12px; line-height: 1.8; color: #9d85aa; }
+.presets { width: 100%; gap: 8px; }.preset { flex: 1; font-size: 12px; padding: 11px; border-radius: 9px; font-weight: 600; }.presetOn { background: #7b3ba7; border-color: #7b3ba7; }.amountBox input { height: 56px; border-radius: 11px; font-size: 23px; font-weight: 600; }.dialogKeep,.dialogConfirm { min-height: 45px; font-size: 12px; font-weight: 600; border-radius: 10px; }.dialogConfirm { background: linear-gradient(110deg,#64258f,#8542b1); }.dialog .dialogNote { font-size: 10px; }
+.page :is(a,button,summary):focus-visible,.dialog button:focus-visible { outline: 3px solid #bc96d8; outline-offset: 3px; }
+@media(max-width:700px) {
+  .page { gap: 18px; }.head { gap: 11px; }.headingIcon { width: 47px; height: 47px; border-radius: 13px; }.head h1 { font-size: 24px; }.head p { font-size: 11px; }.eyebrow { font-size: 8px; letter-spacing: 1.3px; }
+  .hero { padding: 25px 22px; gap: 23px; }.balance { font-size: 35px; }.heroDecoration { inset-inline-end: 8%; top: 55px; }.mini { gap: 10px; }.miniItem { padding: 13px 12px; }.miniItem small { font-size: 9px; }.miniItem b { font-size: 16px; }
+  .cardHead { padding: 20px 17px 16px; }.transactionHeading { gap: 9px; }.receiptIcon { width: 36px; height: 36px; border-radius: 10px; }.cardHead h2 { font-size: 16px; }.transactionHeading p { font-size: 10px; }.total { font-size: 9px; padding: 6px 7px; }.tabs { padding: 0 17px 17px; }.tab { padding: 9px 12px; font-size: 11px; }
+  .row { padding: 17px; gap: 11px; }.txIcon { width: 38px; height: 38px; flex-basis: 38px; border-radius: 11px; }.txText h3 { font-size: 12px; }.txText p,.txText small { font-size: 9px; }.amt b { font-size: 12px; }
+  .rechargeCard { padding: 18px; }.rechargeCard>.cardHead:last-child:not(:first-child) { width: 100%; justify-content: flex-end; }.pageBtn { padding: 9px 11px; }.pageInfo { font-size: 10px; }
+}
+@media(max-width:390px) {
+  .balance { font-size: 30px; }.heroTop { align-items: start; }.heroTop>.addBtn { min-height: 38px; padding: 10px 12px; font-size: 11px; }.cardHead { flex-wrap: wrap; }.amt b { font-size: 11px; }.txIcon { width: 32px; height: 32px; flex-basis: 32px; }.row { gap: 9px; padding-inline: 13px; }.miniItem small { gap: 4px; }
+}
+@media(prefers-reduced-motion:reduce) { .addBtn,.tab { transition: none; }.dialog,.skel { animation: none; } }

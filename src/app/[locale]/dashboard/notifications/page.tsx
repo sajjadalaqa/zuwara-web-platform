@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BellOff, CheckCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { Bell, BellOff, CheckCheck, ChevronLeft, ChevronRight, Inbox } from "lucide-react";
 import ReadToggle from "./ReadToggle";
 import MarkAllButton from "./MarkAllButton";
 import NotificationItem from "./NotificationItem";
@@ -11,7 +11,7 @@ import s from "./notifications.module.css";
 const TZ = "Asia/Riyadh";
 const ORDER: NotificationFilter[] = ["all", "unread"];
 
-type SearchParams = { filter?: string; page?: string; source?: string };
+type SearchParams = { filter?: string; page?: string };
 
 export default async function NotificationsPage({
   params,
@@ -29,17 +29,17 @@ export default async function NotificationsPage({
   const nf = new Intl.NumberFormat(isAr ? "ar-SA" : "en-US");
 
   const filter: NotificationFilter = sp.filter === "unread" ? "unread" : "all";
-  const source = sp.source === "d4h" ? "d4h" : "zuwara";
+
   const requestedPage = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
 
-  const data = await getNotifications({ filter, page: requestedPage }, locale, source);
+  const data = await getNotifications({ filter, page: requestedPage }, locale);
   const pages = Math.max(1, Math.ceil(data.total / data.pageSize));
   const hasPrev = data.page > 1;
   const hasNext = data.page < pages;
 
   const href = (opts: { filter?: NotificationFilter; page?: number }) => {
     const u = new URLSearchParams();
-    if (source === "d4h") u.set("source","d4h");
+
     const f = opts.filter ?? filter;
     if (f !== "all") u.set("filter", f);
     if (opts.page && opts.page > 1) u.set("page", String(opts.page));
@@ -80,19 +80,12 @@ export default async function NotificationsPage({
 
   return (
     <div className={s.page}>
-      <header className={s.head}>
-        <div>
-          <h2>{t.title}</h2>
-          <p>{t.subtitle}</p>
-        </div>
-        <MarkAllButton through={data.readAllThrough} label={source === "d4h" ? "Mark displayed read" : t.markAll} displayedIds={data.displayedIds} disabled={source === "d4h" ? !data.items.some(item=>!item.read) : data.counts.unread === 0} />
-      </header>
-
-      <nav className={s.tabs} aria-label="Notification source"><Link className={s.tab} href={prefix+"/dashboard/notifications"}>Zuwara</Link><Link className={s.tab} href={prefix+"/dashboard/notifications?source=d4h"}>Home visits (D4H)</Link></nav>
+      <header className={s.hero}><div><span className={s.eyebrow}>{isAr ? "كل ما يهمك، في مكان واحد" : "YOUR UPDATES, ALL IN ONE PLACE"}</span><h1>{t.title}</h1><p>{t.subtitle}</p><div className={s.heroBadges}><span><Inbox size={14}/>{nf.format(data.counts.all)} {isAr ? "إشعار" : "notifications"}</span><span><span className={s.badgeDot}/>{nf.format(data.counts.unread)} {isAr ? "غير مقروء" : "unread"}</span></div></div><div className={s.heroArt} aria-hidden="true"><Bell size={51} strokeWidth={1.3}/><span/></div></header>
+      <div className={s.toolbar}>
       <nav className={s.tabs} aria-label="Filter">
         {ORDER.map((f) => (
           <Link
-            key={f}
+            key={f} aria-current={f === filter ? "page" : undefined}
             href={href({ filter: f })}
             scroll={false}
             className={`${s.tab} ${f === filter ? s.tabActive : ""}`}
@@ -103,6 +96,8 @@ export default async function NotificationsPage({
         ))}
       </nav>
 
+        <MarkAllButton through={data.readAllThrough} label={t.markAll} disabled={data.counts.unread === 0}/>
+      </div>
       {data.items.length === 0 ? (
         <div className={s.empty}>
           <span className={s.emptyIcon}>

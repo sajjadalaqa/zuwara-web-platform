@@ -1,3 +1,9 @@
+import ComplaintsUI, { ComplaintsLayout, s as complaintStyles } from "../complaints/ComplaintsUI";
+import AddressesUI, { AddressesLayout } from "../addresses/AddressesUI";
+import LoyaltyUI, { LoyaltyLayout, s as loyaltyStyles } from "../referral/LoyaltyUI";
+import ReviewsUI, { ReviewsLayout, s as reviewStyles } from "../reviews/ReviewsUI";
+import DocumentsLayout from "../documents/DocumentsLayout";
+import documentStyles from "../documents/documents.module.css";
 import SavedUI, { s as savedStyles } from "../saved/SavedUI";
 import { Heart } from "lucide-react";
 import RequestsUI, { RequestsLayout } from "../requests/RequestsUI";
@@ -124,35 +130,6 @@ function BookingField() {
     />
   );
 }
-function AddressFields({ address }: { address?: Address }) {
-  return (
-    <>
-      <Field
-        name="address"
-        label="Address"
-        max={1000}
-        required
-        value={address?.address}
-      />
-      <Field
-        name="lat"
-        label="Latitude (-90 to 90)"
-        type="number"
-        step="any"
-        required
-        value={address?.lat ?? address?.latitude}
-      />
-      <Field
-        name="long"
-        label="Longitude (-180 to 180)"
-        type="number"
-        step="any"
-        required
-        value={address?.long ?? address?.longitude}
-      />
-    </>
-  );
-}
 export default async function PatientFeature({
   feature,
   searchParams = Promise.resolve({}),
@@ -167,7 +144,7 @@ export default async function PatientFeature({
     single = (v: Query[string]) => (typeof v === "string" ? v : ""),
     backend: Source = ["addresses", "referral", "requests"].includes(feature)
       ? "d4h"
-      : single(q.source) === "d4h"
+      : feature !== "complaints" && single(q.source) === "d4h"
         ? "d4h"
         : "zuwara",
     page = Math.max(1, Number(single(q.page)) || 1),
@@ -184,123 +161,18 @@ export default async function PatientFeature({
     } else if (feature === "reviews") {
       const result = await list<Review>(backend, "/reviews", page);
       pagination = result.meta?.pagination;
-      content = (
-        <>
-          <section className={s.card}>
-            <h2>Review a completed appointment or visit</h2>
-            <p>Reviews cannot be changed or deleted after submission.</p>
-            <Form op="review" source={backend} label="Submit review">
-              <Field
-                name="id"
-                label={
-                  backend === "d4h"
-                    ? "Completed visit reference"
-                    : "Completed appointment reference"
-                }
-                type="number"
-                required
-                step="1"
-              />
-              <Field
-                name="rating"
-                label="Rating (1 to 5)"
-                type="number"
-                step="0.01"
-                required
-              />
-              <Field
-                name="comment"
-                label="Comment"
-                type="textarea"
-                max={2000}
-                required
-              />
-            </Form>
-          </section>
-          {result.data.map((r) => (
-            <section className={s.card} key={r.id}>
-              <Facts
-                rows={[
-                  ["Reference", r.id],
-                  ["Appointment", r.appointment_id],
-                  ["Visit", r.booking_id],
-                  ["Consultant", r.consultant_id],
-                  ["Service", r.service_id],
-                  ["Rating", r.rating],
-                  ["Submitted", stamp(r.created_at, ar)],
-                ]}
-              />
-              <p style={{ whiteSpace: "pre-wrap" }}>{r.comment}</p>
-            </section>
-          ))}
-          {!result.data.length && (
-            <Empty>No reviews submitted in this account.</Empty>
-          )}
-        </>
-      );
+      content = <ReviewsUI rows={result.data} ar={ar} backend={backend} />;
     } else if (feature === "complaints") {
       const result = await list<Complaint>(backend, "/complaints", page);
       pagination = result.meta?.pagination;
-      content = (
-        <>
-          <section className={s.card}>
-            <h2>Submit a concern</h2>
-            <p>
-              Submitting does not trigger a refund or confirm an email/SMS
-              notification. Replies are not available here.
-            </p>
-            <Form
-              op="complaint"
-              source={backend}
-              label="Submit complaint"
-              uncertain
-            >
-              <Field name="subject" label="Subject" max={150} required />
-              <Field
-                name="message"
-                label="Message"
-                max={5000}
-                type="textarea"
-                required
-              />
-              <BookingField />
-            </Form>
-          </section>
-          {result.data.map((r) => (
-            <section className={s.card} key={r.id}>
-              <h2>{r.subject}</h2>
-              <p style={{ whiteSpace: "pre-wrap" }}>{r.message}</p>
-              <Facts
-                rows={[
-                  ["Reference", r.id],
-                  ["Booking reference", r.booking_id],
-                  ["Status", r.status],
-                  ["Created", stamp(r.created_at, ar)],
-                  ["Updated", stamp(r.updated_at, ar)],
-                ]}
-              />
-              <Link
-                href={
-                  base + "/" + encodeURIComponent(r.id) + "?source=" + backend
-                }
-              >
-                View complaint
-              </Link>
-            </section>
-          ))}
-          {!result.data.length && <Empty>No complaints in this account.</Empty>}
-        </>
-      );
+      content = <ComplaintsUI rows={result.data} base={base} ar={ar} />;
     } else if (feature === "documents") {
       const result = await list<Document>(backend, "/patient-documents", page);
       pagination = result.meta?.pagination;
       content = (
         <>
-          <Link href={prefix + "/dashboard/records"}>
-            View official clinical reports
-          </Link>
-          <section className={s.card}>
-            <h2>Upload your own medical documents</h2>
+
+          <section className={s.card} id="upload-document"><h2>Upload a document</h2>
             <p>
               Patient-authored PDFs are separate from official clinical reports.
               Uploading does not share a file in chat or assign it to a doctor.
@@ -376,52 +248,7 @@ export default async function PatientFeature({
     } else if (feature === "addresses") {
       const { data } = await request<Address[]>("d4h", "/patients/addresses");
       if (!Array.isArray(data)) throw Error("Invalid addresses.");
-      content = (
-        <>
-          <section className={s.card}>
-            <h2>Add address</h2>
-            <Form
-              op="address-create"
-              source="d4h"
-              label="Add address"
-              uncertain
-            >
-              <AddressFields />
-            </Form>
-          </section>
-          <p>
-            Address changes do not change existing bookings. Coverage and prices
-            are checked during booking preview.
-          </p>
-          {data.map((a) => (
-            <section className={s.card} key={a.id}>
-              <h2>{a.address}</h2>
-              <Facts
-                rows={[
-                  ["Reference", a.id],
-                  ["Latitude", a.latitude ?? a.lat],
-                  ["Longitude", a.longitude ?? a.long],
-                ]}
-              />
-              <Form
-                op="address-edit"
-                source="d4h"
-                id={a.id}
-                label="Save address"
-              >
-                <AddressFields address={a} />
-              </Form>
-              <Form
-                op="address-delete"
-                source="d4h"
-                id={a.id}
-                label="Archive address"
-              />
-            </section>
-          ))}
-          {!data.length && <Empty>No saved addresses.</Empty>}
-        </>
-      );
+      content = <AddressesUI rows={data} ar={ar} />;
     } else if (feature === "referral") {
       const [loyalty, history] = await Promise.all([
         request<Loyalty>("d4h", "/loyalty"),
@@ -436,54 +263,7 @@ export default async function PatientFeature({
       ]);
       pagination = history.meta?.pagination;
       const l = loyalty.data;
-      content = (
-        <>
-          <section className={s.card}>
-            <Facts
-              rows={[
-                ["Points", l.points],
-                ["Referral code", l.referral_code],
-                ["Referrals enabled", l.referral_enabled],
-                ["Referral count", l.referral_count],
-                ["Referrer points", l.referrer_points],
-                ["Referred patient points", l.referred_user_points],
-                ["Referral limit", l.max_referrals_per_user],
-              ]}
-            />
-            <p>
-              Points cannot be redeemed or converted to wallet credit here.
-              Referral assignment applies at signup only.
-            </p>
-            <Form
-              op="referral-validate"
-              source="d4h"
-              label="Check referral code"
-            >
-              <Field
-                name="referral_code"
-                label="Referral code"
-                max={150}
-                required
-              />
-            </Form>
-          </section>
-          {history.data.map((r) => (
-            <section className={s.card} key={r.id}>
-              <Facts
-                rows={[
-                  ["Reference", r.id],
-                  ["Type", r.type],
-                  ["Points", r.points],
-                  ["Direction", r.direction],
-                  ["Source", r.source],
-                  ["Date", stamp(r.created_at, ar)],
-                ]}
-              />
-            </section>
-          ))}
-          {!history.data.length && <Empty>No loyalty history.</Empty>}
-        </>
-      );
+      content = <LoyaltyUI loyalty={l} history={history.data} ar={ar} />;
     } else if (feature === "requests") {
       const result = await list<ServiceRequest>(
         "d4h",
@@ -622,6 +402,39 @@ export default async function PatientFeature({
       </section>
     );
   }
+  if (feature === "complaints") return <ComplaintsLayout ar={ar}>
+    {content}
+    {pagination && (pagination.current_page > 1 || pagination.has_more) && <nav className={complaintStyles.pagination} aria-label={ar ? "صفحات الشكاوى" : "Complaint pages"}>
+      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : "Previous"}</Link>}
+      <span>{ar ? "صفحة" : "Page"} {pagination.current_page}</span>
+      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : "Next"}</Link>}
+    </nav>}
+  </ComplaintsLayout>;
+  if (feature === "addresses") return <AddressesLayout ar={ar}>{content}</AddressesLayout>;
+  if (feature === "referral") return <LoyaltyLayout ar={ar}>
+    {content}
+    {pagination && (pagination.current_page > 1 || pagination.has_more) && <nav className={loyaltyStyles.pagination} aria-label={ar ? "صفحات سجل النقاط" : "Loyalty history pages"}>
+      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : "Previous"}</Link>}
+      <span>{ar ? "صفحة" : "Page"} {pagination.current_page}</span>
+      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : "Next"}</Link>}
+    </nav>}
+  </LoyaltyLayout>;
+  if (feature === "reviews") return <ReviewsLayout ar={ar} backend={backend} base={base}>
+    {content}
+    {pagination && (pagination.current_page > 1 || pagination.has_more) && <nav className={reviewStyles.pagination} aria-label={ar ? "صفحات التقييمات" : "Review pages"}>
+      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : "Previous"}</Link>}
+      <span>{ar ? "صفحة" : "Page"} {pagination.current_page}</span>
+      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : "Next"}</Link>}
+    </nav>}
+  </ReviewsLayout>;
+  if (feature === "documents") return <DocumentsLayout ar={ar} backend={backend} base={base} prefix={prefix}>
+    {content}
+    {pagination && (pagination.current_page > 1 || pagination.has_more) && <nav className={documentStyles.pagination} aria-label={ar ? "صفحات المستندات" : "Document pages"}>
+      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : "Previous"}</Link>}
+      <span>{ar ? "صفحة" : "Page"} {pagination.current_page}</span>
+      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : "Next"}</Link>}
+    </nav>}
+  </DocumentsLayout>;
   if (feature === "saved") return <div className={savedStyles.page}><header className={savedStyles.header}><span className={savedStyles.heart}><Heart size={25}/></span><div><h1>{ar ? "\u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u064a\u0648\u0646 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0648\u0646" : "Saved consultants"}</h1><p>{ar ? "\u0627\u0644\u0631\u0639\u0627\u064a\u0629 \u0627\u0644\u062a\u064a \u062a\u0641\u0636\u0644\u0647\u0627\u060c \u0641\u064a \u0645\u0643\u0627\u0646 \u0648\u0627\u062d\u062f." : "The care you connect with, kept close for your next visit."}</p></div></header>{content}{pagination && <nav className={savedStyles.pagination} aria-label="Saved consultant pages">{pagination.current_page > 1 && <Link href={path(pagination.current_page-1)}>Previous</Link>}<span>Page {pagination.current_page}</span>{pagination.has_more && <Link href={path(pagination.current_page+1)}>Next</Link>}</nav>}</div>;
   if (feature === "requests")
     return (
