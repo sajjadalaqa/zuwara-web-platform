@@ -95,3 +95,17 @@
 }
 
 .layout { margin-top: 32px; }
+/* Compact article cards with consistent dimensions. */
+.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.card{border-radius:18px}
+.media{aspect-ratio:16/8}
+.body{padding:17px 18px;gap:9px}
+.cardTitle{font-size:18px;line-height:1.4}
+.excerpt{font-size:13px;line-height:1.7;-webkit-line-clamp:2}
+.meta{font-size:11px}
+.foot{padding-top:11px;gap:9px}
+.author{font-size:11px}
+.avatar{width:27px;height:27px;font-size:12px}
+.more{font-size:12px}
+@media(max-width:950px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}}
+@media(max-width:600px){.grid{grid-template-columns:minmax(0,1fr);gap:16px}.media{aspect-ratio:16/7}.body{padding:16px 17px}.cardTitle{font-size:18px}}

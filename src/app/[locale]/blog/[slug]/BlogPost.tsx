@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { categories, formatDate, getPost, getRelated, pick } from "@/data/blog";
+import { categories, formatDate, pick, type BlogPostData } from "@/lib/blog";
 import BlogCover from "../BlogCover";
 import PostHero from "../PostHero";
 import type { IconType } from "react-icons";
@@ -23,11 +23,11 @@ const LINK = "M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 
 const SHARE = "M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13";
 const CLOSE = "M6 6l12 12M18 6L6 18";
 
-export default function BlogPost({ slug }: { slug: string }) {
+export default function BlogPost({ post, related }: { post: BlogPostData; related: BlogPostData[] }) {
   const t = useTranslations("blogPage");
   const locale = useLocale();
-  const post = getPost(slug)!;
-  const related = getRelated(slug, post.category);
+
+
 
   const [progress, setProgress] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -36,10 +36,7 @@ export default function BlogPost({ slug }: { slug: string }) {
   const [shareOpen, setShareOpen] = useState(false);
   const title = pick(post.title, locale);
 
-  useEffect(() => {
-    setPageUrl(window.location.href);
-    setCanShare(typeof navigator.share === "function");
-  }, []);
+
 
   // Close popup with Escape + lock page scroll while it is open
   useEffect(() => {
@@ -96,11 +93,11 @@ export default function BlogPost({ slug }: { slug: string }) {
           post={post}
           locale={locale}
           backLabel={t("back")}
-          readLabel={t("minRead", { count: post.readMinutes })}
+          readLabel={post.readMinutes > 0 ? t("minRead", { count: post.readMinutes }) : ""}
         />
 
         <div className={styles.layout}>
-          <article className={styles.article}>
+          <article className={styles.article} dir="auto">
             {post.content.map((b, i) => {
               if (b.type === "h2") return <h2 key={i}>{pick(b.text, locale)}</h2>;
               if (b.type === "p") return <p key={i}>{pick(b.text, locale)}</p>;
@@ -124,7 +121,7 @@ export default function BlogPost({ slug }: { slug: string }) {
             {/* Share bar: one button that opens the popup */}
             <div className={styles.shareBox}>
               <p className={styles.shareText}>{t("share")}</p>
-              <button type="button" className={styles.shareOpen} onClick={() => setShareOpen(true)}
+              <button type="button" className={styles.shareOpen} onClick={() => { setPageUrl(window.location.href); setCanShare(typeof navigator.share === "function"); setShareOpen(true); }}
                 aria-haspopup="dialog">
                 <Svg d={SHARE} size={16} /> {t("share")}
               </button>
@@ -132,7 +129,7 @@ export default function BlogPost({ slug }: { slug: string }) {
           </article>
 
           <aside className={styles.side}>
-            <div className={styles.box}>
+            {categories.length > 0 && (            <div className={styles.box}>
               <h3>{t("categories")}</h3>
               <ul className={styles.catList}>
                 {categories.map((c) => (
@@ -143,7 +140,7 @@ export default function BlogPost({ slug }: { slug: string }) {
                   </li>
                 ))}
               </ul>
-            </div>
+            </div>)}
             <div className={`${styles.box} ${styles.boxCta}`}>
               <h3>{t("ctaTitle")}</h3>
               <p>{t("ctaText")}</p>
@@ -159,9 +156,9 @@ export default function BlogPost({ slug }: { slug: string }) {
               {related.map((r) => (
                 <li key={r.slug}>
                   <Link href={`/blog/${r.slug}`} className={styles.rCard}>
-                    <div className={styles.rMedia}><BlogCover category={r.category} cover={r.cover} alt={pick(r.title, locale)} /></div>
+                    <div className={styles.rMedia}><BlogCover category={r.category} cover={r.cover} alt={pick(r.title, locale)} compact /></div>
                     <div className={styles.rBody}>
-                      <span>{formatDate(r.date, locale)} · {t("minRead", { count: r.readMinutes })}</span>
+                      <span>{formatDate(r.date, locale)} · {r.readMinutes > 0 ? t("minRead", { count: r.readMinutes }) : ""}</span>
                       <h3>{pick(r.title, locale)}</h3>
                       <em>{t("readMore")} <Svg d={ARROW} size={15} /></em>
                     </div>

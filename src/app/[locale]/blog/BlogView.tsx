@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { categories, formatDate, getCategory, pick, posts } from "@/data/blog";
+import { categories, formatDate, getCategory, pick, type BlogPostData } from "@/lib/blog";
 import BlogCover from "./BlogCover";
 import styles from "./blog.module.css";
 
@@ -18,7 +18,7 @@ const ARROW = "M5 12h14M13 6l6 6-6 6";
 const CLOCK = "M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2";
 const EMPTY = "M5 4h14v16H5zM9 9h6M9 13h4";
 
-export default function BlogView({ initialCategory }: { initialCategory: string }) {
+export default function BlogView({ initialCategory, posts }: { initialCategory: string; posts: BlogPostData[] }) {
   const t = useTranslations("blogPage");
   const locale = useLocale();
 
@@ -30,7 +30,7 @@ export default function BlogView({ initialCategory }: { initialCategory: string 
     const m: Record<string, number> = {};
     posts.forEach((p) => { m[p.category] = (m[p.category] ?? 0) + 1; });
     return m;
-  }, []);
+  }, [posts]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -39,7 +39,7 @@ export default function BlogView({ initialCategory }: { initialCategory: string 
       const okText = !q || `${p.title.en} ${p.title.ar} ${p.excerpt.en} ${p.excerpt.ar}`.toLowerCase().includes(q);
       return okCat && okText;
     });
-  }, [active, query]);
+  }, [active, query, posts]);
 
   const reset = () => { setActive("all"); setQuery(""); };
 
@@ -84,11 +84,11 @@ export default function BlogView({ initialCategory }: { initialCategory: string 
           </div>
         ) : (
           <ul className={styles.grid}>
-            {filtered.map((p, i) => {
+            {filtered.map((p) => {
               const cat = getCategory(p.category);
               const title = pick(p.title, locale);
               return (
-                <li key={p.slug} className={i === 0 && filtered.length > 1 && active === "all" && !query ? styles.featured : ""}>
+                <li key={p.slug}>
                   <Link href={`/blog/${p.slug}`} className={styles.card}>
                     <div className={styles.media}>
                       <BlogCover category={p.category} cover={p.cover} alt={title} />
@@ -98,10 +98,10 @@ export default function BlogView({ initialCategory }: { initialCategory: string 
                       <div className={styles.meta}>
                         <span>{formatDate(p.date, locale)}</span>
                         <span className={styles.dot} aria-hidden="true" />
-                        <span className={styles.read}><Svg d={CLOCK} size={14} /> {t("minRead", { count: p.readMinutes })}</span>
+                        {p.readMinutes > 0 && <span className={styles.read}><Svg d={CLOCK} size={14} /> {t("minRead", { count: p.readMinutes })}</span>}
                       </div>
-                      <h2 className={styles.cardTitle}>{title}</h2>
-                      <p className={styles.excerpt}>{pick(p.excerpt, locale)}</p>
+                      <h2 className={styles.cardTitle} dir="auto">{title}</h2>
+                      <p className={styles.excerpt} dir="auto">{pick(p.excerpt, locale)}</p>
                       <div className={styles.foot}>
                         <span className={styles.author}>
                           <span className={styles.avatar} aria-hidden="true">Z</span>

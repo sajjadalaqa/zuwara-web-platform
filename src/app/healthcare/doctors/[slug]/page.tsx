@@ -1,3 +1,6 @@
+import { UserRound, Stethoscope, MapPin, GraduationCap, BadgeCheck } from "lucide-react";
+import ScheduleUpdateButton from "@/components/healthcare/ScheduleUpdateButton";
+import Form from "next/form";
 import SaveProvider from "@/components/SaveProvider";
 import type { Metadata } from "next";
 import { DoctorPhoto } from "@/components/healthcare/DoctorPhoto";
@@ -27,7 +30,7 @@ function money(value: string | null, currency: string) { return value !== null &
 
 function ProfileList({ title, items }: { title: string; items: ZuwaraProfileItem[] }) {
   if (!items.length) return null;
-  return <section className="profile-detail-section"><h2>{title}</h2><div className="profile-detail-list">{items.map((item) => <div key={item.id}><Icon name="check" size={17}/><div><strong>{item.title}</strong>{item.titleAr ? <span lang="ar" dir="rtl">{item.titleAr}</span> : null}</div></div>)}</div></section>;
+  return <section className="profile-detail-section"><h2><span className="profile-section-icon"><BadgeCheck size={22}/></span>{title}</h2><div className="profile-detail-list">{items.map((item) => <div key={item.id}><Icon name="check" size={17}/><div><strong>{item.title}</strong>{item.titleAr ? <span lang="ar" dir="rtl">{item.titleAr}</span> : null}</div></div>)}</div></section>;
 }
 
 function Slot({ slot, bookingHref }: { slot: ZuwaraSlot; bookingHref: string }) {
@@ -88,19 +91,19 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
 
     <section className="content-section doctor-profile-content"><div className="container doctor-profile-grid">
       <main>
-        {about || profile.aboutAr ? <section className="profile-detail-section"><h2>About the consultant</h2>{about ? <p style={{whiteSpace:"pre-line"}}>{about}</p> : null}{profile.aboutAr ? <p lang="ar" dir="rtl">{profile.aboutAr}</p> : null}</section> : null}
-        <section className="profile-detail-section"><h2>Consultation options</h2><div className="doctor-result-tags">{profile.consultationTypes.map(type => <span key={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</span>)}{profile.acceptsInstant ? <span>Instant consultations available</span> : null}</div><dl className="profile-facts"><dt>Consultant number</dt><dd>{profile.doctorNumber}</dd>{durations.map(item => <div key={item.minutes}><dt>{item.minutes} minutes</dt><dd>{money(item.price, profile.currency)}</dd></div>)}</dl></section>
-        {profile.serviceLocations?.length ? <section className="profile-detail-section"><h2>Service locations</h2>{profile.serviceLocations.map(location => <div key={location.id}><h3>{location.title}</h3>{location.titleAr ? <p lang="ar" dir="rtl">{location.titleAr}</p> : null}{location.address ? <p style={{whiteSpace:"pre-line"}}>{location.address}</p> : null}{location.addressAr ? <p lang="ar" dir="rtl" style={{whiteSpace:"pre-line"}}>{location.addressAr}</p> : null}</div>)}</section> : null}
+        {about || profile.aboutAr ? <section className="profile-detail-section"><h2><span className="profile-section-icon"><UserRound size={22}/></span>About the consultant</h2>{about ? <p style={{whiteSpace:"pre-line"}}>{about}</p> : null}{profile.aboutAr ? <p lang="ar" dir="rtl">{profile.aboutAr}</p> : null}</section> : null}
+        <section className="profile-detail-section"><h2><span className="profile-section-icon"><Stethoscope size={22}/></span>Consultation options</h2><div className="doctor-result-tags">{profile.consultationTypes.map(type => <span key={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</span>)}{profile.acceptsInstant ? <span>Instant consultations available</span> : null}</div><dl className="profile-facts"><dt>Consultant number</dt><dd>{profile.doctorNumber}</dd>{durations.map(item => <div key={item.minutes}><dt>{item.minutes} minutes</dt><dd>{money(item.price, profile.currency)}</dd></div>)}</dl></section>
+        {profile.serviceLocations?.length ? <section className="profile-detail-section"><h2><span className="profile-section-icon"><MapPin size={22}/></span>Service locations</h2>{profile.serviceLocations.map(location => <div key={location.id} className="profile-location"><h3>{location.title}</h3>{location.titleAr ? <p lang="ar" dir="rtl">{location.titleAr}</p> : null}{location.address ? <p style={{whiteSpace:"pre-line"}}>{location.address}</p> : null}{location.addressAr ? <p lang="ar" dir="rtl" style={{whiteSpace:"pre-line"}}>{location.addressAr}</p> : null}</div>)}</section> : null}
         <ProfileList title="Services" items={profile.services}/>
         <ProfileList title="Areas of expertise" items={profile.expertise}/>
         <ProfileList title="Professional experience" items={profile.experience}/>
         <ProfileList title="Awards and recognition" items={profile.awards}/>
-        {(profile.degrees || profile.degreeAr || profile.languagesSpoken) ? <section className="profile-detail-section"><h2>Credentials and languages</h2><dl className="profile-facts">{profile.degrees ? <><dt>Degrees</dt><dd>{profile.degrees}</dd></> : null}{profile.degreeAr ? <><dt>Degrees (Arabic)</dt><dd lang="ar" dir="rtl">{profile.degreeAr}</dd></> : null}{profile.languagesSpoken ? <><dt>Languages</dt><dd>{profile.languagesSpoken}</dd></> : null}</dl></section> : null}
+        {(profile.degrees || profile.degreeAr || profile.languagesSpoken) ? <section className="profile-detail-section"><h2><span className="profile-section-icon"><GraduationCap size={22}/></span>Credentials and languages</h2><dl className="profile-facts">{profile.degrees ? <><dt>Degrees</dt><dd>{profile.degrees}</dd></> : null}{profile.degreeAr ? <><dt>Degrees (Arabic)</dt><dd lang="ar" dir="rtl">{profile.degreeAr}</dd></> : null}{profile.languagesSpoken ? <><dt>Languages</dt><dd>{profile.languagesSpoken}</dd></> : null}</dl></section> : null}
       </main>
 
       <aside id="availability" className="schedule-panel">
         <span className="eyebrow">Appointment availability</span><h2>Choose a date and duration.</h2>
-        <form action={canonical} method="get" className="schedule-filter"><label><span>Date</span><input type="date" name="date" min={riyadhToday()} defaultValue={profile.selectedDate}/></label><label><span>Duration</span><select name="duration" defaultValue={activeDuration ?? ""}><option value="">All durations</option>{durations.map((item) => <option key={item.minutes} value={item.minutes}>{item.minutes} min · {money(item.price, profile.currency)}</option>)}</select></label><button className="button button-secondary" type="submit">Update schedule</button></form>
+        <Form action={canonical} scroll={false} className="schedule-filter"><label><span>Date</span><input type="date" name="date" min={riyadhToday()} defaultValue={profile.selectedDate}/></label><label><span>Duration</span><select name="duration" defaultValue={activeDuration ?? ""}><option value="">All durations</option>{durations.map((item) => <option key={item.minutes} value={item.minutes}>{item.minutes} min · {money(item.price, profile.currency)}</option>)}</select></label><ScheduleUpdateButton /></Form>
         <div className="schedule-legend"><span><i className="legend-available"/>Available</span><span><i className="legend-booked"/>Booked</span><span><i className="legend-reserved"/>Reserved</span></div>
         {profile.slots?.length ? <div className="schedule-slots">{profile.slots.map((slot) => <Slot key={`${slot.startTime}-${slot.endTime}`} slot={slot} bookingHref={bookingHref}/>)}</div> : <div className="schedule-empty"><Icon name="calendar" size={28}/><strong>{profile.scheduleMessage ?? "No schedule is available for this selection."}</strong><p>Try another date or an enabled consultation duration.</p></div>}
         <p className="schedule-disclaimer"><Icon name="shield" size={17}/>Selecting an available time continues to secure Zuwara sign-in. Final slot validation and booking remain handled by the existing Zuwara platform.</p>

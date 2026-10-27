@@ -18,3 +18,8 @@
 
 .hero .iconBox{position:absolute;inset-block-start:22px;inset-inline-end:22px;width:64px;height:64px;border-radius:20px}
 .hero .iconBox svg{width:32px;height:32px}
+.compact{background:linear-gradient(135deg,#6b2fb3,#2a0f55);color:#fff}
+.compact .iconBox{width:42px;height:42px;border-radius:12px;background:#ffffff16;border:1px solid #ffffff40;box-shadow:0 4px 12px #24094718;backdrop-filter:none}
+.compact .iconBox svg{width:23px;height:23px;stroke-width:1.6}
+.compact .dots{opacity:.16}
+.compact .ring1,.compact .ring2{border-color:#ffffff26;background:none}

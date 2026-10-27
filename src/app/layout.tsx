@@ -1,3 +1,4 @@
+import PageScrollReset from "@/components/PageScrollReset";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { getLocale } from "next-intl/server";
@@ -35,7 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const locale = await getLocale();
   return (
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} className={`${manrope.variable} ${notoArabic.variable}`}>
-      <body>{children}</body>
+      <body><PageScrollReset />{children}</body>
     </html>
   );
 }

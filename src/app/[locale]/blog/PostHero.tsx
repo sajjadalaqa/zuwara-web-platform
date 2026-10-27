@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { formatDate, getCategory, pick, posts } from "@/data/blog";
+import { formatDate, getCategory, pick, type BlogPostData } from "@/lib/blog";
 import BlogCover from "./BlogCover";
 import styles from "./post-hero.module.css";
 
@@ -14,7 +14,7 @@ const CAL = "M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-
 const CLOCK = "M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2";
 
 type Props = {
-  post: (typeof posts)[number];
+  post: BlogPostData;
   locale: string;
   backLabel: string;   // e.g. "Back to blog"
   readLabel: string;   // e.g. "5 min read"
@@ -38,7 +38,7 @@ export default function PostHero({ post, locale, backLabel, readLabel }: Props) 
 
       <div className={styles.content}>
         {cat && <span className={styles.tag}>{pick(cat.name, locale)}</span>}
-        <h1 className={styles.title}>{title}</h1>
+        <h1 className={styles.title} dir="auto">{title}</h1>
         <p className={styles.excerpt}>{pick(post.excerpt, locale)}</p>
         <div className={styles.meta}>
           <span className={styles.author}>
@@ -48,7 +48,7 @@ export default function PostHero({ post, locale, backLabel, readLabel }: Props) 
           <span className={styles.dot} aria-hidden="true" />
           <span className={styles.item}><Svg d={CAL} /> {formatDate(post.date, locale)}</span>
           <span className={styles.dot} aria-hidden="true" />
-          <span className={styles.item}><Svg d={CLOCK} /> {readLabel}</span>
+          {readLabel && <span className={styles.item}><Svg d={CLOCK} /> {readLabel}</span>}
         </div>
       </div>
     </header>

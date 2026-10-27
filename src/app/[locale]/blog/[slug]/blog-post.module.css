@@ -169,3 +169,26 @@
   .shareOpen, .shareItem, .shareClose, .copyRow button { transition: none; }
   .shareOpen:hover, .shareItem:hover { transform: none; }
 }
+/* Six recommendations in two desktop rows. */
+.related{margin-block-start:36px}
+.related h2{margin-bottom:20px;font-size:25px}
+.related ul{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.related li{min-width:0}
+.rCard{flex-direction:column;border-radius:16px}
+.rMedia{flex:none;height:135px;min-height:0}
+.rBody{flex:1;padding:15px 16px;gap:9px;min-width:0}
+.rBody span{font-size:11px}
+.rBody h3{font-size:16px;font-weight:650;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rBody em{font-size:12px;padding-top:5px}
+@media(max-width:950px){.related ul{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.related ul{grid-template-columns:minmax(0,1fr);gap:14px}.rCard{flex-direction:row}.rMedia{flex:0 0 32%;height:auto;min-height:125px}.rBody{padding:14px;gap:8px}.rBody h3{font-size:15px}.rBody span{font-size:10px}}
+/* Short recommendation rows with bounded thumbnails and titles. */
+.related ul{gap:14px}
+.related .rCard{display:grid;grid-template-columns:84px minmax(0,1fr);height:122px;border-radius:13px;align-items:stretch}
+.related .rMedia{width:84px;height:122px;min-height:0;overflow:hidden}
+.related .rMedia>div{height:100%;min-height:0}
+.related .rBody{display:flex;flex-direction:column;padding:12px;gap:7px;min-width:0;overflow:hidden}
+.related .rBody>span{font-size:10px;line-height:1.3}
+.related .rBody h3{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:14px;line-height:1.45;max-height:41px;font-weight:650}
+.related .rBody em{font-size:11px;line-height:1.4;padding:0;margin-block-start:auto}
+@media(max-width:560px){.related .rCard{grid-template-columns:86px minmax(0,1fr);height:114px}.related .rMedia{width:86px;height:114px}.related .rBody{padding:11px 12px}.related .rBody h3{font-size:14px}}
