@@ -169,3 +169,4 @@ background:linear-gradient(135deg,#6a2b98 0%,#55207d 55%,#411563 100%);box-shado
 .empty{padding:14px 10px;text-align:center;font-size:13.5px;color:var(--muted)}
 .menuUp{top:auto;bottom:calc(100% + 8px);animation-name:menuInUp}
 @keyframes menuInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.backLink{display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;color:var(--p);font-size:14px;font-weight:600;text-decoration:none}.backLink svg{flex-shrink:0}.backLink:hover{text-decoration:underline}.backLink:focus-visible{outline:3px solid rgba(85,32,125,.35);outline-offset:2px}

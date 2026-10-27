@@ -93,7 +93,7 @@ export default function VerifyOtpPage() {
         {seconds > 0
           ? <span>Resend code in <b>0:{String(seconds).padStart(2, "0")}</b></span>
           : <span>Didn&apos;t get it? <button type="button" onClick={resend} disabled={resending || loading} className={s.link} style={{ background: "none", border: 0, cursor: "pointer", font: "inherit", fontWeight: 600 }}>Resend code</button></span>}
-        <Link href="/login-page" className={s.link}><Icon name="arrowLeft" size={14} /> Back to Sign In</Link>
+        <Link href="/login-page" className={s.backLink}><Icon name="arrowLeft" size={14} /><span>Back to Sign In</span></Link>
       </div>
     </AuthLayout>
   );

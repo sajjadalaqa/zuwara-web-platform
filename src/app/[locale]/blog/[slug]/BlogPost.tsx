@@ -144,7 +144,7 @@ export default function BlogPost({ post, related }: { post: BlogPostData; relate
             <div className={`${styles.box} ${styles.boxCta}`}>
               <h3>{t("ctaTitle")}</h3>
               <p>{t("ctaText")}</p>
-              <Link href="/#start" className={styles.ctaBtn}>{t("ctaButton")}</Link>
+              <Link href="/healthcare/doctors" className={styles.ctaBtn}>{t("ctaButton")}</Link>
             </div>
           </aside>
         </div>

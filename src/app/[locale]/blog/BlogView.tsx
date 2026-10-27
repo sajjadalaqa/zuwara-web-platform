@@ -122,7 +122,7 @@ export default function BlogView({ initialCategory, posts }: { initialCategory: 
             <h2>{t("ctaTitle")}</h2>
             <p>{t("ctaText")}</p>
           </div>
-          <Link href="/#start" className={styles.ctaBtn}>{t("ctaButton")}</Link>
+          <Link href="/healthcare/doctors" className={styles.ctaBtn}>{t("ctaButton")}</Link>
         </div>
       </section>
     </main>

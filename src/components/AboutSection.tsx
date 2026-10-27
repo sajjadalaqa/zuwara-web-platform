@@ -74,7 +74,7 @@ export function AboutSection() {
             ))}
           </ul>
 
-          <Link href="/provider" className={styles.cta}>{t("cta")}</Link>
+          <Link href="/healthcare/doctors" className={styles.cta}>{t("cta")}</Link>
         </div>
       </div>
     </section>
