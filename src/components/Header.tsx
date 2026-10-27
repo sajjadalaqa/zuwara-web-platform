@@ -33,6 +33,13 @@ export function Header() {
   const otherLocale = locale === "ar" ? "en" : "ar";
   const pathname = usePathname(); // already without the "/ar" prefix
   const [open, setOpen] = useState(false);
+  const [menuPath, setMenuPath] = useState(pathname);
+
+  // Reset before rendering a new route, without a state-setting effect.
+  if (menuPath !== pathname) {
+    setMenuPath(pathname);
+    setOpen(false);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -46,11 +53,6 @@ export function Header() {
       document.body.style.overflow = "";
     };
   }, [open]);
-
-  // Close the menu whenever the route changes
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   // Close the menu if the screen grows into the desktop layout
   useEffect(() => {
