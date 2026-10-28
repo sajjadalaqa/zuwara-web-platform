@@ -199,7 +199,7 @@ export default async function AppointmentDetailPage({
                 </Link>
               )}
               {!cancellable && (
-                <Link href={`${prefix}/provider`} className={canReview ? s.actGhost : s.actPrimary}>
+                <Link href={`${prefix}${a.type === "visit" ? "/provider" : "/healthcare/doctors"}`} className={canReview ? s.actGhost : s.actPrimary}>
                   <CalendarPlus size={16} />
                   {t.rebook}
                 </Link>

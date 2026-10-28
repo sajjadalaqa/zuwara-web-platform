@@ -103,7 +103,9 @@ background:linear-gradient(135deg,#6a2b98 0%,#55207d 55%,#411563 100%);box-shado
 
 /* ---------- OTP ---------- */
 .otp{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-.otpBox{height:58px;min-width:0;text-align:center;font:inherit;font-size:22px;font-weight:700;color:var(--p);background:#faf7fd;border:1.5px solid var(--p-line);border-radius:14px;outline:0;transition:.2s}
+.otpBox{height:58px;min-width:0;text-align:center;font:inherit;font-size:22px;font-weight:700;color:var(--ink);background:#f4ecfb;border:2px solid #8b5bad;border-radius:14px;outline:0;transition:.2s}
+.otpBox:hover{border-color:var(--p)}
+.otpNotice{margin:0;padding:12px 14px;border:1px solid #83b59c;border-radius:10px;background:#edf8f1;color:#185c3d;font-size:13px;line-height:1.5}
 .otpBox:focus{background:#fff;border-color:var(--p);box-shadow:0 0 0 4px rgba(85,32,125,.12)}
 .otpBox.invalid{border-color:var(--danger)}
 .success{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}

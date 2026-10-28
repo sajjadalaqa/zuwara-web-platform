@@ -1,8 +1,7 @@
 import { UserRound, Stethoscope, MapPin, GraduationCap, BadgeCheck } from "lucide-react";
-import ScheduleUpdateButton from "@/components/healthcare/ScheduleUpdateButton";
-import Form from "next/form";
 import SaveProvider from "@/components/SaveProvider";
 import type { Metadata } from "next";
+import { getLocale } from "next-intl/server";
 import { DoctorPhoto } from "@/components/healthcare/DoctorPhoto";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -12,7 +11,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { SITE_URL } from "@/data/site";
 import { getZuwaraDoctorProfile, riyadhToday } from "@/lib/api/zuwara/doctors";
 import { doctorSlug, idFromSlug, specialtySlug } from "@/lib/api/zuwara/slugs";
-import type { ZuwaraProfileItem, ZuwaraSlot } from "@/lib/api/zuwara/types";
+import type { ZuwaraProfileItem } from "@/lib/api/zuwara/types";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 type Props = { params: Promise<{ slug: string }>; searchParams: SearchParams };
@@ -20,12 +19,6 @@ type Props = { params: Promise<{ slug: string }>; searchParams: SearchParams };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 function duration(value: string | undefined) { const parsed = Number(value); return Number.isInteger(parsed) && parsed > 0 ? parsed : null; }
 function safeDate(value: string | undefined) { return value && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : riyadhToday(); }
-function displayTime(value: string) {
-  const normalized = value.replace(":", "").padStart(4, "0");
-  const hour = Number(normalized.slice(0, 2));
-  const minute = normalized.slice(2, 4);
-  return Number.isFinite(hour) ? `${hour % 12 || 12}:${minute} ${hour >= 12 ? "PM" : "AM"}` : value;
-}
 function money(value: string | null, currency: string) { return value !== null && value.trim() !== "" && Number.isFinite(Number(value)) && Number(value) >= 0 ? `${Number(value).toFixed(2)} ${currency}` : "Price in app"; }
 
 function ProfileList({ title, items }: { title: string; items: ZuwaraProfileItem[] }) {
@@ -33,11 +26,6 @@ function ProfileList({ title, items }: { title: string; items: ZuwaraProfileItem
   return <section className="profile-detail-section"><h2><span className="profile-section-icon"><BadgeCheck size={22}/></span>{title}</h2><div className="profile-detail-list">{items.map((item) => <div key={item.id}><Icon name="check" size={17}/><div><strong>{item.title}</strong>{item.titleAr ? <span lang="ar" dir="rtl">{item.titleAr}</span> : null}</div></div>)}</div></section>;
 }
 
-function Slot({ slot, bookingHref }: { slot: ZuwaraSlot; bookingHref: string }) {
-  const label = `${displayTime(slot.startTime)}–${displayTime(slot.endTime)}`;
-  if (slot.available) return <Link className="schedule-slot schedule-slot-available" href={bookingHref}><span>{label}</span><small>Available</small></Link>;
-  return <span className={`schedule-slot schedule-slot-${slot.status}`} aria-disabled="true"><span>{label}</span><small>{slot.status === "booked" ? "Booked" : slot.status === "reserved" ? "Reserved" : slot.status === "past" ? "Past" : "Unavailable"}</small></span>;
-}
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const [{ slug }, query] = await Promise.all([params, searchParams]);
@@ -66,8 +54,8 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
   const canonical = `/healthcare/doctors/${doctorSlug(profile.name, profile.id)}`;
   const categoryHref = profile.categoryId && profile.categoryTitle ? `/healthcare/specialties/${specialtySlug(profile.categoryTitle, profile.categoryId)}` : "/healthcare/specialties";
   const durations = (profile.durationOptions ?? []).filter((item) => item.enabled);
-  const activeDuration = profile.selectedDurationMinutes ?? selectedDuration ?? durations[0]?.minutes ?? null;
-  const bookingHref = canonical + "/book";
+  const isAr = (await getLocale()) === "ar";
+  const bookingHref = (isAr ? "/ar" : "") + canonical + "/book";
   const about = profile.about ?? profile.educationalJourney;
 
   return <>
@@ -85,7 +73,7 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
       <div className="doctor-profile-heading">
         <div className="doctor-profile-photo"><DoctorPhoto src={profile.imageUrl} name={profile.name} priority sizes="(max-width: 640px) 140px, 220px"/></div>
         <div className="doctor-profile-intro"><div className="doctor-result-tags">{profile.categoryTitle ? <Link href={categoryHref}>{profile.categoryTitle}</Link> : null}{profile.classificationTitle ? <span>{profile.classificationTitle}</span> : null}</div><h1>{profile.name}</h1><SaveProvider id={profile.id} source="zuwara"/>{profile.nameAr ? <p className="doctor-profile-name-ar" lang="ar" dir="rtl">{profile.nameAr}</p> : null}<p>{profile.designation ?? profile.classificationTitle ?? "Healthcare consultant"}</p><div className="doctor-profile-metrics">{Number.isFinite(profile.rating) && profile.rating >= 0 ? <span><strong>★ {profile.rating.toFixed(1)}</strong> rating</span> : null}{profile.reviewsCount !== undefined ? <span><strong>{profile.reviewsCount}</strong> reviews</span> : null}{profile.experienceYears > 0 ? <span><strong>{profile.experienceYears}</strong> years experience</span> : null}{profile.happyClients > 0 ? <span><strong>{profile.happyClients}</strong> completed consultations</span> : null}</div></div>
-        <aside className="doctor-profile-price"><span>Consultations from</span><strong>{money(profile.startingPrice, profile.currency)}</strong><small>Final price depends on the selected duration.</small><a href="#availability" className="button button-primary">Check availability <Icon name="arrow" size={17}/></a></aside>
+        <aside className="doctor-profile-price"><span>Consultations from</span><strong>{money(profile.startingPrice, profile.currency)}</strong><small>Final price depends on the selected duration.</small><Link href={bookingHref} className="button button-primary">{isAr ? "\u0627\u062d\u062c\u0632 \u0645\u0648\u0639\u062f\u0643" : "Book an appointment"} <Icon name="arrow" size={17}/></Link></aside>
       </div>
     </div></section>
 
@@ -101,12 +89,12 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
         {(profile.degrees || profile.degreeAr || profile.languagesSpoken) ? <section className="profile-detail-section"><h2><span className="profile-section-icon"><GraduationCap size={22}/></span>Credentials and languages</h2><dl className="profile-facts">{profile.degrees ? <><dt>Degrees</dt><dd>{profile.degrees}</dd></> : null}{profile.degreeAr ? <><dt>Degrees (Arabic)</dt><dd lang="ar" dir="rtl">{profile.degreeAr}</dd></> : null}{profile.languagesSpoken ? <><dt>Languages</dt><dd>{profile.languagesSpoken}</dd></> : null}</dl></section> : null}
       </main>
 
-      <aside id="availability" className="schedule-panel">
-        <span className="eyebrow">Appointment availability</span><h2>Choose a date and duration.</h2>
-        <Form action={canonical} scroll={false} className="schedule-filter"><label><span>Date</span><input type="date" name="date" min={riyadhToday()} defaultValue={profile.selectedDate}/></label><label><span>Duration</span><select name="duration" defaultValue={activeDuration ?? ""}><option value="">All durations</option>{durations.map((item) => <option key={item.minutes} value={item.minutes}>{item.minutes} min · {money(item.price, profile.currency)}</option>)}</select></label><ScheduleUpdateButton /></Form>
-        <div className="schedule-legend"><span><i className="legend-available"/>Available</span><span><i className="legend-booked"/>Booked</span><span><i className="legend-reserved"/>Reserved</span></div>
-        {profile.slots?.length ? <div className="schedule-slots">{profile.slots.map((slot) => <Slot key={`${slot.startTime}-${slot.endTime}`} slot={slot} bookingHref={bookingHref}/>)}</div> : <div className="schedule-empty"><Icon name="calendar" size={28}/><strong>{profile.scheduleMessage ?? "No schedule is available for this selection."}</strong><p>Try another date or an enabled consultation duration.</p></div>}
-        <p className="schedule-disclaimer"><Icon name="shield" size={17}/>Selecting an available time continues to secure Zuwara sign-in. Final slot validation and booking remain handled by the existing Zuwara platform.</p>
+      <aside className="schedule-panel">
+        <span className="eyebrow">{isAr ? "\u062d\u062c\u0632 \u0627\u0644\u0645\u0648\u0639\u062f" : "YOUR APPOINTMENT"}</span>
+        <h2>{isAr ? "\u062e\u0637\u0648\u062a\u0643 \u0627\u0644\u0642\u0627\u062f\u0645\u0629 \u0644\u0644\u0631\u0639\u0627\u064a\u0629." : "Ready for your next step?"}</h2>
+        <p style={{fontSize:14,lineHeight:1.8,color:"var(--text-secondary)",marginBottom:24}}>{isAr ? "\u0627\u062e\u062a\u0631 \u0627\u0644\u062a\u0627\u0631\u064a\u062e \u0648\u0627\u0644\u0648\u0642\u062a \u0648\u0645\u062f\u0629 \u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u0629 \u0641\u064a \u0635\u0641\u062d\u0629 \u0627\u0644\u062d\u062c\u0632." : "Choose your date, time, and consultation duration together on the booking page."}</p>
+        <Link href={bookingHref} className="button button-primary" style={{width:"100%"}}>{isAr ? "\u0627\u062d\u062c\u0632 \u0645\u0648\u0639\u062f\u0643" : "Book an appointment"}<Icon name="arrow" size={17}/></Link>
+        <p className="schedule-disclaimer"><Icon name="shield" size={17}/>{isAr ? "\u064a\u062a\u0645 \u062a\u0623\u0643\u064a\u062f \u0627\u0644\u062a\u0648\u0641\u0631 \u0648\u0627\u0644\u0633\u0639\u0631 \u0642\u0628\u0644 \u0625\u062a\u0645\u0627\u0645 \u0627\u0644\u062d\u062c\u0632." : "Availability and final pricing are checked before your appointment is confirmed."}</p>
       </aside>
     </div></section>
   </>;

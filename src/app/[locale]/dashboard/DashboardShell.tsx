@@ -229,7 +229,7 @@ export default function DashboardShell({
       <nav className={s.bottomNav} aria-label="Primary">
         {renderTab(bottom[0])}
         {renderTab(bottom[1])}
-        <Link href={href("/provider")} className={s.bookBtn} aria-label={isAr ? "احجز" : "Book"}>
+        <Link href={href("/healthcare/doctors")} className={s.bookBtn} aria-label={isAr ? "احجز" : "Book"}>
           <Plus size={26} />
         </Link>
         {renderTab(bottom[2])}

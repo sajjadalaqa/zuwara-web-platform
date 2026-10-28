@@ -52,7 +52,7 @@ export default async function AppointmentsPage({
           <h2>{t.title}</h2>
           <p>{t.subtitle}</p>
         </div>
-        <Link href={`${prefix}/provider`} className={s.bookBtn}>
+        <Link href={`${prefix}/healthcare/doctors`} className={s.bookBtn}>
           <CalendarPlus size={17} />
           {t.book}
         </Link>
@@ -73,7 +73,7 @@ export default async function AppointmentsPage({
           <span className={s.emptyIcon}><CalendarX2 size={26} /></span>
           <h3>{t.empty.title}</h3>
           <p>{t.empty.text}</p>
-          <Link href={`${prefix}/provider`} className={s.bookBtn}>
+          <Link href={`${prefix}/healthcare/doctors`} className={s.bookBtn}>
             <CalendarPlus size={17} />
             {t.book}
           </Link>

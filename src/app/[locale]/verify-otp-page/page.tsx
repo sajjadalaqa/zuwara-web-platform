@@ -16,8 +16,14 @@ export default function VerifyOtpPage() {
   const [loading, setLoading] = useState(false);
   const [seconds, setSeconds] = useState(60);
   const [resending, setResending] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [expiresAt, setExpiresAt] = useState<number | null>(null);
   useEffect(() => { otpStatusAction().then(result => {
-    if (result.ok) setSeconds(Math.max(0, Math.ceil(((result.resendAt ?? 0) - Date.now()) / 1000)));
+    if (result.ok) {
+      setSeconds(Math.max(0, Math.ceil(((result.resendAt ?? 0) - Date.now()) / 1000)));
+      setExpiresAt(result.expiresAt ?? null);
+      if ((result.expiresAt ?? 0) > Date.now()) setNotice("OTP sent successfully. Check your phone for the verification code.");
+    }
     else { setError(result.error); setSeconds(0); }
   }).catch(() => setError("Unable to load verification status.")); }, []);
   const refs = useRef<(HTMLInputElement | null)[]>([]);
@@ -44,6 +50,7 @@ export default function VerifyOtpPage() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
+    if (expiresAt !== null && expiresAt <= Date.now()) return setError("The code expired. Request a new code.");
     if (digits.join("").length < LEN) return setError("Enter the 6-digit code.");
     setError(""); setLoading(true);
     try {
@@ -56,11 +63,13 @@ export default function VerifyOtpPage() {
 
   async function resend() {
     if (resending || loading) return;
-    setResending(true); setError("");
+    setResending(true); setError(""); setNotice("");
     try {
       const result = await resendOtpAction();
       if (result.ok) {
         setSeconds(Math.max(0, Math.ceil(((result.resendAt ?? 0) - Date.now()) / 1000)));
+        setExpiresAt(result.expiresAt ?? null);
+        setNotice("A new OTP was sent successfully. Check your phone for the verification code.");
         setDigits(Array(LEN).fill("")); refs.current[0]?.focus();
       } else setError(result.error);
     } catch { setError("Unable to resend. Please try again."); }
@@ -68,7 +77,7 @@ export default function VerifyOtpPage() {
   }
 
   return (
-    <AuthLayout headline="Check your phone." tagline="We sent a 6-digit verification code to your phone. It expires in two minutes.">
+    <AuthLayout headline="Check your phone." tagline="We sent a 6-digit verification code to your phone.">
       <span className={s.badge}><Icon name="shield" size={26} /></span>
       <div className={s.cardHead}>
         <div>
@@ -77,7 +86,8 @@ export default function VerifyOtpPage() {
         </div>
       </div>
       <form className={s.form} onSubmit={onSubmit} noValidate>
-        <div className={s.otp} onPaste={onPaste}>
+        {notice && <p className={s.otpNotice} role="status">{notice}</p>}
+        <div className={s.otp} onPaste={onPaste} dir="ltr">
           {digits.map((d, i) => (
             <input key={i} ref={(el) => { refs.current[i] = el; }} className={`${s.otpBox} ${error ? s.invalid : ""}`}
               inputMode="numeric" autoComplete={i === 0 ? "one-time-code" : "off"} maxLength={1} value={d}

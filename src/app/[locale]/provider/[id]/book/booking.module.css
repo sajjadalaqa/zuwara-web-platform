@@ -153,3 +153,5 @@
   .pickCol + .pickCol { border-inline-start: 0; border-block-start: 1px solid var(--p100); }
 }.field select { width: 100%; min-height: 46px; padding: 12px; border: 1px solid #e8dcf3; border-radius: 12px; background: white; color: #241335; font: inherit; }
 .field input:disabled, .field textarea:disabled, .field select:disabled { opacity: .65; }
+
+.availabilityNotice{display:flex;align-items:flex-start;gap:12px;margin:20px 0;padding:16px 18px;border:1px solid #e4d5ef;border-radius:12px;background:#f8f3fc;color:#58346f}.availabilityNotice>svg{flex:none;margin-top:2px}.availabilityNotice strong{display:block;font-size:14px}.availabilityNotice p{margin:6px 0 10px;font-size:13px;line-height:1.7;color:#6c587a}.availabilityNotice a{color:#602d8c;font-size:13px;font-weight:700;text-underline-offset:3px}

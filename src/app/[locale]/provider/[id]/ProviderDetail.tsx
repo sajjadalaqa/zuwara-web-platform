@@ -134,7 +134,7 @@ export default function ProviderDetail({ provider: p, services }: { provider: Pr
               </li>
             </ul>
 
-           <Link href="/healthcare/doctors" className={styles.book}>{t("book")}</Link>
+           <Link href={`/provider/${p.id}/book`} className={styles.book}>{t("book")}</Link>
           </aside>
 
           {/* Details */}
@@ -181,7 +181,7 @@ export default function ProviderDetail({ provider: p, services }: { provider: Pr
               <li>{t("point2")}</li>
               <li>{t("point3")}</li>
             </ul>
-            <Link href="/healthcare/doctors" className={styles.book} onClick={() => setOpen(false)}>{t("book")}</Link>
+            <Link href={`/provider/${p.id}/book`} className={styles.book} onClick={() => setOpen(false)}>{t("book")}</Link>
           </div>
         </div>
       )}

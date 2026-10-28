@@ -30,7 +30,7 @@ async function issue(input: OtpInput, locale: string): Promise<Result> {
   const response = await zuwaraV2<{ challenge_id: string; expires_in: number; resend_after: number }>("/auth/otp/request", { method: "POST", body: input, locale });
   const { challenge_id, expires_in, resend_after } = response.data;
   if (!challenge_id || !Number.isFinite(expires_in) || !Number.isFinite(resend_after)) throw new Error("Invalid OTP response.");
-  const expiresAt = Date.now() + Math.min(120, expires_in) * 1000;
+  const expiresAt = Date.now() + Math.min(300, expires_in) * 1000;
   const resendAt = Date.now() + Math.max(1, resend_after) * 1000;
   await savePending({ input, locale, challenge_id, expiresAt, resendAt, pendingUntil: Date.now() + 10 * 60_000 });
   return { ok: true, expiresAt, resendAt };

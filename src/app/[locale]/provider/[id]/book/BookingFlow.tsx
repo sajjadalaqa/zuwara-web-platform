@@ -221,10 +221,20 @@ export default function BookingFlow({ provider, services, addresses, identity }:
             {step === 1 && (
               <>
                 <div className={styles.form}><Field label={isAr ? "الخدمة" : "Service"}>
-                  <select value={serviceId} disabled={locked} onChange={e=>{setServiceId(Number(e.target.value));setTime(null);setQuote(null);}}>
+                  <select value={serviceId} disabled={locked || !services.length} onChange={e=>{setServiceId(Number(e.target.value));setTime(null);setQuote(null);}}>
+                    {!services.length && <option value={0}>{isAr ? "\u0644\u0627 \u062a\u0648\u062c\u062f \u062e\u062f\u0645\u0627\u062a \u0645\u062a\u0627\u062d\u0629" : "No services available"}</option>}
                     {services.map(service=><option key={service.id} value={service.id}>{isAr && service.nameAr ? service.nameAr : service.name}</option>)}
                   </select>
                 </Field></div>
+                {(!services.length || !addresses.length) && <div className={styles.availabilityNotice} role="status">
+                  <Svg d={I.cal} size={20}/>
+                  <div><strong>{isAr ? "\u0627\u0644\u062d\u062c\u0632 \u063a\u064a\u0631 \u0645\u062a\u0627\u062d \u062d\u0627\u0644\u064a\u0627\u064b" : "Booking is not available yet"}</strong>
+                    <p>{!services.length
+                      ? isAr ? "\u0644\u0627 \u062a\u0648\u062c\u062f \u062e\u062f\u0645\u0627\u062a \u0645\u062a\u0627\u062d\u0629 \u0644\u0644\u062d\u062c\u0632 \u0644\u062f\u0649 \u0645\u0642\u062f\u0645 \u0627\u0644\u062e\u062f\u0645\u0629 \u062d\u0627\u0644\u064a\u0627\u064b." : "This provider has no home-visit services available. Available times will appear once a service is listed."
+                      : isAr ? "\u0623\u0636\u0641 \u0639\u0646\u0648\u0627\u0646\u0643 \u0641\u064a \u062a\u0637\u0628\u064a\u0642 \u0632\u0648\u0627\u0631\u0629 \u0644\u0644\u0632\u064a\u0627\u0631\u0627\u062a \u0623\u0648 \u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u0627\u0644\u062f\u0639\u0645." : "A saved address is required. Add your address in Zuwara Visit or contact support to continue."}</p>
+                    <Link href={!services.length ? "/provider" : "/contact"}>{!services.length ? isAr ? "\u0627\u0633\u062a\u0643\u0634\u0641 \u0645\u0642\u062f\u0645\u064a \u0627\u0644\u062e\u062f\u0645\u0629" : "Browse other providers" : isAr ? "\u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u0627\u0644\u062f\u0639\u0645" : "Contact support"}</Link>
+                  </div>
+                </div>}
                 <div className={styles.pick}>
                   {/* Date */}
                   <section className={styles.pickCol} aria-label={t("selectDate")}>
@@ -282,7 +292,9 @@ export default function BookingFlow({ provider, services, addresses, identity }:
                       </div>
                     </div>
 
-                    {!date ? (
+                    {!serviceId ? (
+                      <p className={styles.hint}>{isAr ? "\u0644\u0627 \u062a\u062a\u0648\u0641\u0631 \u0623\u0648\u0642\u0627\u062a \u0644\u0644\u062d\u062c\u0632 \u0628\u062f\u0648\u0646 \u062e\u062f\u0645\u0629 \u0645\u062a\u0627\u062d\u0629." : "Available times require a bookable service from this provider."}</p>
+                    ) : !date ? (
                       <p className={styles.hint}>{t("pickDateFirst")}</p>
                     ) : slotError ? (<p className={styles.fail} role="alert">{isAr ? "تعذر تحميل الأوقات المتاحة. أعد المحاولة." : "Availability could not be loaded. Please retry."}</p>) : slotLoading ? (<p className={styles.hint}>{isAr ? "جارٍ تحميل الأوقات" : "Loading available times"}</p>) : noSlots ? (
                       <p className={styles.hint}>{t("noSlots")}</p>
@@ -304,7 +316,7 @@ export default function BookingFlow({ provider, services, addresses, identity }:
                 </div>
 
                 <div className={styles.actions}>
-                  <button type="button" className={styles.primary} disabled={!date || !time} onClick={() => setStep(2)}>
+                  <button type="button" className={styles.primary} disabled={!date || !time || !services.length || !addresses.length} onClick={() => setStep(2)}>
                     {t("continue")}
                   </button>
                 </div>
