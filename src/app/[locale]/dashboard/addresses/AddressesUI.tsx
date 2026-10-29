@@ -1,3 +1,4 @@
+import { useUiText } from "@/i18n/use-ui-text";
 import type { ReactNode } from "react";
 import { MapPin, Plus, Navigation, House, Info, Pencil, Archive, MapPinned } from "lucide-react";
 import type { Address } from "@/lib/api/patient-dashboard";
@@ -5,11 +6,13 @@ import Form from "../_patient/Form";
 import s from "./addresses.module.css";
 
 export function AddressesLayout({ar,children}:{ar:boolean;children:ReactNode}){
- return <div className={s.page}><header className={s.hero}><div><span className={s.eyebrow}>{ar?"الرعاية، حيث تحتاجها":"CARE, RIGHT WHERE YOU NEED IT"}</span><h1>{ar?"العناوين المحفوظة":"Saved addresses"}</h1><p>{ar?"احتفظ بعناوين زياراتك المنزلية في مكان واحد.":"Keep your home-visit locations together in one place."}</p><a href="#add-address" className={s.primary}><Plus size={16}/>{ar?"إضافة عنوان":"Add an address"}</a></div><div className={s.art} aria-hidden="true"><MapPinned size={56} strokeWidth={1.3}/><span/></div></header>{children}</div>;
+  const uiText = useUiText();
+ return <div className={s.page}><header className={s.hero}><div><span className={s.eyebrow}>{ar?"الرعاية، حيث تحتاجها":"CARE, RIGHT WHERE YOU NEED IT"}</span><h1>{ar?"العناوين المحفوظة":uiText("Saved addresses")}</h1><p>{ar?"احتفظ بعناوين زياراتك المنزلية في مكان واحد.":"Keep your home-visit locations together in one place."}</p><a href="#add-address" className={s.primary}><Plus size={16}/>{ar?"إضافة عنوان":"Add an address"}</a></div><div className={s.art} aria-hidden="true"><MapPinned size={56} strokeWidth={1.3}/><span/></div></header>{children}</div>;
 }
 function AddressFields({ar,address}:{ar:boolean;address?:Address}){
+  const uiText = useUiText();
  return <div className={s.fields}>
-  <label className={s.full}>{ar?"العنوان":"Address"}<input name="address" maxLength={1000} required defaultValue={address?.address} placeholder={ar?"الشارع، المبنى، الحي، المدينة":"Street, building, district, city"}/></label>
+  <label className={s.full}>{ar?"العنوان":uiText("Address")}<input name="address" maxLength={1000} required defaultValue={address?.address} placeholder={ar?"الشارع، المبنى، الحي، المدينة":"Street, building, district, city"}/></label>
   <label>{ar?"خط العرض":"Latitude"}<input name="lat" type="number" step="any" required defaultValue={address?.lat??address?.latitude} placeholder="24.7136"/><span className={s.hint}>{ar?"من ‎-٩٠ إلى ٩٠":"Between −90 and 90"}</span></label>
   <label>{ar?"خط الطول":"Longitude"}<input name="long" type="number" step="any" required defaultValue={address?.long??address?.longitude} placeholder="46.6753"/><span className={s.hint}>{ar?"من ‎-١٨٠ إلى ١٨٠":"Between −180 and 180"}</span></label>
  </div>;

@@ -1,3 +1,4 @@
+import { useUiText } from "@/i18n/use-ui-text";
 import Link from "next/link";
 import {
   ClipboardList,
@@ -33,6 +34,7 @@ export function RequestsLayout({
   children: ReactNode;
   ar: boolean;
 }) {
+  const uiText = useUiText();
   return (
     <div className={s.page}>
       <header className={s.header}>
@@ -49,7 +51,7 @@ export function RequestsLayout({
             <h1>
               {ar
                 ? "\u0637\u0644\u0628\u0627\u062a \u0627\u0644\u062e\u062f\u0645\u0627\u062a"
-                : "Service requests"}
+                : uiText("Service requests")}
             </h1>
             <p>
               {ar
@@ -84,6 +86,7 @@ export default function RequestsUI({
   ar: boolean;
   total?: number;
 }) {
+  const uiText = useUiText();
   const names = new Map(services.map((r) => [r.id, r.name]));
   return (
     <>
@@ -110,17 +113,13 @@ export default function RequestsUI({
             <div className={s.notice} role="alert">
               <Info size={18} />
               <p>
-                Services could not be loaded. Please refresh this page and try
-                again.
-              </p>
+                {uiText("Services could not be loaded. Please refresh this page and try again.")}{" "}</p>
             </div>
           ) : !services.length ? (
             <div className={s.notice}>
               <Info size={18} />
               <p>
-                No services are available to request right now. Please check
-                again later.
-              </p>
+                {uiText("No services are available to request right now. Please check again later.")}{" "}</p>
             </div>
           ) : (
             <Form

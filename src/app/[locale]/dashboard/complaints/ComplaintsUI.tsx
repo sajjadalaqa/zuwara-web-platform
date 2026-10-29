@@ -1,3 +1,4 @@
+import { useUiText } from "@/i18n/use-ui-text";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { MessageSquare, PenLine, Info, ArrowUpRight, ClipboardList, Clock3 } from "lucide-react";
@@ -6,9 +7,11 @@ import Form from "../_patient/Form";
 import { stamp } from "../_care/ui";
 import s from "./complaint-page.module.css";
 export function ComplaintsLayout({ar,children}:{ar:boolean;children:ReactNode}){
- return <div className={s.page}><header className={s.hero}><div><span className={s.eyebrow}>{ar?"رأيك يهمنا":"WE VALUE YOUR FEEDBACK"}</span><h1>{ar?"الشكاوى":"Complaints"}</h1><p>{ar?"شارك مخاوفك واطّلع على الشكاوى التي أرسلتها.":"Share a concern and keep track of your submitted complaints."}</p><a href="#new-complaint" className={s.primary}><PenLine size={16}/>{ar?"إرسال شكوى":"Submit a concern"}</a></div><div className={s.art} aria-hidden="true"><MessageSquare size={52} strokeWidth={1.3}/><span/><span/><span/></div></header>{children}</div>;
+  const uiText = useUiText();
+ return <div className={s.page}><header className={s.hero}><div><span className={s.eyebrow}>{ar?"رأيك يهمنا":"WE VALUE YOUR FEEDBACK"}</span><h1>{ar?"الشكاوى":uiText("Complaints")}</h1><p>{ar?"شارك مخاوفك واطّلع على الشكاوى التي أرسلتها.":"Share a concern and keep track of your submitted complaints."}</p><a href="#new-complaint" className={s.primary}><PenLine size={16}/>{ar?"إرسال شكوى":"Submit a concern"}</a></div><div className={s.art} aria-hidden="true"><MessageSquare size={52} strokeWidth={1.3}/><span/><span/><span/></div></header>{children}</div>;
 }
 export default function ComplaintsUI({rows,base,ar}:{rows:Complaint[];base:string;ar:boolean}){
+  const uiText = useUiText();
  const t=(en:string,arabic:string)=>ar?arabic:en;
  return <div className={s.workspace}>
  <section className={s.formCard} id="new-complaint"><div className={s.sectionHead}><span className={s.icon}><PenLine size={22}/></span><div><h2>{t("Tell us what happened","أخبرنا بما حدث")}</h2><p>{t("Help us understand your concern.","ساعدنا على فهم شكواك.")}</p></div></div>

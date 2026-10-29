@@ -1,6 +1,6 @@
 "use client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useUiText } from "@/i18n/use-ui-text";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useState, type FormEvent } from "react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Field, SubmitButton } from "@/components/auth/Field";
@@ -9,6 +9,7 @@ import { isEmail } from "@/components/auth/validators";
 import s from "@/components/auth/auth.module.css";
 
 export default function ForgotPasswordPage() {
+  const uiText = useUiText();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -16,7 +17,7 @@ export default function ForgotPasswordPage() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!isEmail(email)) return setError("Enter the email you registered with.");
+    if (!isEmail(email)) return setError(uiText("Enter the email you registered with."));
     setError("");
     setLoading(true);
     // TODO: call "send reset code" API here -> { email }
@@ -26,21 +27,21 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <AuthLayout headline="Locked out? We'll get you back in." tagline="Enter your email and we will send you a 6-digit code to reset your password.">
+    <AuthLayout headline={uiText("Locked out? We'll get you back in.")} tagline={uiText("Enter your email and we will send you a 6-digit code to reset your password.")}>
       <span className={s.badge}><Icon name="key" size={26} /></span>
       <div className={s.cardHead}>
         <div>
-          <h2>Forgot Password?</h2>
-          <p>No worries. Enter your email address and we&apos;ll send you a verification code.</p>
+          <h2>{uiText("Forgot Password?")}</h2>
+          <p>{uiText("No worries. Enter your email address and we'll send you a verification code.")}</p>
         </div>
       </div>
       <form className={s.form} onSubmit={onSubmit} noValidate>
-        <Field label="Email Address" icon="mail" type="email" required placeholder="e.g. david@gmail.com"
-          autoComplete="email" value={email} onChange={setEmail} error={error} />
-        <SubmitButton loading={loading}>Send Code</SubmitButton>
+        <Field label={uiText("Email Address")} icon="mail" type="email" required placeholder={uiText("e.g. david@gmail.com")}
+          autoComplete="email" value={email} onChange={setEmail} error={uiText(error)} />
+        <SubmitButton loading={loading}>{uiText("Send Code")}</SubmitButton>
       </form>
       <div className={s.foot}>
-        <Link href="/login-page" className={s.link}><Icon name="arrowLeft" size={14} /> Back to Sign In</Link>
+        <Link href="/login-page" className={s.link}><Icon name="arrowLeft" size={14} /> {uiText("Back to Sign In")}</Link>
       </div>
     </AuthLayout>
   );

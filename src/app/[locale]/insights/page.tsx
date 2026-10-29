@@ -1,1 +1,1 @@
-﻿export { default, metadata } from "@/app/insights/page";
+﻿export { default, generateMetadata } from "@/app/insights/page";

@@ -1,4 +1,5 @@
 "use client";
+import { useUiText } from "@/i18n/use-ui-text";
 import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
@@ -24,6 +25,7 @@ export default function TherapyBooking({
   pending: PendingIntent | null;
   dependents: number[];
 }) {
+  const uiText = useUiText();
   const ar = useLocale() === "ar",
     router = useRouter(),
     today = new Intl.DateTimeFormat("en-CA", {
@@ -69,13 +71,13 @@ export default function TherapyBooking({
           setError("");
         } else {
           setCalendar([]);
-          setError("Therapy availability could not be loaded.");
+          setError(uiText("Therapy availability could not be loaded."));
         }
       })
       .catch(() => {
         if (active) {
           setCalendar([]);
-          setError("Therapy availability could not be loaded.");
+          setError(uiText("Therapy availability could not be loaded."));
         }
       })
       .finally(() => {
@@ -113,7 +115,7 @@ export default function TherapyBooking({
       if (result.ok) setQuote(result.quote);
       else setError("Preview failed: " + result.error);
     } catch {
-      setError("The price preview could not be loaded.");
+      setError(uiText("The price preview could not be loaded."));
     } finally {
       setBusy(false);
     }
@@ -144,7 +146,7 @@ export default function TherapyBooking({
     } catch {
       setUncertain(true);
       setError(
-        "Outcome unknown. Retry this request or check appointment history before starting a new package.",
+        uiText("Outcome unknown. Retry this request or check appointment history before starting a new package."),
       );
     } finally {
       setBusy(false);
@@ -153,27 +155,23 @@ export default function TherapyBooking({
   if (resume && resume!.resourceId !== String(plan.id))
     return (
       <section className={s.card}>
-        <p>Resolve your earlier therapy request first.</p>
+        <p>{uiText("Resolve your earlier therapy request first.")}</p>
         <Link
           href={(ar ? "/ar" : "") + "/dashboard/therapy/" + resume!.resourceId}
         >
-          Resume request
-        </Link>
+          {uiText("Resume request")}{" "}</Link>
       </section>
     );
   return (
     <section className={s.card}>
-      <h2>Book therapy sessions</h2>
+      <h2>{uiText("Book therapy sessions")}</h2>
       {resume ? (
         <p className={s.notice}>
-          An earlier request has an unconfirmed outcome. Retry it with the
-          original selections before starting another package.
-        </p>
+          {uiText("An earlier request has an unconfirmed outcome. Retry it with the original selections before starting another package.")}{" "}</p>
       ) : null}
       <div className={s.form}>
         <label>
-          Consultant
-          <select
+          {uiText("Consultant")}{" "}<select
             disabled={locked}
             value={doctor}
             onChange={(e) => {
@@ -191,8 +189,7 @@ export default function TherapyBooking({
           </select>
         </label>
         <label>
-          Duration
-          <select
+          {uiText("Duration")}{" "}<select
             disabled={locked}
             value={duration}
             onChange={(e) => {
@@ -204,14 +201,12 @@ export default function TherapyBooking({
           >
             {plan.durations?.map((d) => (
               <option key={d.duration_minutes} value={d.duration_minutes}>
-                {d.duration_minutes} minutes
-              </option>
+                {d.duration_minutes} {uiText("minutes")}{" "}</option>
             ))}
           </select>
         </label>
         <label>
-          Week starting
-          <input
+          {uiText("Week starting")}{" "}<input
             type="date"
             min={today}
             value={date}
@@ -223,7 +218,7 @@ export default function TherapyBooking({
           />
         </label>
         {loading ? (
-          <p>Loading availability?</p>
+          <p>{uiText("Loading availability?")}</p>
         ) : (
           calendar.map((day) => (
             <div key={day.date}>
@@ -258,15 +253,14 @@ export default function TherapyBooking({
                     </button>
                   ))
                 ) : (
-                  <p className={s.muted}>No available slots.</p>
+                  <p className={s.muted}>{uiText("No available slots.")}</p>
                 )}
               </div>
             </div>
           ))
         )}
         <p>
-          {sessions.length} selected
-          {plan.total_sessions ? " / " + Math.min(plan.total_sessions, 20) : ""}
+          {sessions.length} {uiText("selected")}{" "}{plan.total_sessions ? " / " + Math.min(plan.total_sessions, 20) : ""}
         </p>
         {sessions.map((item) => (
           <p key={item.date + item.time}>
@@ -276,14 +270,12 @@ export default function TherapyBooking({
                 type="button"
                 onClick={() => choose(item.date, item.time)}
               >
-                Remove
-              </button>
+                {uiText("Remove")}{" "}</button>
             ) : null}
           </p>
         ))}
         <label>
-          Patient
-          <select
+          {uiText("Patient")}{" "}<select
             disabled={locked}
             value={patient ?? ""}
             onChange={(e) => {
@@ -291,18 +283,17 @@ export default function TherapyBooking({
               setQuote(null);
             }}
           >
-            <option value="">Myself</option>
+            <option value="">{uiText("Myself")}</option>
             {dependents.map((id) => (
               <option key={id} value={id}>
-                Saved patient #{id}
+                {uiText("Saved patient #")}{id}
               </option>
             ))}
           </select>
         </label>
-        <p>Consultation type: Online</p>
+        <p>{uiText("Consultation type: Online")}</p>
         <label>
-          Notes (up to 500 characters)
-          <textarea
+          {uiText("Notes (up to 500 characters)")}{" "}<textarea
             maxLength={500}
             disabled={locked}
             value={problem}
@@ -313,8 +304,7 @@ export default function TherapyBooking({
           />
         </label>
         <label>
-          Payment
-          <select
+          {uiText("Payment")}{" "}<select
             disabled={locked}
             value={method}
             onChange={(e) => {
@@ -322,7 +312,7 @@ export default function TherapyBooking({
               setQuote(null);
             }}
           >
-            <option value="wallet">Wallet</option>
+            <option value="wallet">{uiText("Wallet")}</option>
             <option value="myfatoorah">MyFatoorah</option>
             <option value="tamara">Tamara</option>
           </select>
@@ -332,27 +322,26 @@ export default function TherapyBooking({
           disabled={locked || !doctor || !sessions.length || !problem.trim()}
           onClick={preview}
         >
-          Preview package price
-        </button>
+          {uiText("Preview package price")}{" "}</button>
       </div>
       {quote ? (
         <div className={s.notice}>
           <p>
-            Service: {(quote.service / 100).toFixed(2)} {quote.currency}
+            {uiText("Service:")}{" "}{(quote.service / 100).toFixed(2)} {quote.currency}
           </p>
           <p>
-            Tax: {(quote.tax / 100).toFixed(2)} {quote.currency}
+            {uiText("Tax:")}{" "}{(quote.tax / 100).toFixed(2)} {quote.currency}
           </p>
           <p>
-            Total: {(quote.payable / 100).toFixed(2)} {quote.currency}
+            {uiText("Total:")}{" "}{(quote.payable / 100).toFixed(2)} {quote.currency}
           </p>
           {quote.sessions?.map((item) => (
             <p key={item.session_number}>
-              Session {item.session_number}: {item.date} {item.time}?
+              {uiText("Session")}{" "}{item.session_number}: {item.date} {item.time}?
               {item.end_time}
             </p>
           ))}
-          <p>Slots are not reserved by this preview.</p>
+          <p>{uiText("Slots are not reserved by this preview.")}</p>
         </div>
       ) : null}
       {token ? (
@@ -364,7 +353,7 @@ export default function TherapyBooking({
       ) : null}
       {error ? (
         <p className={s.error} role="alert">
-          {error}
+          {uiText(error)}
         </p>
       ) : null}
     </section>

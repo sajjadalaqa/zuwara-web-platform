@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import { Bell, BellOff, CheckCheck, ChevronLeft, ChevronRight, Inbox } from "lucide-react";
 import ReadToggle from "./ReadToggle";
@@ -20,6 +21,7 @@ export default async function NotificationsPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<SearchParams>;
 }) {
+  const uiText = await getUiText();
   const { locale } = await params;
   const sp = await searchParams;
   const isAr = locale === "ar";
@@ -82,7 +84,7 @@ export default async function NotificationsPage({
     <div className={s.page}>
       <header className={s.hero}><div><span className={s.eyebrow}>{isAr ? "كل ما يهمك، في مكان واحد" : "YOUR UPDATES, ALL IN ONE PLACE"}</span><h1>{t.title}</h1><p>{t.subtitle}</p><div className={s.heroBadges}><span><Inbox size={14}/>{nf.format(data.counts.all)} {isAr ? "إشعار" : "notifications"}</span><span><span className={s.badgeDot}/>{nf.format(data.counts.unread)} {isAr ? "غير مقروء" : "unread"}</span></div></div><div className={s.heroArt} aria-hidden="true"><Bell size={51} strokeWidth={1.3}/><span/></div></header>
       <div className={s.toolbar}>
-      <nav className={s.tabs} aria-label="Filter">
+      <nav className={s.tabs} aria-label={uiText("Filter")}>
         {ORDER.map((f) => (
           <Link
             key={f} aria-current={f === filter ? "page" : undefined}
@@ -133,7 +135,7 @@ export default async function NotificationsPage({
       )}
 
       {pages > 1 && (
-        <nav className={s.pager} aria-label="Pagination">
+        <nav className={s.pager} aria-label={uiText("Pagination")}>
           <Link
             href={href({ page: data.page - 1 })}
             scroll={false}

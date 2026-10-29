@@ -1,4 +1,6 @@
-﻿"use client";
+"use client";
+import { useUiText } from "@/i18n/use-ui-text";
+
 import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import type { IAgoraRTCClient, IMicrophoneAudioTrack, ICameraVideoTrack } from "agora-rtc-sdk-ng";
@@ -6,6 +8,7 @@ import type { VideoSession } from "@/lib/api/zuwara/video";
 import { startVideoAction, attendanceAction, videoEligibilityAction } from "./actions";
 import s from "./video.module.css";
 export default function VideoCall({ id, canJoin, followUpId }: { id: string; canJoin: boolean; followUpId?: string }) {
+  const uiText = useUiText();
   const ar = useLocale() === "ar";
   const local = useRef<HTMLDivElement>(null), remote = useRef<HTMLDivElement>(null);
   const client = useRef<IAgoraRTCClient | null>(null), tracks = useRef<[IMicrophoneAudioTrack, ICameraVideoTrack] | null>(null);
@@ -40,7 +43,7 @@ export default function VideoCall({ id, canJoin, followUpId }: { id: string; can
     setError(""); setState("joining"); const attempt = ++generation.current;
     try {
       const result = await startVideoAction(id, followUpId);
-      if (!result.ok) throw new Error("Session unavailable");
+      if (!result.ok) throw new Error(uiText("Session unavailable"));
       if (!mounted.current || attempt !== generation.current) return;
       const sdk = (await import("agora-rtc-sdk-ng")).default;
       if (!mounted.current || attempt !== generation.current) return;
@@ -63,7 +66,7 @@ export default function VideoCall({ id, canJoin, followUpId }: { id: string; can
       rtc.on("token-privilege-will-expire", async () => {
         try {
           const renewed = await startVideoAction(id, followUpId);
-          if (!renewed.ok || renewed.session.meeting_id !== session.current?.meeting_id || renewed.session.channel_name !== session.current.channel_name) throw new Error("Session ended");
+          if (!renewed.ok || renewed.session.meeting_id !== session.current?.meeting_id || renewed.session.channel_name !== session.current.channel_name) throw new Error(uiText("Session ended"));
           await rtc.renewToken(renewed.session.token); session.current = renewed.session;
         } catch { await leave(); if (mounted.current) setError(ar ? "انتهت الجلسة." : "The session ended."); }
       });

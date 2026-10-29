@@ -1,5 +1,5 @@
 "use client";
-
+import { useUiText } from "@/i18n/use-ui-text";
 import { useEffect, useState } from "react";
 import q from "./testimonials.module.css";
 
@@ -12,13 +12,14 @@ type Testimonial = {
 };
 
 function TestimonialCard({ name, role, tag, quote, initials }: Testimonial) {
+  const uiText = useUiText();
   return (
     <div className={q.card}>
       <div className={q.top}>
         <span className={q.quoteMark} aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.6 5C6.5 6.3 4 9.3 4 13.2V19h6.4v-6.2H7.2c0-2.3 1.2-3.9 3.2-4.9L9.6 5zm9 0c-3.1 1.3-5.6 4.3-5.6 8.2V19h6.4v-6.2h-3.2c0-2.3 1.2-3.9 3.2-4.9L18.6 5z" /></svg>
         </span>
-        <span className={q.stars} role="img" aria-label="5 out of 5 stars">
+        <span className={q.stars} role="img" aria-label={uiText("5 out of 5 stars")}>
           {Array.from({ length: 5 }).map((_, i) => (
             <svg key={i} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9L12 2.5z" /></svg>
           ))}
@@ -35,6 +36,7 @@ function TestimonialCard({ name, role, tag, quote, initials }: Testimonial) {
 }
 
 export function TestimonialsSlider({ items }: { items: readonly Testimonial[] }) {
+  const uiText = useUiText();
   const [perView, setPerView] = useState(3);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -91,7 +93,7 @@ export function TestimonialsSlider({ items }: { items: readonly Testimonial[] })
       </div>
 
       <div className={q.controls}>
-        <button type="button" className={q.arrow} onClick={prev} aria-label="Previous testimonials">
+        <button type="button" className={q.arrow} onClick={prev} aria-label={uiText("Previous testimonials")}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
         </button>
 
@@ -108,7 +110,7 @@ export function TestimonialsSlider({ items }: { items: readonly Testimonial[] })
           ))}
         </div>
 
-        <button type="button" className={q.arrow} onClick={next} aria-label="Next testimonials">
+        <button type="button" className={q.arrow} onClick={next} aria-label={uiText("Next testimonials")}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
         </button>
       </div>

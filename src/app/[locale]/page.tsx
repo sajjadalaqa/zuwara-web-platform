@@ -65,7 +65,7 @@ const whyItems = [
 
 const faqIds = ["choose", "patients", "paid", "nearby", "missing", "track"] as const;
 
-// Reviews stay in English on every locale
+// Testimonials are translated at their display component.
 const testimonials = [
   { name: "Sara Al-Harbi", role: "Healthcare patient", tag: "Healthcare", initials: "SA", quote: "Finding the right consultant was easy. I could see the specialties and prices first, then book in a few minutes." },
   { name: "Ahmed Al-Qahtani", role: "Home services customer", tag: "Home services", initials: "AQ", quote: "I booked a home service without any calls back and forth, and I could follow the booking from start to finish." },
@@ -304,7 +304,7 @@ export default async function Home({ params }: Props) {
         </div>
       </section>
 
-      {/* ---------- Testimonials (heading translated, reviews English only) ---------- */}
+      {/* ---------- Testimonials ---------- */}
       <section className={q.section} aria-labelledby="testimonials-heading">
         <div className={`container ${q.inner}`}>
           <header className={q.header}>
@@ -315,9 +315,7 @@ export default async function Home({ params }: Props) {
             <p>{t("testimonials.intro")}</p>
           </header>
 
-          <div dir="ltr" lang="en">
-            <TestimonialsSlider items={testimonials} />
-          </div>
+          <TestimonialsSlider items={testimonials} />
         </div>
       </section>
 

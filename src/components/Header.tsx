@@ -1,8 +1,8 @@
 "use client";
-
+import { useUiText } from "@/i18n/use-ui-text";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useEffect, useState, type CSSProperties } from "react";
 import { Icon } from "./Icon";
 import styles from "./Header.module.css";
@@ -28,8 +28,10 @@ function GlobeIcon() {
 }
 
 export function Header() {
+  const uiText = useUiText();
   const t = useTranslations("Header");
   const locale = useLocale();
+  const router = useRouter();
   const otherLocale = locale === "ar" ? "en" : "ar";
   const pathname = usePathname(); // already without the "/ar" prefix
   const [open, setOpen] = useState(false);
@@ -78,7 +80,7 @@ export function Header() {
           <Image src="/brand/zuwara-logo.png" alt="Zuwara" width={118} height={40} priority />
         </Link>
 
-        <nav id="main-nav" className={`${styles.nav} ${open ? styles.navOpen : ""}`} aria-label="Main navigation">
+        <nav id="main-nav" className={`${styles.nav} ${open ? styles.navOpen : ""}`} aria-label={uiText("Main navigation")}>
           {/* Drawer header: title and close button (mobile menu only) */}
           <div className={styles.menuHead}>
             <p className={styles.menuTitle} aria-hidden="true">{t("menu")}</p>
@@ -126,7 +128,7 @@ export function Header() {
               className={styles.mobileLang}
               lang={otherLocale}
               hrefLang={otherLocale}
-              onClick={() => setOpen(false)}
+              onClick={(event) => { event.preventDefault(); setOpen(false); router.replace(pathname + window.location.search + window.location.hash, { locale: otherLocale }); }}
             >
               <GlobeIcon />
               <span>{t("switchLong")}</span>
@@ -143,7 +145,7 @@ export function Header() {
             lang={otherLocale}
             hrefLang={otherLocale}
             aria-label={t("switchAria")}
-            onClick={() => setOpen(false)}
+            onClick={(event) => { event.preventDefault(); setOpen(false); router.replace(pathname + window.location.search + window.location.hash, { locale: otherLocale }); }}
           >
             <GlobeIcon />
             <span>{t("switchShort")}</span>

@@ -1,5 +1,5 @@
 "use client";
-
+import { useUiText } from "@/i18n/use-ui-text";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -23,6 +23,7 @@ const ORDER: StatusFilter[] = ["all", ...STATUSES];
 export default function Toolbar({
   locale, status, q, counts, labels, placeholder, clearLabel,
 }: Props) {
+  const uiText = useUiText();
   const pathname = usePathname();
   const router = useRouter();
   const [value, setValue] = useState(q);
@@ -46,7 +47,7 @@ export default function Toolbar({
 
   return (
     <div className={s.toolbar}>
-      <nav className={s.tabs} aria-label="Status">
+      <nav className={s.tabs} aria-label={uiText("Status")}>
         {ORDER.map((st) => (
           <Link
             key={st}

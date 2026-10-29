@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import RechargeStatus from "./RechargeStatus";
 import Link from "next/link";
 import {
@@ -25,6 +26,7 @@ export default async function WalletPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<SearchParams>;
 }) {
+  const uiText = await getUiText();
   const { locale } = await params;
   const sp = await searchParams;
   const isAr = locale === "ar";
@@ -103,7 +105,7 @@ export default async function WalletPage({
           <span className={s.total}>{number(data.total, locale)} {t.results}</span>
         </div>
 
-        <nav className={s.tabs} aria-label="Type">
+        <nav className={s.tabs} aria-label={uiText("Type")}>
           {ORDER.map((tp) => (
             <Link
               key={tp} aria-current={tp === type ? "page" : undefined}
@@ -158,7 +160,7 @@ export default async function WalletPage({
       </section>
 
       {pages > 1 && (
-        <nav className={s.pager} aria-label="Pagination">
+        <nav className={s.pager} aria-label={uiText("Pagination")}>
           <Link
             href={href({ page: data.page - 1 })}
             scroll={false}

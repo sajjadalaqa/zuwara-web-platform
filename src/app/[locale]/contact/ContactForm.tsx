@@ -1,5 +1,5 @@
 "use client";
-
+import { useUiText } from "@/i18n/use-ui-text";
 import { useState, type FormEvent } from "react";
 import { Glyph } from "./ContactIcons";
 import styles from "./Contact.module.css";
@@ -21,6 +21,7 @@ function validate(v: Fields): Errors {
 }
 
 export function ContactForm() {
+  const uiText = useUiText();
   const [values, setValues] = useState<Fields>(empty);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>("idle");
@@ -57,11 +58,10 @@ export function ContactForm() {
     return (
       <div className={styles.success} role="status">
         <span className={styles.successIcon}><Glyph name="check" size={28} /></span>
-        <h3>Message sent</h3>
-        <p>Thank you for reaching out. Our team will get back to you as soon as possible.</p>
+        <h3>{uiText("Message sent")}</h3>
+        <p>{uiText("Thank you for reaching out. Our team will get back to you as soon as possible.")}</p>
         <button type="button" className={styles.ghostBtn} onClick={() => setStatus("idle")}>
-          Send another message
-        </button>
+          {uiText("Send another message")}{" "}</button>
       </div>
     );
   }
@@ -77,46 +77,45 @@ export function ContactForm() {
         aria-describedby={errors[key] ? `${key}-error` : undefined}
         {...props}
       />
-      {errors[key] && <small id={`${key}-error`} className={styles.fieldError}>{errors[key]}</small>}
+      {errors[key] && <small id={`${key}-error`} className={styles.fieldError}>{uiText(errors[key] ?? "")}</small>}
     </div>
   );
 
   return (
     <form onSubmit={onSubmit} noValidate className={styles.form}>
       <div className={styles.row}>
-        {field("firstName", "First Name", { placeholder: "Enter your first name", autoComplete: "given-name" })}
-        {field("lastName", "Last Name", { placeholder: "Enter your last name", autoComplete: "family-name" })}
+        {field("firstName", uiText("First Name"), { placeholder: uiText("Enter your first name"), autoComplete: "given-name" })}
+        {field("lastName", uiText("Last Name"), { placeholder: uiText("Enter your last name"), autoComplete: "family-name" })}
       </div>
       <div className={styles.row}>
-        {field("email", "Email Address", { type: "email", placeholder: "you@example.com", autoComplete: "email" })}
-        {field("phone", "Phone Number", { type: "tel", inputMode: "tel", placeholder: "+1 234 567 8900", autoComplete: "tel" })}
+        {field("email", uiText("Email Address"), { type: "email", placeholder: "you@example.com", autoComplete: "email" })}
+        {field("phone", uiText("Phone Number"), { type: "tel", inputMode: "tel", placeholder: "+1 234 567 8900", autoComplete: "tel" })}
       </div>
 
       <div className={styles.field}>
-        <label htmlFor="message">Message <span aria-hidden="true">*</span></label>
+        <label htmlFor="message">{uiText("Message")}{" "}<span aria-hidden="true">*</span></label>
         <textarea
           id="message" name="message" rows={5} value={values.message} onChange={set("message")} required
-          placeholder="How can we help you?"
+          placeholder={uiText("How can we help you?")}
           aria-invalid={Boolean(errors.message)}
           aria-describedby={errors.message ? "message-error" : undefined}
         />
-        {errors.message && <small id="message-error" className={styles.fieldError}>{errors.message}</small>}
+        {errors.message && <small id="message-error" className={styles.fieldError}>{uiText(errors.message ?? "")}</small>}
       </div>
 
       {/* spam trap: hidden from people, bots fill it in */}
       <div className={styles.trap} aria-hidden="true">
-        <label>Company<input tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} /></label>
+        <label>{uiText("Company")}<input tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} /></label>
       </div>
 
       {status === "error" && (
         <p className={styles.formAlert} role="alert">
-          Something went wrong while sending. Please try again in a moment.
-        </p>
+          {uiText("Something went wrong while sending. Please try again in a moment.")}{" "}</p>
       )}
 
       <button type="submit" className={styles.submit} disabled={status === "sending"}>
         {status === "sending" ? <span className={styles.spinner} aria-hidden="true" /> : <Glyph name="send" size={18} />}
-        {status === "sending" ? "Sending…" : "Send Message"}
+        {status === "sending" ? uiText("Sending…") : uiText("Send Message")}
       </button>
     </form>
   );

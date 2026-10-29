@@ -104,15 +104,17 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  will-change: transform;
   transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .slide {
   display: flex;
+  min-width: 0;
   flex: 0 0 calc(100% / var(--per, 3));
   box-sizing: border-box;
   padding: 0 10px;              /* this is the gap between cards */
 }
-.slide .card { width: 100%; }   /* cards fill their slide instead of using a fixed width */
+.slide .card { width: 100%; max-width: none; }   /* cards fill their slide instead of using a fixed width */
 
 .controls {
   display: flex;
@@ -135,7 +137,9 @@
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 .arrow svg { width: 20px; height: 20px; }
-.arrow:hover { background: var(--purple); color: #fff; }
+.arrow:hover:not(:disabled) { background: var(--purple); color: #fff; }
+.arrow:disabled { opacity: .4; cursor: default; box-shadow: none; }
+.arrow:dir(rtl) svg { transform: rotate(180deg); }
 .arrow:focus-visible,
 .dot:focus-visible { outline: 3px solid #b98aca; outline-offset: 3px; }
 

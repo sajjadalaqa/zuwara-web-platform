@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   return {
     metadataBase: new URL(SITE_URL),
-    title: { default: "Zuwara | Connected healthcare and home services", template: "%s | Zuwara" },
+    title: { default: isArabic ? "زوارة | رعاية صحية وخدمات منزلية متكاملة" : "Zuwara | Connected healthcare and home services", template: isArabic ? "%s | زوارة" : "%s | Zuwara" },
     description: "Discover healthcare consultants and trusted services at home through one connected Zuwara ecosystem.",
     keywords: ["Zuwara", "healthcare", "virtual consultation", "therapy", "home services", "Saudi Arabia"],
     alternates: {
@@ -55,6 +56,7 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
+  const uiText = await getUiText();
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
@@ -72,7 +74,7 @@ export default async function LocaleLayout({
               sameAs: [],
             }}
           />
-          <a className="skip-link" href="#main-content">Skip to content</a>
+          <a className="skip-link" href="#main-content">{uiText("Skip to content")}</a>
           <SiteChrome><Header /></SiteChrome>
 <main id="main-content">{children}</main>
 <SiteChrome><Footer /></SiteChrome>

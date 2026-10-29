@@ -1,5 +1,5 @@
 "use client";
-
+import { useUiText } from "@/i18n/use-ui-text";
 import SaveProvider from "@/components/SaveProvider";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
@@ -53,6 +53,7 @@ function Stars({ value }: { value: number }) {
 }
 
 export default function ProviderDetail({ provider: p, services }: { provider: ProviderInfo; services?: HomeService[] | null }) {
+  const uiText = useUiText();
   const t = useTranslations("providerDetail");
   const isAr = useLocale() === "ar";
 
@@ -156,7 +157,7 @@ export default function ProviderDetail({ provider: p, services }: { provider: Pr
               {bio ? <p className={styles.bio}>{bio}</p> : <p className={styles.muted}>{isAr ? "لا توجد نبذة شخصية متاحة." : "A biography has not been provided for this provider."}</p>}
             </section>
 
-            <section className={styles.panel}><h2 className={styles.heading}><Icon d={ICON.calendar} /> {isAr ? "خدمات الزيارة المنزلية" : "Home-visit services"}</h2>{services === null ? <p className={styles.muted}>{isAr ? "تعذر تحميل الخدمات. حاول مجدداً." : "Services could not be loaded. Please retry."}</p> : services?.length ? <dl className={styles.rows}>{services.map(service => <div className={styles.row} key={service.id}><dt>{isAr && service.nameAr ? service.nameAr : service.name}</dt><dd>{service.minutes} {isAr ? "دقيقة" : "minutes"}</dd></div>)}</dl> : <p className={styles.muted}>{isAr ? "لا توجد خدمات مدرجة حالياً." : "No home-visit services are currently listed for this provider."}</p>}</section>
+            <section className={styles.panel}><h2 className={styles.heading}><Icon d={ICON.calendar} /> {isAr ? "خدمات الزيارة المنزلية" : "Home-visit services"}</h2>{services === null ? <p className={styles.muted}>{isAr ? "تعذر تحميل الخدمات. حاول مجدداً." : "Services could not be loaded. Please retry."}</p> : services?.length ? <dl className={styles.rows}>{services.map(service => <div className={styles.row} key={service.id}><dt>{isAr && service.nameAr ? service.nameAr : service.name}</dt><dd>{service.minutes} {isAr ? "دقيقة" : uiText("minutes")}</dd></div>)}</dl> : <p className={styles.muted}>{isAr ? "لا توجد خدمات مدرجة حالياً." : "No home-visit services are currently listed for this provider."}</p>}</section>
             <section className={styles.panel}>
               <h2 className={styles.heading}><Icon d={ICON.calendar} /> {t("reviewsTitle")}</h2>
               <div className={styles.emptyReviews}>

@@ -1,5 +1,5 @@
 "use client";
-
+import { useUiText } from "@/i18n/use-ui-text";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -43,6 +43,7 @@ type Ymd = { y: number; m: number; d: number };
 const initials = (n: string) => n.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
 
 export default function BookingFlow({ provider, services, addresses, identity }: { provider: BookingProvider; services: HomeService[]; addresses: HomeAddress[]; identity: { name: string; phone: string; email: string } }) {
+  const uiText = useUiText();
   const t = useTranslations("bookPage");
   const locale = useLocale();
   const isAr = locale === "ar";
@@ -166,7 +167,7 @@ export default function BookingFlow({ provider, services, addresses, identity }:
     try {
       if (!quote) {
         const result=await previewHomeAction({providerId:Number(provider.id),serviceId,addressId,date,time,notes});
-        if(!result.ok)throw new Error("Visit preview unavailable");
+        if(!result.ok)throw new Error(uiText("Visit preview unavailable"));
         setQuote(result.quote);return;
       }
       setLocked(true);
@@ -180,7 +181,7 @@ export default function BookingFlow({ provider, services, addresses, identity }:
     setSending(true);setFailed(false);
     try{
       const result=await payHomeAction(group.id);
-      if(!result.ok || !result.paid)throw new Error("Payment verification pending");
+      if(!result.ok || !result.paid)throw new Error(uiText("Payment verification pending"));
       setGroup({...group,paid:true});
     }catch{setFailed(true);}finally{setSending(false);}
   };

@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -29,6 +30,7 @@ export default async function AppointmentDetailPage({
 }: {
   params: Promise<{ locale: string; id: string }>;
 }) {
+  const uiText = await getUiText();
   const { locale, id } = await params;
   const isAr = locale === "ar";
   const t = isAr ? detailCopy.ar : detailCopy.en;
@@ -162,9 +164,9 @@ export default async function AppointmentDetailPage({
               </span>
             </div>
             <div className={s.sum}>
-              <p><Link href={prefix+"/dashboard/appointments/"+a.id+"/reschedule"}>Request reschedule</Link></p>
-              <p><Link href={prefix+"/dashboard/rescheduling?appointment_id="+a.id}>Reschedule history</Link></p>
-              <p><Link href={prefix+"/dashboard/appointments/"+a.id+"/review"}>Follow-up and reopen status</Link></p>
+              <p><Link href={prefix+"/dashboard/appointments/"+a.id+"/reschedule"}>{uiText("Request reschedule")}</Link></p>
+              <p><Link href={prefix+"/dashboard/rescheduling?appointment_id="+a.id}>{uiText("Reschedule history")}</Link></p>
+              <p><Link href={prefix+"/dashboard/appointments/"+a.id+"/review"}>{uiText("Follow-up and reopen status")}</Link></p>
               <div className={s.sumRow}><span>{t.method}</span><b>{a.payment.method}</b></div>
               <div className={s.sumRow}>
                 <span>{t.subtotal}</span>
@@ -174,7 +176,7 @@ export default async function AppointmentDetailPage({
                 <span>{isAr ? "\u0627\u0644\u0636\u0631\u064a\u0628\u0629" : "Tax"}</span>
                 <b>{money(a.payment.fee, a.currency, locale)}</b>
               </div>
-              {a.payment.discount !== undefined ? <div className={s.sumRow}><span>{isAr ? "\u0627\u0644\u062e\u0635\u0645" : "Discount"}</span><b>{money(a.payment.discount, a.currency, locale)}</b></div> : null}
+              {a.payment.discount !== undefined ? <div className={s.sumRow}><span>{isAr ? "\u0627\u0644\u062e\u0635\u0645" : uiText("Discount")}</span><b>{money(a.payment.discount, a.currency, locale)}</b></div> : null}
               <div className={`${s.sumRow} ${s.sumTotal}`}>
                 <span>{t.total}</span>
                 <b>{money(a.payment.total, a.currency, locale)}</b>

@@ -1,7 +1,7 @@
 "use client";
-
+import { useUiText } from "@/i18n/use-ui-text";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
@@ -13,7 +13,9 @@ export type CarouselDoctor = {
   nameAr?: string | null;
   imageUrl?: string | null;
   categoryTitle?: string | null;
+  categoryTitleAr?: string | null;
   role?: string | null;
+  designationAr?: string | null;
   rating: number;
   experienceYears: number;
   startingPrice: number | string;
@@ -25,7 +27,9 @@ const ALL = "All";
 const FALLBACK_CATEGORY = "Healthcare consultant";
 
 export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
+  const uiText = useUiText();
   const t = useTranslations("Doctors");
+  const locale = useLocale();
 
   const [active, setActive] = useState<string>(ALL);
 
@@ -54,8 +58,8 @@ export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
   const updateArrows = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    setCanPrev(el.scrollLeft > 4);
-    setCanNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+    setCanPrev(Math.abs(el.scrollLeft) > 4);
+    setCanNext(Math.abs(el.scrollLeft) + el.clientWidth < el.scrollWidth - 4);
   }, []);
 
   // Throttle scroll updates to once per animation frame
@@ -86,7 +90,7 @@ export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
     if (!el) return;
     const card = el.querySelector<HTMLElement>("article");
     const step = (card?.offsetWidth ?? 300) + 18;
-    el.scrollBy({ left: direction * step, behavior: "smooth" });
+    el.scrollBy({ left: direction * step * (locale === "ar" ? -1 : 1), behavior: "smooth" });
   };
 
   // Mouse drag-to-scroll (touch and trackpad already scroll natively)
@@ -158,8 +162,7 @@ export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
           </div>
         </header>
 
-        {/* Everything below stays English and left-to-right on every locale */}
-        <div dir="ltr" lang="en">
+        <div dir={locale === "ar" ? "rtl" : "ltr"} lang={locale}>
           {/* ---------- specialty filters ---------- */}
           <div className={c.filters} role="group" aria-label={t("filterLabel")}>
             {categories.map((cat) => (
@@ -170,7 +173,7 @@ export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
                 aria-pressed={active === cat.name}
                 onClick={() => setActive(cat.name)}
               >
-                {cat.name}
+                {locale === "ar" ? doctors.find(doctor => doctor.categoryTitle === cat.name)?.categoryTitleAr || uiText(cat.name) : cat.name}
                 <span className={c.chipCount}>{cat.count}</span>
               </button>
             ))}
@@ -208,29 +211,29 @@ export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
                     {doctor.imageUrl ? (
                       <SafeImage
                         src={doctor.imageUrl}
-                        alt={`Profile photo of ${doctor.name}`}
+                        alt={locale === "ar" ? doctor.nameAr || doctor.name : doctor.name}
                         fill
                         sizes="(max-width: 600px) 80vw, 320px"
                       />
                     ) : (
                       <div className={c.fallback}><Icon name="user" size={48} /></div>
                     )}
-                    <span className={c.tag}>{doctor.categoryTitle?.trim() || FALLBACK_CATEGORY}</span>
+                    <span className={c.tag}>{locale === "ar" ? doctor.categoryTitleAr || uiText(doctor.categoryTitle?.trim() || FALLBACK_CATEGORY) : doctor.categoryTitle?.trim() || FALLBACK_CATEGORY}</span>
                     {doctor.rating > 0 ? <span className={c.rating}>★ {doctor.rating.toFixed(1)}</span> : null}
                   </div>
 
                   <div className={c.body}>
-                    <span className={c.role}>{doctor.role || "Consultant"}</span>
-                    <h3>{doctor.name}</h3>
+                    <span className={c.role}>{locale === "ar" ? doctor.designationAr || uiText(doctor.role || "Consultant") : doctor.role || uiText("Consultant")}</span>
+                    <h3>{locale === "ar" ? doctor.nameAr || doctor.name : doctor.name}</h3>
             
 
                     <div className={c.facts}>
-                      {doctor.experienceYears > 0 ? <span>{doctor.experienceYears} years experience</span> : null}
-                      <span>From {doctor.startingPrice} {doctor.currency}</span>
+                      {doctor.experienceYears > 0 ? <span>{doctor.experienceYears} {uiText("years experience")}</span> : null}
+                      <span>{uiText("From")}{" "}{doctor.startingPrice} {doctor.currency}</span>
                     </div>
 
                     <Link href={doctor.href} className={c.link} draggable={false}>
-                      View consultant <Icon name="arrow" size={17} />
+                      {uiText("View consultant")}{" "}<Icon name="arrow" size={17} />
                     </Link>
                   </div>
                 </article>

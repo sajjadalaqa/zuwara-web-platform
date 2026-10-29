@@ -1,9 +1,11 @@
 "use client";
+import { useUiText } from "@/i18n/use-ui-text";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { payHomeAction } from "@/app/[locale]/provider/[id]/book/booking-api";
 import s from "../../_care/care.module.css";
 export default function PayVisit({ group }: { group: string }) {
+  const uiText = useUiText();
   const [pending, start] = useTransition(),
     [message, setMessage] = useState(""),
     router = useRouter();
@@ -24,14 +26,13 @@ export default function PayVisit({ group }: { group: string }) {
               if (result.ok && result.paid) router.refresh();
             } catch {
               setMessage(
-                "Payment outcome is unknown. Check your wallet and retry this same group.",
+                uiText("Payment outcome is unknown. Check your wallet and retry this same group."),
               );
             }
           })
         }
       >
-        Pay from shared wallet / retry verification
-      </button>
+        {uiText("Pay from shared wallet / retry verification")}{" "}</button>
       {message ? <p role="status">{message}</p> : null}
     </div>
   );

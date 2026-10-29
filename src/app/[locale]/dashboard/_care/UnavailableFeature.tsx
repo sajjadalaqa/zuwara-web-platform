@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
 import { requireSession } from "@/lib/auth/session";
@@ -53,6 +54,7 @@ export default async function UnavailableFeature({
 }: {
   feature: MissingFeature;
 }) {
+  const uiText = await getUiText();
   await requireSession();
   const ar = (await getLocale()) === "ar",
     data = features[feature];
@@ -74,7 +76,7 @@ export default async function UnavailableFeature({
           <Link href={(ar ? "/ar" : "") + "/dashboard"}>
             {ar
               ? "\u0644\u0648\u062d\u0629 \u0627\u0644\u062a\u062d\u0643\u0645"
-              : "Back to dashboard"}
+              : uiText("Back to dashboard")}
           </Link>
         </div>
       </section>

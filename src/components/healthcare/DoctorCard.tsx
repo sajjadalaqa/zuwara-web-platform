@@ -1,5 +1,8 @@
+import { healthcareText } from "@/i18n/healthcare-text";
+import { useLocale } from "next-intl";
+import { useUiText } from "@/i18n/use-ui-text";
 import { DoctorPhoto } from "@/components/healthcare/DoctorPhoto";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/Icon";
 import { doctorSlug } from "@/lib/api/zuwara/slugs";
 import type { ZuwaraDoctor } from "@/lib/api/zuwara/types";
@@ -13,6 +16,8 @@ function displayTime(value: string) {
 }
 
 export function DoctorCard({ doctor, date, duration }: { doctor: ZuwaraDoctor; date?: string | null; duration?: number | null }) {
+  const displayLocale = useLocale();
+  const uiText = useUiText();
   const params = new URLSearchParams();
   if (date) params.set("date", date);
   if (duration) params.set("duration", String(duration));
@@ -24,26 +29,26 @@ export function DoctorCard({ doctor, date, duration }: { doctor: ZuwaraDoctor; d
 
   return <article className="doctor-result-card">
     <div className="doctor-result-photo">
-      <DoctorPhoto src={doctor.imageUrl} name={doctor.name} sizes="(max-width: 720px) 120px, 180px" />
+      <DoctorPhoto src={doctor.imageUrl} name={healthcareText(doctor, "name", displayLocale)} sizes="(max-width: 720px) 120px, 180px" />
     </div>
     <div className="doctor-result-main">
-      <div className="doctor-result-tags"><span>{doctor.categoryTitle ?? "Healthcare"}</span>{doctor.classificationTitle ? <span>{doctor.classificationTitle}</span> : null}</div>
-      <h2><Link href={href}>{doctor.name}</Link></h2>
-      {doctor.nameAr ? <p className="doctor-name-ar" lang="ar" dir="rtl">{doctor.nameAr}</p> : null}
-      <p className="doctor-designation">{doctor.designation ?? doctor.classificationTitle ?? "Healthcare consultant"}</p>
+      <div className="doctor-result-tags"><span>{healthcareText(doctor, "categoryTitle", displayLocale) || uiText("Healthcare")}</span>{healthcareText(doctor, "classificationTitle", displayLocale) ? <span>{healthcareText(doctor, "classificationTitle", displayLocale)}</span> : null}</div>
+      <h2><Link href={href}>{healthcareText(doctor, "name", displayLocale)}</Link></h2>
+
+      <p className="doctor-designation">{healthcareText(doctor, "designation", displayLocale) || healthcareText(doctor, "classificationTitle", displayLocale) || uiText("Healthcare consultant")}</p>
       <div className="doctor-result-meta">
         {rating ? <span className="rating">★ {rating}</span> : null}
-        {doctor.reviewsCount !== undefined ? <span>{doctor.reviewsCount} reviews</span> : null}
-        {doctor.experienceYears > 0 ? <span>{doctor.experienceYears} years experience</span> : null}
-        {doctor.happyClients > 0 ? <span>{doctor.happyClients} completed consultations</span> : null}
+        {doctor.reviewsCount !== undefined ? <span>{doctor.reviewsCount} {uiText("reviews")}</span> : null}
+        {doctor.experienceYears > 0 ? <span>{doctor.experienceYears} {uiText("years experience")}</span> : null}
+        {doctor.happyClients > 0 ? <span>{doctor.happyClients} {uiText("completed consultations")}</span> : null}
       </div>
-      <div className="doctor-result-tags">{doctor.consultationTypes.map(type => <span key={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</span>)}{doctor.acceptsInstant ? <span>Instant consultations available</span> : null}</div>
-      {previewSlots.length > 0 ? <div className="slot-preview" aria-label="Schedule preview">{previewSlots.map((slot) => <span key={`${slot.startTime}-${slot.endTime}`} className={`slot-${slot.status}`}>{displayTime(slot.startTime)}</span>)}</div> : doctor.scheduleMessage ? <p className="schedule-note">{doctor.scheduleMessage}</p> : null}
+      <div className="doctor-result-tags">{doctor.consultationTypes.map(type => <span key={type}>{uiText(type)}</span>)}{doctor.acceptsInstant ? <span>{uiText("Instant consultations available")}</span> : null}</div>
+      {previewSlots.length > 0 ? <div className="slot-preview" aria-label={uiText("Schedule preview")}>{previewSlots.map((slot) => <span key={`${slot.startTime}-${slot.endTime}`} className={`slot-${slot.status}`}>{displayTime(slot.startTime)}</span>)}</div> : doctor.scheduleMessage ? <p className="schedule-note">{doctor.scheduleMessage}</p> : null}
     </div>
     <div className="doctor-result-action">
-      <small>{duration ? `${duration} minute consultation` : "Consultation"}</small>
-      <strong>{hasPrice ? <>From {doctor.startingPrice} {doctor.currency}</> : "View pricing"}</strong>
-      <Link href={href} className="button button-primary">View profile <Icon name="arrow" size={17}/></Link>
+      <small>{duration ? `${duration} ${uiText("minute consultation")}` : uiText("Consultation")}</small>
+      <strong>{hasPrice ? <>{uiText("From")}{" "}{doctor.startingPrice} {doctor.currency}</> : uiText("View pricing")}</strong>
+      <Link href={href} className="button button-primary">{uiText("View profile")}{" "}<Icon name="arrow" size={17}/></Link>
     </div>
   </article>;
 }

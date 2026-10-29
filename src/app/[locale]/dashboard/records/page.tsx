@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import {
   CalendarDays, ChevronLeft, ChevronRight, Download, Eye, FileText,
@@ -33,6 +34,7 @@ export default async function RecordsPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<SearchParams>;
 }) {
+  const uiText = await getUiText();
   const { locale } = await params;
   const sp = await searchParams;
   const isAr = locale === "ar";
@@ -85,7 +87,7 @@ export default async function RecordsPage({
         <>
           <SearchBar source={source} q={q} category={category} placeholder={t.search} clearLabel={t.clear} />
 
-          <nav className={s.tabs} aria-label="Categories">
+          <nav className={s.tabs} aria-label={uiText("Categories")}>
             {ORDER.map((c) => (
               <Link
                 key={c}
@@ -166,7 +168,7 @@ export default async function RecordsPage({
           </div>
 
           {pages > 1 && (
-            <nav className={s.pager} aria-label="Pagination">
+            <nav className={s.pager} aria-label={uiText("Pagination")}>
               <Link
                 href={href({ page: data.page - 1 })}
                 scroll={false}

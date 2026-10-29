@@ -1,1 +1,1 @@
-﻿export { default, metadata } from "@/app/healthcare/specialties/page";
+﻿export { default, generateMetadata } from "@/app/healthcare/specialties/page";

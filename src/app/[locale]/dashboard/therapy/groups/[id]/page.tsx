@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
 import { patientApi } from "@/lib/auth/session";
@@ -12,6 +13,7 @@ export default async function GroupPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const uiText = await getUiText();
   const { id } = await params,
     ar = (await getLocale()) === "ar",
     prefix = ar ? "/ar" : "";
@@ -20,15 +22,15 @@ export default async function GroupPage({
     sessions: AppointmentResource[];
   }>("/therapy-bookings/" + uuid(id));
   if (data.session_group_id !== id || !Array.isArray(data.sessions))
-    throw new Error("Invalid package.");
+    throw new Error(uiText("Invalid package."));
   data.sessions.forEach(validateAppointment);
   return (
-    <CareLayout title="Therapy package">
+    <CareLayout title={uiText("Therapy package")}>
       <section className={s.card}>
         <Facts
           rows={[
-            ["Group reference", data.session_group_id],
-            ["Sessions", data.sessions.length],
+            [uiText("Group reference"), data.session_group_id],
+            [uiText("Sessions"), data.sessions.length],
           ]}
         />
       </section>
@@ -38,32 +40,31 @@ export default async function GroupPage({
             <h2>{session.appointment_number}</h2>
             <Facts
               rows={[
-                ["Status", session.status.key],
-                ["Date", session.scheduled.date],
-                ["Time", session.scheduled.time],
-                ["End time", session.scheduled.end_time],
-                ["Duration", session.scheduled.duration_minutes],
+                [uiText("Status"), session.status.key],
+                [uiText("Date"), session.scheduled.date],
+                [uiText("Time"), session.scheduled.time],
+                [uiText("End time"), session.scheduled.end_time],
+                [uiText("Duration"), session.scheduled.duration_minutes],
                 [
-                  "Consultant",
+                  uiText("Consultant"),
                   ar
                     ? session.doctor?.name_ar || session.doctor?.name
                     : session.doctor?.name,
                 ],
-                ["Consultation type", session.consultation_type],
+                [uiText("Consultation type"), session.consultation_type],
                 [
-                  "Payable",
+                  uiText("Payable"),
                   currency(
                     session.amount.payable_halalas,
                     session.amount.currency,
                     ar,
                   ),
                 ],
-                ["Notes", session.problem],
+                [uiText("Notes"), session.problem],
               ]}
             />
             <Link href={prefix + "/dashboard/appointments/" + session.id}>
-              Appointment details
-            </Link>
+              {uiText("Appointment details")}{" "}</Link>
             {session.status.code === 7 ? (
               <p>
                 <Link
@@ -72,8 +73,7 @@ export default async function GroupPage({
                     prefix + "/dashboard/appointments/" + session.id + "/pay"
                   }
                 >
-                  Continue package payment
-                </Link>
+                  {uiText("Continue package payment")}{" "}</Link>
               </p>
             ) : null}
           </article>

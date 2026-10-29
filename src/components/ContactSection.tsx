@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "./Icon";

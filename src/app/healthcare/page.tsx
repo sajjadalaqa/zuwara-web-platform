@@ -1,18 +1,28 @@
+import { healthcareText } from "@/i18n/healthcare-text";
+import { getLocale } from "next-intl/server";
+import { getUiText } from "@/i18n/server-ui-text";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/Icon";
 import { CareHero } from "@/components/healthcare/CareHero";
 import { DoctorCard } from "@/components/healthcare/DoctorCard";
 import s from "@/components/healthcare/care-experience.module.css";
 import { getZuwaraHomeData } from "@/lib/api/zuwara/home";
 import { specialtySlug } from "@/lib/api/zuwara/slugs";
-export const metadata: Metadata = {
+const pageMetadata: Metadata = {
   title: "Healthcare",
   description:
     "Explore Zuwara specialties and find a consultant for your next step in care.",
   alternates: { canonical: "/healthcare" },
 };
+export async function generateMetadata(): Promise<Metadata> {
+  const uiText = await getUiText();
+  return { ...pageMetadata, title: typeof pageMetadata.title === 'string' ? uiText(pageMetadata.title) : pageMetadata.title, description: pageMetadata.description ? uiText(pageMetadata.description) : undefined };
+}
+
 export default async function HealthcarePage() {
+  const displayLocale = await getLocale();
+  const uiText = await getUiText();
   const data = await getZuwaraHomeData();
   return (
     <>
@@ -21,17 +31,13 @@ export default async function HealthcarePage() {
         <div className={s.inner}>
           <header className={s.sectionHead}>
             <span className={s.pill}>
-              <Icon name="heart" size={14} /> FIND YOUR AREA OF CARE
-            </span>
+              <Icon name="heart" size={14} /> {uiText("FIND YOUR AREA OF CARE")}{" "}</span>
             <h2>
-              Different needs.
-              <br />
-              <em>Care for every chapter.</em>
+              {uiText("Different needs.")}{" "}<br />
+              <em>{uiText("Care for every chapter.")}</em>
             </h2>
             <p>
-              Start with what matters to you. Explore our specialties and find
-              your way to the right support.
-            </p>
+              {uiText("Start with what matters to you. Explore our specialties and find your way to the right support.")}{" "}</p>
           </header>
           {data.categories.length ? (
             <div className={s.specialties}>
@@ -41,7 +47,7 @@ export default async function HealthcarePage() {
                   key={item.id}
                   href={
                     "/healthcare/specialties/" +
-                    specialtySlug(item.title, item.id)
+                    specialtySlug(healthcareText(item, "title", displayLocale), item.id)
                   }
                 >
                   <span>
@@ -58,25 +64,19 @@ export default async function HealthcarePage() {
                       size={28}
                     />
                   </span>
-                  <h3>{item.title}</h3>
-                  {item.titleAr && (
-                    <small dir="rtl" lang="ar">
-                      {item.titleAr}
-                    </small>
-                  )}
+                  <h3>{healthcareText(item, "title", displayLocale)}</h3>
+
                   <Icon name="arrow" size={18} />
                 </Link>
               ))}
             </div>
           ) : (
             <p className={s.empty}>
-              Specialties are temporarily unavailable. Please try again shortly.
-            </p>
+              {uiText("Specialties are temporarily unavailable. Please try again shortly.")}{" "}</p>
           )}
           <div className={s.centerAction}>
             <Link className={s.secondary} href="/healthcare/specialties">
-              Explore all specialties
-              <Icon name="arrow" size={17} />
+              {uiText("Explore all specialties")}{" "}<Icon name="arrow" size={17} />
             </Link>
           </div>
         </div>
@@ -85,17 +85,13 @@ export default async function HealthcarePage() {
         <div className={s.inner}>
           <header className={s.sectionHead}>
             <span className={s.pill}>
-              <Icon name="user" size={14} /> PEOPLE BEHIND YOUR CARE
-            </span>
+              <Icon name="user" size={14} /> {uiText("PEOPLE BEHIND YOUR CARE")}{" "}</span>
             <h2>
-              A connection that makes
-              <br />
-              <em>all the difference.</em>
+              {uiText("A connection that makes")}{" "}<br />
+              <em>{uiText("all the difference.")}</em>
             </h2>
             <p>
-              Meet our consultants. Get to know their specialties, explore
-              consultation options and take the next step at your pace.
-            </p>
+              {uiText("Meet our consultants. Get to know their specialties, explore consultation options and take the next step at your pace.")}{" "}</p>
           </header>
           {data.doctors.length ? (
             <div className={s.featuredGrid}>
@@ -105,13 +101,11 @@ export default async function HealthcarePage() {
             </div>
           ) : (
             <p className={s.empty}>
-              Consultants are temporarily unavailable. Please try again shortly.
-            </p>
+              {uiText("Consultants are temporarily unavailable. Please try again shortly.")}{" "}</p>
           )}
           <div className={s.centerAction}>
             <Link href="/healthcare/doctors" className={s.primary}>
-              Meet all consultants
-              <Icon name="arrow" size={18} />
+              {uiText("Meet all consultants")}{" "}<Icon name="arrow" size={18} />
             </Link>
           </div>
         </div>
@@ -120,17 +114,13 @@ export default async function HealthcarePage() {
         <div className={s.inner}>
           <header className={s.sectionHead}>
             <span className={s.pill}>
-              <Icon name="calendar" size={14} /> A LITTLE GUIDANCE
-            </span>
+              <Icon name="calendar" size={14} /> {uiText("A LITTLE GUIDANCE")}{" "}</span>
             <h2>
-              Your next step,
-              <br />
-              <em>made simple.</em>
+              {uiText("Your next step,")}{" "}<br />
+              <em>{uiText("made simple.")}</em>
             </h2>
             <p>
-              From finding a consultant to choosing your consultation,
-              everything starts here.
-            </p>
+              {uiText("From finding a consultant to choosing your consultation, everything starts here.")}{" "}</p>
           </header>
           <div className={s.steps}>
             {[
@@ -141,7 +131,7 @@ export default async function HealthcarePage() {
               },
               {
                 icon: "calendar" as const,
-                title: "Choose your time",
+                title: uiText("Choose your time"),
                 body: "Check the available dates, durations and consultation options.",
               },
               {
@@ -165,18 +155,13 @@ export default async function HealthcarePage() {
           <div className={s.banner}>
             <div>
               <h2>
-                You do not have to figure
-                <br />
-                it all out alone.
-              </h2>
+                {uiText("You do not have to figure")}{" "}<br />
+                {uiText("it all out alone.")}{" "}</h2>
               <p>
-                Not sure where to begin? Our team can help you explore the care
-                options available on Zuwara.
-              </p>
+                {uiText("Not sure where to begin? Our team can help you explore the care options available on Zuwara.")}{" "}</p>
             </div>
             <Link href="/contact" className={s.secondary}>
-              Talk to our team
-              <Icon name="arrow" size={18} />
+              {uiText("Talk to our team")}{" "}<Icon name="arrow" size={18} />
             </Link>
           </div>
         </div>

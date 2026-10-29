@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
 import { patientApi } from "@/lib/auth/session";
@@ -10,6 +11,7 @@ export default async function ReviewPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ date?: string }>;
 }) {
+  const uiText = await getUiText();
   const { id } = await params,
     sp = await searchParams,
     ar = (await getLocale()) === "ar",
@@ -29,18 +31,18 @@ export default async function ReviewPage({
     }
   }
   return (
-    <CareLayout title="Follow-up and reopen status">
+    <CareLayout title={uiText("Follow-up and reopen status")}>
       <section className={s.card}>
-        <h2>Follow-up</h2>
+        <h2>{uiText("Follow-up")}</h2>
         <Facts
           rows={[
-            ["Eligible for consultant scheduling", data.follow_up.eligible],
-            ["Reason", data.follow_up.reason],
-            ["Completed", stamp(data.follow_up.completed_at, ar)],
-            ["Schedule by", stamp(data.follow_up.schedule_by, ar)],
+            [uiText("Eligible for consultant scheduling"), data.follow_up.eligible],
+            [uiText("Reason"), data.follow_up.reason],
+            [uiText("Completed"), stamp(data.follow_up.completed_at, ar)],
+            [uiText("Schedule by"), stamp(data.follow_up.schedule_by, ar)],
             ["Duration (minutes)", data.follow_up.duration_minutes],
-            ["Patient can schedule", data.patient_can_schedule_follow_up],
-            ["Patient can complete", data.patient_can_complete_review],
+            [uiText("Patient can schedule"), data.patient_can_schedule_follow_up],
+            [uiText("Patient can complete"), data.patient_can_complete_review],
           ]}
         />
         {data.follow_up.follow_up?.id ? (
@@ -49,25 +51,21 @@ export default async function ReviewPage({
               prefix + "/dashboard/follow-ups/" + data.follow_up.follow_up.id
             }
           >
-            Open scheduled follow-up
-          </Link>
+            {uiText("Open scheduled follow-up")}{" "}</Link>
         ) : null}
         <p className={s.notice}>
-          Your consultant manages follow-up scheduling and clinical completion.
-        </p>
+          {uiText("Your consultant manages follow-up scheduling and clinical completion.")}{" "}</p>
         {data.follow_up.eligible ? (
           <form className={s.form}>
             <label>
-              Check follow-up availability
-              <input type="date" name="date" required defaultValue={sp.date} />
+              {uiText("Check follow-up availability")}{" "}<input type="date" name="date" required defaultValue={sp.date} />
             </label>
-            <button className={s.button}>View times</button>
+            <button className={s.button}>{uiText("View times")}</button>
           </form>
         ) : null}
         {slotError ? (
           <p className={s.error}>
-            Follow-up availability could not be loaded for this date.
-          </p>
+            {uiText("Follow-up availability could not be loaded for this date.")}{" "}</p>
         ) : slots ? (
           <div className={s.slots}>
             {slots.length
@@ -82,15 +80,15 @@ export default async function ReviewPage({
         ) : null}
       </section>
       <section className={s.card}>
-        <h2>Reopen status</h2>
+        <h2>{uiText("Reopen status")}</h2>
         <Facts
           rows={[
-            ["Consultant eligible", data.reopen.eligible_for_consultant],
-            ["Used", data.reopen.used],
-            ["Completed", data.reopen.completed],
-            ["Active", data.reopen.active],
-            ["Ends", stamp(data.reopen.ends_at, ar)],
-            ["Patient can reopen", data.patient_can_reopen],
+            [uiText("Consultant eligible"), data.reopen.eligible_for_consultant],
+            [uiText("Used"), data.reopen.used],
+            [uiText("Completed"), data.reopen.completed],
+            [uiText("Active"), data.reopen.active],
+            [uiText("Ends"), stamp(data.reopen.ends_at, ar)],
+            [uiText("Patient can reopen"), data.patient_can_reopen],
           ]}
         />
       </section>

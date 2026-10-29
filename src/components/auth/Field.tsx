@@ -1,4 +1,6 @@
 "use client";
+import { useUiText } from "@/i18n/use-ui-text";
+import { useLocale } from "next-intl";
 import { useEffect, useId, useRef, useState, type InputHTMLAttributes } from "react";
 import { Icon, type IconName } from "./icons";
 import { passwordScore, strengthLabel } from "./validators";
@@ -16,6 +18,7 @@ interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChan
 }
 
 export function Field({ label, icon, error, optional, showStrength, onChange, type = "text", value, ...rest }: FieldProps) {
+  const uiText = useUiText();
   const id = useId();
   const [show, setShow] = useState(false);
   const isPw = type === "password";
@@ -25,7 +28,7 @@ export function Field({ label, icon, error, optional, showStrength, onChange, ty
     <div className={s.field}>
       <label htmlFor={id} className={s.label}>
         {label}
-        {optional ? <span className={s.opt}> (Optional)</span> : rest.required && <span className={s.req}>*</span>}
+        {optional ? <span className={s.opt}> {uiText("(Optional)")}</span> : rest.required && <span className={s.req}>*</span>}
       </label>
       <div className={`${s.control} ${error ? s.invalid : ""}`}>
         <span className={s.icon}><Icon name={icon} /></span>
@@ -36,7 +39,7 @@ export function Field({ label, icon, error, optional, showStrength, onChange, ty
         />
         {isPw && (
           <button type="button" className={s.toggle} onClick={() => setShow(!show)}
-            aria-label={show ? "Hide password" : "Show password"}>
+            aria-label={show ? uiText("Hide password") : uiText("Show password")}>
             <Icon name={show ? "eye" : "eyeOff"} />
           </button>
         )}
@@ -46,10 +49,10 @@ export function Field({ label, icon, error, optional, showStrength, onChange, ty
           <div className={s.meter} aria-hidden="true">
             {[1, 2, 3, 4].map((n) => <span key={n} className={score >= n ? s[`on${score}`] : ""} />)}
           </div>
-          <p className={s.hint}>Password strength: {strengthLabel[score]}</p>
+          <p className={s.hint}>{uiText("Password strength:")}{" "}{uiText(strengthLabel[score])}</p>
         </>
       )}
-      {error && <p id={`${id}-err`} className={s.error} role="alert"><Icon name="alert" size={14} />{error}</p>}
+      {error && <p id={`${id}-err`} className={s.error} role="alert"><Icon name="alert" size={14} />{uiText(error)}</p>}
     </div>
   );
 }
@@ -67,6 +70,10 @@ const MENU_NEED = 330;   // approx. full menu height
 const TOP_GAP = 140;     // keep clear of your sticky site header
 const BOTTOM_GAP = 16;
 export function PhoneField({ label, dial, number, error, onDial, onNumber }: PhoneProps) {
+  const uiText = useUiText();
+  const locale = useLocale();
+  const regions = new Intl.DisplayNames([locale], { type: "region" });
+  const countryName = (country: (typeof COUNTRIES)[number]) => regions.of(country.iso.toUpperCase()) ?? country.name;
   const id = useId();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -79,7 +86,7 @@ export function PhoneField({ label, dial, number, error, onDial, onNumber }: Pho
 
   const q = query.trim().toLowerCase();
   const list = q
-    ? COUNTRIES.filter((c) => c.name.toLowerCase().includes(q) || c.code.includes(q))
+    ? COUNTRIES.filter((c) => countryName(c).toLowerCase().includes(q) || c.name.toLowerCase().includes(q) || c.code.includes(q))
     : COUNTRIES;
 
   const close = () => { setOpen(false); setQuery(""); };
@@ -122,45 +129,46 @@ const toggle = () => {
       <div className={s.dialWrap} ref={wrapRef}>
         <div className={`${s.control} ${error ? s.invalid : ""}`}>
           <button type="button" className={s.dialBtn} onClick={toggle}
-            aria-haspopup="listbox" aria-expanded={open} aria-label="Country code">
-            <Flag iso={current.iso} name={current.name} />
-            <span className={s.dialCode}>{current.code}</span>
+            aria-haspopup="listbox" aria-expanded={open} aria-label={uiText("Country code")}>
+            <Flag iso={current.iso} name={countryName(current)} />
+            <span className={s.dialCode} dir="ltr">{current.code}</span>
             <span className={`${s.chev} ${open ? s.chevOpen : ""}`} aria-hidden="true">▾</span>
           </button>
-          <input id={id} className={s.input} style={{ paddingInlineStart: 14 }} type="tel" inputMode="tel"
-            placeholder="e.g. 5xx xxx xxxx" value={number} aria-invalid={!!error}
+          <input id={id} className={s.input} style={{ paddingInlineStart: 14 }} type="tel" inputMode="tel" dir="ltr"
+            placeholder={uiText("e.g. 5xx xxx xxxx")} value={number} aria-invalid={!!error}
             onChange={(e) => onNumber(e.target.value.replace(/[^\d\s]/g, ""))} />
         </div>
 
         {open && (
           <div className={`${s.menu} ${place.up ? s.menuUp : ""}`}>
-            <input ref={searchRef} className={s.search} type="text" placeholder="Search country or code"
-              value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search country" />
-            <ul className={s.list} style={{ maxHeight: place.maxH }} role="listbox" aria-label="Select country code">
-              {list.length === 0 && <li className={s.empty}>No country found</li>}
+            <input ref={searchRef} className={s.search} type="text" placeholder={uiText("Search country or code")}
+              value={query} onChange={(e) => setQuery(e.target.value)} aria-label={uiText("Search country")} />
+            <ul className={s.list} style={{ maxHeight: place.maxH }} role="listbox" aria-label={uiText("Select country code")}>
+              {list.length === 0 && <li className={s.empty}>{uiText("No country found")}</li>}
               {list.map((c, i) => (
                 <li key={c.iso} role="option" aria-selected={c.iso === iso}
                   className={`${s.opt2} ${c.iso === iso ? s.opt2Active : ""} ${!q && i === POPULAR_COUNT ? s.optSep : ""}`}
                   onClick={() => pick(c)}>
-                  <Flag iso={c.iso} name={c.name} />
-                  <span className={s.optName}>{c.name}</span>
-                  <span className={s.optCode}>{c.code}</span>
+                  <Flag iso={c.iso} name={countryName(c)} />
+                  <span className={s.optName}>{countryName(c)}</span>
+                  <span className={s.optCode} dir="ltr">{c.code}</span>
                 </li>
               ))}
             </ul>
           </div>
         )}
       </div>
-      {error && <p className={s.error} role="alert"><Icon name="alert" size={14} />{error}</p>}
+      {error && <p className={s.error} role="alert"><Icon name="alert" size={14} />{uiText(error)}</p>}
     </div>
   );
 }
   
 
 export function SubmitButton({ loading, children }: { loading: boolean; children: React.ReactNode }) {
+  const uiText = useUiText();
   return (
     <button type="submit" className={s.btn} disabled={loading}>
-      {loading ? <span className={s.spinner} aria-label="Loading" /> : <>{children}<Icon name="arrowRight" size={18} /></>}
+      {loading ? <span className={s.spinner} aria-label={uiText("Loading")} /> : <>{children}<Icon name="arrowRight" size={18} /></>}
     </button>
   );
 }

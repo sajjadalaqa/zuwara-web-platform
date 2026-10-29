@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import {
   ChevronDown, Clock, LifeBuoy, Mail, MessageCircle, Phone, SearchX, BookOpen, Send,
@@ -21,6 +22,7 @@ export default async function HelpPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<SearchParams>;
 }) {
+  const uiText = await getUiText();
   const { locale } = await params;
   const sp = await searchParams;
   const isAr = locale === "ar";
@@ -90,7 +92,7 @@ export default async function HelpPage({
       </section>
 
       {/* ===== Category chips ===== */}
-      <nav className={s.tabs} aria-label="Categories">
+      <nav className={s.tabs} aria-label={uiText("Categories")}>
         {ORDER.map((c) => (
           <Link
             key={c} aria-current={c === category ? "page" : undefined}
@@ -106,7 +108,7 @@ export default async function HelpPage({
 
       <div className={s.layout}>
         {/* ===== FAQ ===== */}
-        <div className={s.main}><div className={s.faqHeading}><span className={s.sectionIcon}><BookOpen size={22}/></span><div><span className={s.sectionEyebrow}>{isAr ? "إجابات في متناول يدك" : "ANSWERS AT YOUR FINGERTIPS"}</span><h2>{isAr ? "الأسئلة الشائعة" : "Frequently asked questions"}</h2></div></div>
+        <div className={s.main}><div className={s.faqHeading}><span className={s.sectionIcon}><BookOpen size={22}/></span><div><span className={s.sectionEyebrow}>{isAr ? "إجابات في متناول يدك" : "ANSWERS AT YOUR FINGERTIPS"}</span><h2>{isAr ? "الأسئلة الشائعة" : uiText("Frequently asked questions")}</h2></div></div>
           {data.items.length === 0 ? (
             <div className={s.empty}>
               <span className={s.emptyIcon}><SearchX size={26} /></span>

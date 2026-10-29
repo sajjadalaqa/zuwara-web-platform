@@ -1,5 +1,5 @@
 "use client";
-
+import { useUiText } from "@/i18n/use-ui-text";
 import Image from "next/image";
 import { useState } from "react";
 import { Icon } from "./Icon";
@@ -27,11 +27,12 @@ export function SafeImage({
   className,
   fallbackIcon = "user",
 }: SafeImageProps) {
+  const uiText = useUiText();
   const [failed, setFailed] = useState(false);
 
   if (failed) {
     return (
-      <span className={`safe-image-fallback${className ? ` ${className}` : ""}`} role="img" aria-label={alt || "Image unavailable"}>
+      <span className={`safe-image-fallback${className ? ` ${className}` : ""}`} role="img" aria-label={alt || uiText("Image unavailable")}>
         <Icon name={fallbackIcon} size={fallbackIcon === "user" ? 38 : 26} />
       </span>
     );

@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import {
@@ -18,6 +19,7 @@ export default async function Detail({
   params: Promise<{ id: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const uiText = await getUiText();
   const { id } = await params,
     q = await searchParams,
     backend: Source =
@@ -37,14 +39,14 @@ export default async function Detail({
           <p style={{ whiteSpace: "pre-wrap" }}>{r.message}</p>
           <Facts
             rows={[
-              ["Reference", r.id],
-              ["Booking reference", r.booking_id],
-              ["Status", r.status],
-              ["Created", stamp(r.created_at, ar)],
-              ["Updated", stamp(r.updated_at, ar)],
+              [uiText("Reference"), r.id],
+              [uiText("Booking reference"), r.booking_id],
+              [uiText("Status"), r.status],
+              [uiText("Created"), stamp(r.created_at, ar)],
+              [uiText("Updated"), stamp(r.updated_at, ar)],
             ]}
           />
-          <p>Replies are not available here.</p>
+          <p>{uiText("Replies are not available here.")}</p>
         </section>
       </CareLayout>
     );
@@ -59,17 +61,15 @@ export default async function Detail({
         <p style={{ whiteSpace: "pre-wrap" }}>{r.description}</p>
         <Facts
           rows={[
-            ["Reference", r.id],
-            ["Status", r.status],
-            ["Services", r.service_ids.join(", ")],
-            ["Preferred date", r.preferred_date],
-            ["Created", stamp(r.created_at, ar)],
+            [uiText("Reference"), r.id],
+            [uiText("Status"), r.status],
+            [uiText("Services"), r.service_ids.join(", ")],
+            [uiText("Preferred date"), r.preferred_date],
+            [uiText("Created"), stamp(r.created_at, ar)],
           ]}
         />
         <p>
-          This is a custom request, not a confirmed booking. Offer acceptance
-          and payment are not available here.
-        </p>
+          {uiText("This is a custom request, not a confirmed booking. Offer acceptance and payment are not available here.")}{" "}</p>
       </section>
     </CareLayout>
   );

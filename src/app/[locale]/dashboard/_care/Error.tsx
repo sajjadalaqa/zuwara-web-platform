@@ -1,8 +1,10 @@
 "use client";
+import { useUiText } from "@/i18n/use-ui-text";
 import Link from "next/link";
 import { useLocale } from "next-intl";
 import s from "./care.module.css";
 export default function CareError({ reset }: { reset: () => void }) {
+  const uiText = useUiText();
   const ar = useLocale() === "ar";
   return (
     <section className={s.card} role="alert">
@@ -12,14 +14,11 @@ export default function CareError({ reset }: { reset: () => void }) {
           : "This service could not be loaded"}
       </h2>
       <p>
-        The backend may be unavailable or this record may not be accessible to
-        your account. Retry or choose another service.
-      </p>
+        {uiText("The backend may be unavailable or this record may not be accessible to your account. Retry or choose another service.")}{" "}</p>
       <div className={s.actions}>
         <button className={s.button} onClick={reset}>
-          Try again
-        </button>
-        <Link href={(ar ? "/ar" : "") + "/dashboard"}>Back to dashboard</Link>
+          {uiText("Try again")}{" "}</button>
+        <Link href={(ar ? "/ar" : "") + "/dashboard"}>{uiText("Back to dashboard")}</Link>
       </div>
     </section>
   );

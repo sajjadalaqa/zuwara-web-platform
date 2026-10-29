@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import { getLocale } from "next-intl/server";
 import { homeBooking } from "@/lib/api/d4h/history";
 import { CareLayout, Facts, stamp, currency, s } from "../../_care/ui";
@@ -7,6 +8,7 @@ export default async function HomeVisitPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const uiText = await getUiText();
   const { id } = await params,
     ar = (await getLocale()) === "ar",
     item = await homeBooking(id);
@@ -17,30 +19,30 @@ export default async function HomeVisitPage({
       <section className={s.card}>
         <Facts
           rows={[
-            ["Reference", item.id],
-            ["Booking group", item.booking_group_id],
-            ["Status", item.status],
-            ["Provider", item.provider.name],
-            ["Date", item.scheduled.date],
-            ["Time", item.scheduled.booking_slot],
-            ["Start", stamp(item.scheduled.start_at, ar)],
+            [uiText("Reference"), item.id],
+            [uiText("Booking group"), item.booking_group_id],
+            [uiText("Status"), item.status],
+            [uiText("Provider"), item.provider.name],
+            [uiText("Date"), item.scheduled.date],
+            [uiText("Time"), item.scheduled.booking_slot],
+            [uiText("Start"), stamp(item.scheduled.start_at, ar)],
             ["End", stamp(item.scheduled.end_at, ar)],
-            ["Address", item.address],
-            ["Description", item.description],
-            ["Subtotal", item.amount.subtotal + " " + item.amount.currency],
-            ["Discount", item.amount.discount + " " + item.amount.currency],
+            [uiText("Address"), item.address],
+            [uiText("Description"), item.description],
+            [uiText("Subtotal"), item.amount.subtotal + " " + item.amount.currency],
+            [uiText("Discount"), item.amount.discount + " " + item.amount.currency],
             ["Tax", item.amount.tax + " " + item.amount.currency],
             [
-              "Total",
+              uiText("Total"),
               currency(item.amount.total_halalas, item.amount.currency, ar),
             ],
-            ["Created", stamp(item.created_at, ar)],
-            ["Updated", stamp(item.updated_at, ar)],
+            [uiText("Created"), stamp(item.created_at, ar)],
+            [uiText("Updated"), stamp(item.updated_at, ar)],
           ]}
         />
       </section>
       <section className={s.card}>
-        <h2>Payment</h2>
+        <h2>{uiText("Payment")}</h2>
         {item.payment ? (
           <Facts
             rows={[
@@ -62,7 +64,7 @@ export default async function HomeVisitPage({
             ]}
           />
         ) : (
-          <p className={s.muted}>No payment record returned.</p>
+          <p className={s.muted}>{uiText("No payment record returned.")}</p>
         )}
         {item.booking_group_id &&
         item.payment?.status !== "paid" &&
@@ -71,7 +73,7 @@ export default async function HomeVisitPage({
         ) : null}
       </section>
       <section className={s.card}>
-        <h2>Timeline</h2>
+        <h2>{uiText("Timeline")}</h2>
         {item.timeline?.map((event) => (
           <div key={event.id}>
             <h3>{event.message || event.key}</h3>

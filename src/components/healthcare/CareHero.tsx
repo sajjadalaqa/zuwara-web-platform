@@ -1,5 +1,6 @@
+import { useUiText } from "@/i18n/use-ui-text";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/Icon";
 import s from "./care-experience.module.css";
 export function CareHero({
@@ -9,24 +10,23 @@ export function CareHero({
   directory?: boolean;
   title?: string;
 }) {
+  const uiText = useUiText();
   return (
     <section className={s.hero}>
       <div className={s.heroInner}>
         <div className={s.heroCopy}>
           <span className={s.pill}>
-            <Icon name="heart" size={14} /> YOUR HEALTH, YOUR WAY
-          </span>
+            <Icon name="heart" size={14} /> {uiText("YOUR HEALTH, YOUR WAY")}{" "}</span>
           <h1>
             {title ??
               (directory ? (
                 <>
-                  The right consultant.
-                  <br />
-                  <em>A better beginning.</em>
+                  {uiText("The right consultant.")}{" "}<br />
+                  <em>{uiText("A better beginning.")}</em>
                 </>
               ) : (
                 <>
-                  Care that fits your life.<br/><em>Every step of the way.</em>
+                  {uiText("Care that fits your life.")}<br/><em>{uiText("Every step of the way.")}</em>
                 </>
               ))}
           </h1>
@@ -44,16 +44,13 @@ export function CareHero({
               <Icon name="arrow" size={18} />
             </Link>
             <Link href="/healthcare/specialties" className={s.secondary}>
-              Explore specialties
-            </Link>
+              {uiText("Explore specialties")}{" "}</Link>
           </div>
           <div className={s.heroNotes}>
             <span>
-              <Icon name="video" size={16} /> Consultation options
-            </span>
+              <Icon name="video" size={16} /> {uiText("Consultation options")}{" "}</span>
             <span>
-              <Icon name="calendar" size={16} /> Choose your time
-            </span>
+              <Icon name="calendar" size={16} /> {uiText("Choose your time")}{" "}</span>
           </div>
         </div>
         <div className={s.visual}>
@@ -76,13 +73,13 @@ export function CareHero({
               <Icon name="heart" size={21} />
             </span>
             <div>
-              <strong>Care with a human touch</strong>
-              <small>Here for your next step</small>
+              <strong>{uiText("Care with a human touch")}</strong>
+              <small>{uiText("Here for your next step")}</small>
             </div>
           </div>
           <div className={s.visualTag}>
             <Icon name="video" size={20} />
-            <span>Care that connects</span>
+            <span>{uiText("Care that connects")}</span>
           </div>
         </div>
       </div>

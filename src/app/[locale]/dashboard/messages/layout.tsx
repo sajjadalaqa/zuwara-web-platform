@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import { unstable_rethrow } from "next/navigation";
 import MessagesShell from "./MessagesShell";
@@ -11,6 +12,7 @@ export default async function MessagesLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
+  const uiText = await getUiText();
   const { locale } = await params,
     ar = locale === "ar",
     t = ar ? copy.ar : copy.en;
@@ -26,11 +28,10 @@ export default async function MessagesLayout({
             ? "\u062a\u0639\u0630\u0631 \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0627\u062a"
             : "Conversations could not be loaded"}
         </h2>
-        <p>Please retry when the appointment service is available.</p>
+        <p>{uiText("Please retry when the appointment service is available.")}</p>
         <a className={s.cta} href={(ar ? "/ar" : "") + "/dashboard/messages"}>
-          Try again
-        </a>
-        <Link href={(ar ? "/ar" : "") + "/dashboard"}>Back to dashboard</Link>
+          {uiText("Try again")}{" "}</a>
+        <Link href={(ar ? "/ar" : "") + "/dashboard"}>{uiText("Back to dashboard")}</Link>
       </section>
     );
   }

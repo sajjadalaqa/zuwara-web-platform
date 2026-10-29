@@ -1,13 +1,19 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import s from "../[locale]/privacy-policy/privacy.module.css";
 
-export const metadata: Metadata = {
+const pageMetadata: Metadata = {
  title: "Terms of use",
  description: "Read about using Zuwara, managing your account, booking care, payments, and support.",
  robots: {index:false,follow:true},
 };
+export async function generateMetadata(): Promise<Metadata> {
+  const uiText = await getUiText();
+  return { ...pageMetadata, title: typeof pageMetadata.title === 'string' ? uiText(pageMetadata.title) : pageMetadata.title, description: pageMetadata.description ? uiText(pageMetadata.description) : undefined };
+}
+
 
 type Section = {id:string;title:string;body:string[];list?:string[];privacy?:boolean;contact?:boolean};
 const en: Section[] = [
@@ -39,11 +45,12 @@ const ar: Section[] = [
  {id:"updates",title:"تحديث هذه الشروط",body:["هذه المسودة قيد الإعداد للمراجعة. ينبغي اعتماد الشروط النهائية وتاريخ نفاذها وأي شروط خاصة بالخدمات قبل تقديم المستند باعتباره اتفاقية ملزمة.","عند مراجعة إصدار لاحق، تحقق من حالة المستند وشروط الخدمة المعروضة أثناء الحجز. للاستفسار عن الشروط المنطبقة على خدمة معينة، تواصل مع زوارة."]},
 ];
 export default async function Terms(){
+  const uiText = await getUiText();
  const arLocale=(await getLocale())==="ar";
  const sections=arLocale?ar:en;
  return <div className={s.page} dir={arLocale?"rtl":"ltr"} lang={arLocale?"ar":"en"}>
   <header className={s.hero}><div className="container">
-   <h1 className={s.title}>{arLocale?"شروط الاستخدام":"Terms of use"}</h1>
+   <h1 className={s.title}>{arLocale?"شروط الاستخدام":uiText("Terms of use")}</h1>
    <p className={s.intro}>{arLocale?"دليل واضح لاستخدام زوارة، وإدارة حسابك، وترتيب الرعاية. اطّلع على مسؤوليات الحساب ومعلومات الحجز والدفع والدعم في مكان واحد.":"A clear guide to using Zuwara, managing your account, and arranging care. Find account responsibilities, booking information, and support guidance in one place."}</p>
    <p className={s.updated}><span>{arLocale?"حالة المستند:":"Document status:"}</span><strong>{arLocale?"مسودة للمراجعة":"Draft for review"}</strong></p>
   </div></header>

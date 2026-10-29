@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import ComplaintsUI, { ComplaintsLayout, s as complaintStyles } from "../complaints/ComplaintsUI";
 import AddressesUI, { AddressesLayout } from "../addresses/AddressesUI";
 import LoyaltyUI, { LoyaltyLayout, s as loyaltyStyles } from "../referral/LoyaltyUI";
@@ -137,12 +138,13 @@ export default async function PatientFeature({
   feature: Feature;
   searchParams?: Promise<Query>;
 }) {
+  const uiText = await getUiText();
   await requireSession();
   const ar = (await getLocale()) === "ar",
     prefix = ar ? "/ar" : "",
     q = await searchParams,
     single = (v: Query[string]) => (typeof v === "string" ? v : ""),
-    backend: Source = ["addresses", "referral", "requests"].includes(feature)
+    backend: Source = ["addresses", "referral", uiText("requests")].includes(feature)
       ? "d4h"
       : feature !== "complaints" && single(q.source) === "d4h"
         ? "d4h"
@@ -172,31 +174,27 @@ export default async function PatientFeature({
       content = (
         <>
 
-          <section className={s.card} id="upload-document"><h2>Upload a document</h2>
+          <section className={s.card} id="upload-document"><h2>{uiText("Upload a document")}</h2>
             <p>
-              Patient-authored PDFs are separate from official clinical reports.
-              Uploading does not share a file in chat or assign it to a doctor.
-            </p>
+              {uiText("Patient-authored PDFs are separate from official clinical reports. Uploading does not share a file in chat or assign it to a doctor.")}{" "}</p>
             <Form
               op="document-upload"
               uploadLimit={process.env.VERCEL ? 4000000 : 50 * 1024 * 1024}
               source={backend}
-              label="Upload PDFs"
+              label={uiText("Upload PDFs")}
               uncertain
             >
-              <Field name="title" label="Title" max={150} required />
+              <Field name="title" label={uiText("Title")} max={150} required />
               <label>
-                Category
-                <select name="category" className={s.input}>
-                  <option value="lab_result">Lab result</option>
-                  <option value="xray">X-ray</option>
-                  <option value="other">Other</option>
+                {uiText("Category")}{" "}<select name="category" className={s.input}>
+                  <option value="lab_result">{uiText("Lab result")}</option>
+                  <option value="xray">{uiText("X-ray")}</option>
+                  <option value="other">{uiText("Other")}</option>
                 </select>
               </label>
               <BookingField />
               <label>
-                1 to 5 PDFs, up to 10 MB each
-                {process.env.VERCEL
+                {uiText("1 to 5 PDFs, up to 10 MB each")}{" "}{process.env.VERCEL
                   ? " (4 MB total per upload on this site)"
                   : ""}
                 <input
@@ -212,42 +210,41 @@ export default async function PatientFeature({
           {result.data.map((r) => (
             <section className={s.card} key={r.id}>
               <h2>{r.title}</h2>
-              <p>Patient-uploaded document</p>
+              <p>{uiText("Patient-uploaded document")}</p>
               <Facts
                 rows={[
-                  ["Reference", r.id],
-                  ["Category", r.category],
-                  ["Type", r.document_type],
-                  ["Issuer", r.issuer],
-                  ["Booking reference", r.booking_id],
-                  ["Filename", r.original_name],
-                  ["Format", r.mime_type],
+                  [uiText("Reference"), r.id],
+                  [uiText("Category"), r.category],
+                  [uiText("Type"), r.document_type],
+                  [uiText("Issuer"), r.issuer],
+                  [uiText("Booking reference"), r.booking_id],
+                  [uiText("Filename"), r.original_name],
+                  [uiText("Format"), r.mime_type],
                   ["Size (bytes)", r.size_bytes],
-                  ["Uploaded", stamp(r.created_at, ar)],
+                  [uiText("Uploaded"), stamp(r.created_at, ar)],
                 ]}
               />
               <a
                 className={s.button}
                 href={base + "/" + r.id + "/file?source=" + backend}
               >
-                Download PDF
-              </a>
+                {uiText("Download PDF")}{" "}</a>
               <Form
                 op="document-delete"
                 source={backend}
                 id={r.id}
-                label="Delete patient upload"
+                label={uiText("Delete patient upload")}
               />
             </section>
           ))}
           {!result.data.length && (
-            <Empty>No patient-uploaded documents in this account.</Empty>
+            <Empty>{uiText("No patient-uploaded documents in this account.")}</Empty>
           )}
         </>
       );
     } else if (feature === "addresses") {
       const { data } = await request<Address[]>("d4h", "/patients/addresses");
-      if (!Array.isArray(data)) throw Error("Invalid addresses.");
+      if (!Array.isArray(data)) throw Error(uiText("Invalid addresses."));
       content = <AddressesUI rows={data} ar={ar} />;
     } else if (feature === "referral") {
       const [loyalty, history] = await Promise.all([
@@ -310,68 +307,64 @@ export default async function PatientFeature({
             <h2>{p.full_name}</h2>
             <Facts
               rows={[
-                ["Phone", p.country_code + " " + p.phone_number],
-                ["Email", p.email],
+                [uiText("Phone"), p.country_code + " " + p.phone_number],
+                [uiText("Email"), p.email],
               ]}
             />
             <p>
-              Phone changes require a separate verified identity flow. Your
-              home-visit account name and email update on a later identity sync.
-            </p>
-            <Form op="profile" label="Save profile">
+              {uiText("Phone changes require a separate verified identity flow. Your home-visit account name and email update on a later identity sync.")}{" "}</p>
+            <Form op="profile" label={uiText("Save profile")}>
               <Field
                 name="full_name"
-                label="Full name"
+                label={uiText("Full name")}
                 max={150}
                 value={p.full_name}
                 required
               />
               <Field
                 name="full_name_ar"
-                label="Arabic full name"
+                label={uiText("Arabic full name")}
                 max={150}
                 value={p.full_name_ar ?? ""}
               />
               <Field
                 name="email"
-                label="Email"
+                label={uiText("Email")}
                 type="email"
                 max={190}
                 value={p.email ?? ""}
               />
               <Field
                 name="date_of_birth"
-                label="Date of birth"
+                label={uiText("Date of birth")}
                 type="date"
                 value={p.date_of_birth ?? ""}
               />
               <label>
-                Gender
-                <select
+                {uiText("Gender")}{" "}<select
                   name="gender"
                   defaultValue={p.gender ?? ""}
                   className={s.input}
                 >
-                  <option value="">Not specified</option>
+                  <option value="">{uiText("Not specified")}</option>
                   <option value="0">0</option>
                   <option value="1">1</option>
                 </select>
               </label>
-              <Field name="city" label="City" max={150} value={p.city ?? ""} />
+              <Field name="city" label={uiText("City")} max={150} value={p.city ?? ""} />
               <Field
                 name="national_id"
-                label="National ID"
+                label={uiText("National ID")}
                 max={20}
                 value={p.national_id ?? ""}
               />
             </Form>
           </section>
           <section className={s.card}>
-            <h2>Profile photo</h2>
-            <Form op="avatar" label="Upload profile photo" uncertain>
+            <h2>{uiText("Profile photo")}</h2>
+            <Form op="avatar" label={uiText("Upload profile photo")} uncertain>
               <label>
-                JPEG, PNG or WebP, up to 2 MB
-                <input
+                {uiText("JPEG, PNG or WebP, up to 2 MB")}{" "}<input
                   type="file"
                   name="image"
                   accept="image/jpeg,image/png,image/webp"
@@ -380,7 +373,7 @@ export default async function PatientFeature({
               </label>
             </Form>
           </section>
-          <Link href={prefix + "/dashboard/addresses"}>Manage addresses</Link>
+          <Link href={prefix + "/dashboard/addresses"}>{uiText("Manage addresses")}</Link>
         </>
       );
     }
@@ -394,60 +387,57 @@ export default async function PatientFeature({
             : "This account's data could not be loaded"}
         </h2>
         <p>
-          The service may be unavailable or the linked home-visit session may
-          need renewing. Existing records have not been replaced with sample
-          data.
-        </p>
-        <a href={path(page)}>Try again</a>
+          {uiText("The service may be unavailable or the linked home-visit session may need renewing. Existing records have not been replaced with sample data.")}{" "}</p>
+        <a href={path(page)}>{uiText("Try again")}</a>
       </section>
     );
   }
   if (feature === "complaints") return <ComplaintsLayout ar={ar}>
     {content}
     {pagination && (pagination.current_page > 1 || pagination.has_more) && <nav className={complaintStyles.pagination} aria-label={ar ? "صفحات الشكاوى" : "Complaint pages"}>
-      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : "Previous"}</Link>}
-      <span>{ar ? "صفحة" : "Page"} {pagination.current_page}</span>
-      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : "Next"}</Link>}
+      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : uiText("Previous")}</Link>}
+      <span>{ar ? "صفحة" : uiText("Page")} {pagination.current_page}</span>
+      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : uiText("Next")}</Link>}
     </nav>}
   </ComplaintsLayout>;
   if (feature === "addresses") return <AddressesLayout ar={ar}>{content}</AddressesLayout>;
   if (feature === "referral") return <LoyaltyLayout ar={ar}>
     {content}
     {pagination && (pagination.current_page > 1 || pagination.has_more) && <nav className={loyaltyStyles.pagination} aria-label={ar ? "صفحات سجل النقاط" : "Loyalty history pages"}>
-      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : "Previous"}</Link>}
-      <span>{ar ? "صفحة" : "Page"} {pagination.current_page}</span>
-      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : "Next"}</Link>}
+      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : uiText("Previous")}</Link>}
+      <span>{ar ? "صفحة" : uiText("Page")} {pagination.current_page}</span>
+      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : uiText("Next")}</Link>}
     </nav>}
   </LoyaltyLayout>;
   if (feature === "reviews") return <ReviewsLayout ar={ar} backend={backend} base={base}>
     {content}
     {pagination && (pagination.current_page > 1 || pagination.has_more) && <nav className={reviewStyles.pagination} aria-label={ar ? "صفحات التقييمات" : "Review pages"}>
-      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : "Previous"}</Link>}
-      <span>{ar ? "صفحة" : "Page"} {pagination.current_page}</span>
-      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : "Next"}</Link>}
+      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : uiText("Previous")}</Link>}
+      <span>{ar ? "صفحة" : uiText("Page")} {pagination.current_page}</span>
+      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : uiText("Next")}</Link>}
     </nav>}
   </ReviewsLayout>;
   if (feature === "documents") return <DocumentsLayout ar={ar} backend={backend} base={base} prefix={prefix}>
     {content}
     {pagination && (pagination.current_page > 1 || pagination.has_more) && <nav className={documentStyles.pagination} aria-label={ar ? "صفحات المستندات" : "Document pages"}>
-      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : "Previous"}</Link>}
-      <span>{ar ? "صفحة" : "Page"} {pagination.current_page}</span>
-      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : "Next"}</Link>}
+      {pagination.current_page > 1 && <Link href={path(pagination.current_page - 1)}>{ar ? "السابق" : uiText("Previous")}</Link>}
+      <span>{ar ? "صفحة" : uiText("Page")} {pagination.current_page}</span>
+      {pagination.has_more && <Link href={path(pagination.current_page + 1)}>{ar ? "التالي" : uiText("Next")}</Link>}
     </nav>}
   </DocumentsLayout>;
-  if (feature === "saved") return <div className={savedStyles.page}><header className={savedStyles.header}><span className={savedStyles.heart}><Heart size={25}/></span><div><h1>{ar ? "\u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u064a\u0648\u0646 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0648\u0646" : "Saved consultants"}</h1><p>{ar ? "\u0627\u0644\u0631\u0639\u0627\u064a\u0629 \u0627\u0644\u062a\u064a \u062a\u0641\u0636\u0644\u0647\u0627\u060c \u0641\u064a \u0645\u0643\u0627\u0646 \u0648\u0627\u062d\u062f." : "The care you connect with, kept close for your next visit."}</p></div></header>{content}{pagination && <nav className={savedStyles.pagination} aria-label="Saved consultant pages">{pagination.current_page > 1 && <Link href={path(pagination.current_page-1)}>Previous</Link>}<span>Page {pagination.current_page}</span>{pagination.has_more && <Link href={path(pagination.current_page+1)}>Next</Link>}</nav>}</div>;
+  if (feature === "saved") return <div className={savedStyles.page}><header className={savedStyles.header}><span className={savedStyles.heart}><Heart size={25}/></span><div><h1>{ar ? "\u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u064a\u0648\u0646 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0648\u0646" : "Saved consultants"}</h1><p>{ar ? "\u0627\u0644\u0631\u0639\u0627\u064a\u0629 \u0627\u0644\u062a\u064a \u062a\u0641\u0636\u0644\u0647\u0627\u060c \u0641\u064a \u0645\u0643\u0627\u0646 \u0648\u0627\u062d\u062f." : "The care you connect with, kept close for your next visit."}</p></div></header>{content}{pagination && <nav className={savedStyles.pagination} aria-label={uiText("Saved consultant pages")}>{pagination.current_page > 1 && <Link href={path(pagination.current_page-1)}>{uiText("Previous")}</Link>}<span>{uiText("Page")}{" "}{pagination.current_page}</span>{pagination.has_more && <Link href={path(pagination.current_page+1)}>{uiText("Next")}</Link>}</nav>}</div>;
   if (feature === "requests")
     return (
       <RequestsLayout ar={ar}>
         {content}
         {pagination && (
-          <nav className={s.actions} aria-label="Request pages">
+          <nav className={s.actions} aria-label={uiText("Request pages")}>
             {pagination.current_page > 1 && (
-              <Link href={path(pagination.current_page - 1)}>Previous</Link>
+              <Link href={path(pagination.current_page - 1)}>{uiText("Previous")}</Link>
             )}
-            <span>Page {pagination.current_page}</span>
+            <span>{uiText("Page")}{" "}{pagination.current_page}</span>
             {pagination.has_more && (
-              <Link href={path(pagination.current_page + 1)}>Next</Link>
+              <Link href={path(pagination.current_page + 1)}>{uiText("Next")}</Link>
             )}
           </nav>
         )}
@@ -457,12 +447,12 @@ export default async function PatientFeature({
   return (
     <CareLayout title={titles[feature][ar ? 1 : 0]}>
       <nav className={s.actions}>
-        {!["addresses", "referral", "requests", "profile"].includes(
+        {!["addresses", "referral", uiText("requests"), "profile"].includes(
           feature,
         ) && (
           <>
-            <Link href={base + "?source=zuwara"}>Consultations</Link>
-            <Link href={base + "?source=d4h"}>Home visits</Link>
+            <Link href={base + "?source=zuwara"}>{uiText("Consultations")}</Link>
+            <Link href={base + "?source=d4h"}>{uiText("Home visits")}</Link>
           </>
         )}
       </nav>
@@ -470,11 +460,11 @@ export default async function PatientFeature({
       {pagination && (
         <nav className={s.actions}>
           {pagination.current_page > 1 && (
-            <Link href={path(pagination.current_page - 1)}>Previous</Link>
+            <Link href={path(pagination.current_page - 1)}>{uiText("Previous")}</Link>
           )}
-          <span>Page {pagination.current_page}</span>
+          <span>{uiText("Page")}{" "}{pagination.current_page}</span>
           {pagination.has_more && (
-            <Link href={path(pagination.current_page + 1)}>Next</Link>
+            <Link href={path(pagination.current_page + 1)}>{uiText("Next")}</Link>
           )}
         </nav>
       )}

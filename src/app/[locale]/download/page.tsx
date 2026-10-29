@@ -1,1 +1,1 @@
-﻿export { default, metadata } from "@/app/download/page";
+﻿export { default, generateMetadata } from "@/app/download/page";

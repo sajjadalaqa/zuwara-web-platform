@@ -1,3 +1,5 @@
+import { useUiText } from "@/i18n/use-ui-text";
+import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
 import type { ReactNode } from "react";
@@ -28,6 +30,7 @@ export function stamp(value: string | null | undefined, ar = false) {
     : value;
 }
 export function Facts({ rows }: { rows: [string, ReactNode][] }) {
+  const uiText = useUiText();
   return (
     <dl className={s.facts}>
       {rows.map(([label, value]) => (
@@ -38,8 +41,8 @@ export function Facts({ rows }: { rows: [string, ReactNode][] }) {
               ? "\u2014"
               : typeof value === "boolean"
                 ? value
-                  ? "Yes"
-                  : "No"
+                  ? uiText("Yes")
+                  : uiText("No")
                 : value}
           </dd>
         </div>
@@ -54,22 +57,23 @@ export function Clinical({
   title: string;
   data: ClinicalSummary | null;
 }) {
+  const uiText = useUiText();
   return (
     <section className={s.card}>
       <h2>{title}</h2>
       {data ? (
         <Facts
           rows={[
-            ["Subject", data.subject],
-            ["Objective", data.objective],
-            ["Assessment", data.assessment],
-            ["Diagnosis", data.diagnosed_with],
-            ["Plan", data.plan],
-            ["Follow-up instructions", data.instructions_followup],
+            [uiText("Subject"), data.subject],
+            [uiText("Objective"), data.objective],
+            [uiText("Assessment"), data.assessment],
+            [uiText("Diagnosis"), data.diagnosed_with],
+            [uiText("Plan"), data.plan],
+            [uiText("Follow-up instructions"), data.instructions_followup],
           ]}
         />
       ) : (
-        <p className={s.muted}>No summary provided.</p>
+        <p className={s.muted}>{uiText("No summary provided.")}</p>
       )}
     </section>
   );
@@ -83,12 +87,13 @@ export async function CareLayout({
   description?: string;
   children: ReactNode;
 }) {
+  const uiText = await getUiText();
   const ar = (await getLocale()) === "ar",
     p = ar ? "/ar" : "";
   const links = [
-    ["Therapy", "\u0627\u0644\u0639\u0644\u0627\u062c", "therapy"],
+    [uiText("Therapy"), "\u0627\u0644\u0639\u0644\u0627\u062c", "therapy"],
     [
-      "Rescheduling",
+      uiText("Rescheduling"),
       "\u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062c\u062f\u0648\u0644\u0629",
       "rescheduling",
     ],
@@ -97,9 +102,9 @@ export async function CareLayout({
       "\u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0627\u062a",
       "follow-ups",
     ],
-    ["Benefits", "\u0627\u0644\u0645\u0632\u0627\u064a\u0627", "benefits"],
+    [uiText("Benefits"), "\u0627\u0644\u0645\u0632\u0627\u064a\u0627", "benefits"],
     [
-      "Home visits",
+      uiText("Home visits"),
       "\u0627\u0644\u0632\u064a\u0627\u0631\u0627\u062a \u0627\u0644\u0645\u0646\u0632\u0644\u064a\u0629",
       "home-visits",
     ],
@@ -130,13 +135,13 @@ export function Pager({
   data: Pick<CarePage<unknown>, "page" | "total" | "perPage" | "hasMore">;
   href: (page: number) => string;
 }) {
+  const uiText = useUiText();
   return (
-    <nav className={s.pager} aria-label="Pagination">
-      {data.page > 1 ? <Link href={href(data.page - 1)}>Previous</Link> : null}
+    <nav className={s.pager} aria-label={uiText("Pagination")}>
+      {data.page > 1 ? <Link href={href(data.page - 1)}>{uiText("Previous")}</Link> : null}
       <span>
-        Page {data.page} ? {data.total} results
-      </span>
-      {data.hasMore ? <Link href={href(data.page + 1)}>Next</Link> : null}
+        {uiText("Page")}{" "}{data.page} ? {data.total} {uiText("results")}{" "}</span>
+      {data.hasMore ? <Link href={href(data.page + 1)}>{uiText("Next")}</Link> : null}
     </nav>
   );
 }

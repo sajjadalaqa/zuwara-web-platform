@@ -1,5 +1,6 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { CareHero } from "@/components/healthcare/CareHero";
 import { Icon } from "@/components/Icon";
 import { DoctorCard } from "@/components/healthcare/DoctorCard";
@@ -47,6 +48,7 @@ export default async function DoctorsPage({
 }: {
   searchParams: SearchParams;
 }) {
+  const uiText = await getUiText();
   const params = await searchParams;
   const values: HealthcareFilterValues = {
     query: first(params.query),
@@ -107,15 +109,15 @@ export default async function DoctorsPage({
                 </span>
               </div>
               <Link href="/healthcare/specialties">
-                Browse specialties <Icon name="arrow" size={16} />
+                {uiText("Browse specialties")}{" "}<Icon name="arrow" size={16} />
               </Link>
             </div>
             {!result.available ? (
               <div className="data-state">
                 <Icon name="heart" />
                 <div>
-                  <strong>Consultant data is temporarily unavailable.</strong>
-                  <p>Please try again shortly.</p>
+                  <strong>{uiText("Consultant data is temporarily unavailable.")}</strong>
+                  <p>{uiText("Please try again shortly.")}</p>
                 </div>
               </div>
             ) : result.doctors.length ? (
@@ -132,17 +134,14 @@ export default async function DoctorsPage({
             ) : (
               <div className="directory-empty">
                 <Icon name="search" size={31} />
-                <h2>No consultants match these filters.</h2>
+                <h2>{uiText("No consultants match these filters.")}</h2>
                 <p>
-                  Try another specialty, remove the availability filter, or
-                  search without a duration.
-                </p>
+                  {uiText("Try another specialty, remove the availability filter, or search without a duration.")}{" "}</p>
                 <Link
                   href="/healthcare/doctors"
                   className="button button-secondary"
                 >
-                  Clear all filters
-                </Link>
+                  {uiText("Clear all filters")}{" "}</Link>
               </div>
             )}
           </div>

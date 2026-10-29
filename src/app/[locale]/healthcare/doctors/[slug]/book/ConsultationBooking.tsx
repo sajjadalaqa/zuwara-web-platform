@@ -1,4 +1,6 @@
-﻿"use client";
+"use client";
+import { useUiText } from "@/i18n/use-ui-text";
+
 import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -8,6 +10,7 @@ import { ArrowLeft, ArrowRight, CalendarDays, Clock3, UserRound, Stethoscope, Wa
 import { doctorSlug } from "@/lib/api/zuwara/slugs";
 import s from "./consultation-booking.module.css";
 export default function ConsultationBooking({ doctor, dependents, today }: { doctor: BookingDoctor; dependents: number[]; today: string }) {
+  const uiText = useUiText();
   const ar = useLocale() === "ar", router = useRouter();
   const [date, setDate] = useState(today), [duration, setDuration] = useState(doctor.duration_options[0]?.minutes ?? 0);
   const [time, setTime] = useState(""), [patient, setPatient] = useState<number | null>(null), [problem, setProblem] = useState("");
@@ -20,7 +23,7 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
   useEffect(() => {
     let active = true; const sequence = ++request.current;
     Promise.resolve().then(() => { if (active) setSlotLoading(true); return slotsAction(doctor.id, date, duration); }).then(rows => { if (active && sequence === request.current) { setSlots(rows); setError(""); } })
-      .catch(()=>{ if (active) { setSlots([]); setError(ar ? "تعذر تحميل المواعيد المتاحة." : "Availability could not be loaded."); } }).finally(() => { if (active) setSlotLoading(false); });
+      .catch(()=>{ if (active) { setSlots([]); setError(ar ? "تعذر تحميل المواعيد المتاحة." : uiText("Availability could not be loaded.")); } }).finally(() => { if (active) setSlotLoading(false); });
     return () => { active = false; };
   }, [doctor.id, date, duration, ar]);
   function changed() { setQuote(null); setTime(""); setSlots([]); setSlotLoading(true); setUncertain(false); }
@@ -95,7 +98,7 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
                 <label className={s.field}><span className={s.couponLabel}><Ticket size={15}/>{t("Coupon code", "\u0631\u0645\u0632 \u0627\u0644\u062e\u0635\u0645")}<small>{t("Optional", "\u0627\u062e\u062a\u064a\u0627\u0631\u064a")}</small></span><input maxLength={100} value={couponCode} disabled={disabled} placeholder={t("Enter your code", "\u0623\u062f\u062e\u0644 \u0627\u0644\u0631\u0645\u0632")} onChange={e=>{setCouponCode(e.target.value);setQuote(null);}}/></label>
               </section>
               <div className={s.formFoot}>
-                {error && <p className={s.error} role="alert">{error}</p>}
+                {error && <p className={s.error} role="alert">{uiText(error)}</p>}
                 <button type="submit" className={s.primary} disabled={busy || !time || uncertain || slotLoading}>{busy ? <LoaderCircle size={18} className={s.spinner}/> : null}{busy ? t("Please wait...", "\u064a\u0631\u062c\u0649 \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631...") : t("Review appointment price", "\u0645\u0631\u0627\u062c\u0639\u0629 \u0633\u0639\u0631 \u0627\u0644\u0645\u0648\u0639\u062f")}<ArrowRight size={17} className={s.directional}/></button>
                 <p className={s.footHint}>{t("Review the total before confirming your booking.", "\u0631\u0627\u062c\u0639 \u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a \u0642\u0628\u0644 \u062a\u0623\u0643\u064a\u062f \u0627\u0644\u062d\u062c\u0632.")}</p>
               </div>

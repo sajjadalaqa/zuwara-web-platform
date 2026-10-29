@@ -1,6 +1,9 @@
+import { healthcareText } from "@/i18n/healthcare-text";
+import { getLocale } from "next-intl/server";
+import { getUiText } from "@/i18n/server-ui-text";
 import type { Metadata } from "next";
 import { SpecialtyImage } from "@/components/healthcare/SpecialtyImage";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { DoctorCard } from "@/components/healthcare/DoctorCard";
@@ -29,6 +32,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SpecialtyDetailPage({ params }: Props) {
+  const displayLocale = await getLocale();
+  const uiText = await getUiText();
   const { slug } = await params;
   const id = idFromSlug(slug);
   if (!id) notFound();
@@ -51,16 +56,16 @@ export default async function SpecialtyDetailPage({ params }: Props) {
     }}/>
     <section className="specialty-detail-hero">
       <div className="container">
-        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Healthcare", href: "/healthcare" }, { label: "Specialties", href: "/healthcare/specialties" }, { label: specialty.title }]}/>
+        <Breadcrumbs items={[{ label: uiText("Home"), href: "/" }, { label: uiText("Healthcare"), href: "/healthcare" }, { label: uiText("Specialties"), href: "/healthcare/specialties" }, { label: specialty.title }]}/>
         <div className="specialty-detail-heading">
           <div className="specialty-detail-icon"><SpecialtyImage src={specialty.imageUrl}/></div>
-          <div><span className="eyebrow">Healthcare specialty</span><h1>{specialty.title}</h1>{specialty.titleAr ? <p lang="ar" dir="rtl">{specialty.titleAr}</p> : null}</div>
+          <div><span className="eyebrow">{uiText("Healthcare specialty")}</span><h1>{healthcareText(specialty, "title", displayLocale)}</h1></div>
         </div>
-        <div className="specialty-detail-summary"><strong>{search.doctors.length}</strong><span>active {search.doctors.length === 1 ? "consultant" : "consultants"} currently listed in this specialty</span><Link href={`/healthcare/doctors?category=${specialty.id}`}>Refine results <Icon name="arrow" size={17}/></Link></div>
+        <div className="specialty-detail-summary"><strong>{search.doctors.length}</strong><span>{uiText("active")}{" "}{search.doctors.length === 1 ? "consultant" : "consultants"} {uiText("currently listed in this specialty")}</span><Link href={`/healthcare/doctors?category=${specialty.id}`}>{uiText("Refine results")}{" "}<Icon name="arrow" size={17}/></Link></div>
       </div>
     </section>
     <section className="content-section"><div className="container">
-      {search.available && search.doctors.length ? <div className="doctor-results-list">{search.doctors.map((doctor) => <DoctorCard key={doctor.id} doctor={doctor}/>)}</div> : <div className="directory-empty"><Icon name="search" size={32}/><h2>No active consultants are listed yet.</h2><p>Explore another specialty or return to the complete consultant directory.</p><Link className="button button-secondary" href="/healthcare/doctors">View all consultants</Link></div>}
+      {search.available && search.doctors.length ? <div className="doctor-results-list">{search.doctors.map((doctor) => <DoctorCard key={doctor.id} doctor={doctor}/>)}</div> : <div className="directory-empty"><Icon name="search" size={32}/><h2>{uiText("No active consultants are listed yet.")}</h2><p>{uiText("Explore another specialty or return to the complete consultant directory.")}</p><Link className="button button-secondary" href="/healthcare/doctors">{uiText("View all consultants")}</Link></div>}
     </div></section>
   </>;
 }

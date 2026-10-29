@@ -1,4 +1,5 @@
 "use client";
+import { useUiText } from "@/i18n/use-ui-text";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
@@ -25,6 +26,7 @@ export default function RescheduleForm({
   duration: number;
   pending: PendingIntent | null;
 }) {
+  const uiText = useUiText();
   const router = useRouter(),
     ar = useLocale() === "ar",
     prefix = ar ? "/ar" : "",
@@ -56,12 +58,12 @@ export default function RescheduleForm({
       .then((result) => {
         if (!active) return;
         setSlots(result.ok ? result.slots : []);
-        if (!result.ok) setError("Availability could not be loaded.");
+        if (!result.ok) setError(uiText("Availability could not be loaded."));
       })
       .catch(() => {
         if (active) {
           setSlots([]);
-          setError("Availability could not be loaded.");
+          setError(uiText("Availability could not be loaded."));
         }
       })
       .finally(() => {
@@ -86,7 +88,7 @@ export default function RescheduleForm({
       if (result.ok) setQuote(result.quote);
       else setError("Preview rejected: " + result.error);
     } catch {
-      setError("Preview could not be loaded.");
+      setError(uiText("Preview could not be loaded."));
     } finally {
       setBusy(false);
     }
@@ -120,7 +122,7 @@ export default function RescheduleForm({
     } catch {
       setUncertain(true);
       setError(
-        "Outcome unknown. Retry the same request; do not start a second payment.",
+        uiText("Outcome unknown. Retry the same request; do not start a second payment."),
       );
     } finally {
       setBusy(false);
@@ -130,19 +132,15 @@ export default function RescheduleForm({
     <div className={s.form}>
       {resume ? (
         <p className={s.notice}>
-          An earlier request is pending confirmation. Resume it using the same
-          intent.
-          {resume!.checkoutId ? (
+          {uiText("An earlier request is pending confirmation. Resume it using the same intent.")}{" "}{resume!.checkoutId ? (
             <Link href={prefix + "/dashboard/checkouts/" + resume!.checkoutId}>
               {" "}
-              Open existing payment
-            </Link>
+              {uiText("Open existing payment")}{" "}</Link>
           ) : null}
         </p>
       ) : null}
       <label>
-        New date
-        <input
+        {uiText("New date")}{" "}<input
           type="date"
           min={today}
           value={date}
@@ -156,8 +154,7 @@ export default function RescheduleForm({
         />
       </label>
       <label>
-        Duration
-        <select
+        {uiText("Duration")}{" "}<select
           value={duration}
           disabled={locked || Boolean(plan)}
           onChange={(e) => {
@@ -169,13 +166,12 @@ export default function RescheduleForm({
         >
           {[15, 30, 45, 60].map((n) => (
             <option key={n} value={n}>
-              {n} minutes
-            </option>
+              {n} {uiText("minutes")}{" "}</option>
           ))}
         </select>
       </label>
       {loading ? (
-        <p>Loading times?</p>
+        <p>{uiText("Loading times?")}</p>
       ) : (
         <div className={s.slots}>
           {slots.map((value) => (
@@ -192,12 +188,11 @@ export default function RescheduleForm({
               {value}
             </button>
           ))}
-          {!slots.length ? <p>No available times returned.</p> : null}
+          {!slots.length ? <p>{uiText("No available times returned.")}</p> : null}
         </div>
       )}
       <label>
-        Reason (up to 500 characters)
-        <textarea
+        {uiText("Reason (up to 500 characters)")}{" "}<textarea
           maxLength={500}
           value={reason}
           disabled={locked}
@@ -208,8 +203,7 @@ export default function RescheduleForm({
         />
       </label>
       <label>
-        Payment if an upgrade is required
-        <select
+        {uiText("Payment if an upgrade is required")}{" "}<select
           disabled={locked}
           value={method}
           onChange={(e) => {
@@ -217,7 +211,7 @@ export default function RescheduleForm({
             setQuote(null);
           }}
         >
-          <option value="wallet">Wallet</option>
+          <option value="wallet">{uiText("Wallet")}</option>
           {!plan ? (
             <>
               <option value="myfatoorah">MyFatoorah</option>
@@ -231,13 +225,11 @@ export default function RescheduleForm({
         disabled={locked || !time || !reason.trim()}
         onClick={preview}
       >
-        Preview change and charge
-      </button>
+        {uiText("Preview change and charge")}{" "}</button>
       {quote ? (
         <p className={s.notice}>
-          Additional charge: {(quote.payable / 100).toFixed(2)} {quote.currency}
-          . No slot is reserved by this preview.
-        </p>
+          {uiText("Additional charge:")}{" "}{(quote.payable / 100).toFixed(2)} {quote.currency}
+          {uiText(". No slot is reserved by this preview.")}{" "}</p>
       ) : null}
       {token ? (
         <button className={s.button} disabled={busy} onClick={submit}>
@@ -248,7 +240,7 @@ export default function RescheduleForm({
       ) : null}
       {error ? (
         <p className={s.error} role="alert">
-          {error}
+          {uiText(error)}
         </p>
       ) : null}
     </div>

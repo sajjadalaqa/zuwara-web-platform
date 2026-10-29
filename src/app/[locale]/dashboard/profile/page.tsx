@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import { BadgeCheck, CalendarDays, ShieldCheck, UserRound, Camera, MapPin, ArrowUpRight, Info } from "lucide-react";
 import Link from "next/link";
 import AvatarUploader from "./AvatarUploader";
@@ -12,6 +13,7 @@ export default async function ProfilePage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
+  const uiText = await getUiText();
   const { locale } = await params;
   const isAr = locale === "ar";
   const t = isAr ? copy.ar : copy.en;
@@ -19,7 +21,7 @@ export default async function ProfilePage({
   const profile = await getProfile();
   const prefix = isAr ? "/ar" : "";
   const readOnlyNotice =
-    "Your phone is read-only. Profile changes are saved to your patient account.";
+    uiText("Your phone is read-only. Profile changes are saved to your patient account.");
 
   const since = profile.memberSince
     ? new Intl.DateTimeFormat(isAr ? "ar-SA-u-ca-gregory" : "en-GB", {
@@ -87,9 +89,9 @@ export default async function ProfilePage({
           </p>
         </section>
 
-        <div className={s.side}><section className={s.card}><div className={s.cardHead}><span className={s.cardIcon}><Camera size={20}/></span><div><h2>{isAr ? "الصورة الشخصية" : "Profile photo"}</h2><p>{isAr ? "أضف لمسة شخصية إلى حسابك." : "Add a personal touch to your account."}</p></div></div><div className={s.photoForm}>          <Form op="avatar" label={isAr ? "رفع الصورة الشخصية" : "Upload profile photo"} uncertain>
+        <div className={s.side}><section className={s.card}><div className={s.cardHead}><span className={s.cardIcon}><Camera size={20}/></span><div><h2>{isAr ? "الصورة الشخصية" : uiText("Profile photo")}</h2><p>{isAr ? "أضف لمسة شخصية إلى حسابك." : "Add a personal touch to your account."}</p></div></div><div className={s.photoForm}>          <Form op="avatar" label={isAr ? "رفع الصورة الشخصية" : uiText("Upload profile photo")} uncertain>
             <label>
-              <span>{isAr ? "JPEG أو PNG أو WebP، حتى ٢ ميجابايت" : "JPEG, PNG or WebP, up to 2 MB"}</span>
+              <span>{isAr ? "JPEG أو PNG أو WebP، حتى ٢ ميجابايت" : uiText("JPEG, PNG or WebP, up to 2 MB")}</span>
               <input
                 type="file"
                 name="image"

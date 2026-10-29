@@ -1,7 +1,9 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import { patientApi } from "@/lib/auth/session";
 import Form from "../_patient/Form";
 import s from "./profile.module.css";
 export default async function ProfileEditor() {
+  const uiText = await getUiText();
   const { data: p } = await patientApi<{
     full_name: string;
     full_name_ar: string | null;
@@ -12,14 +14,14 @@ export default async function ProfileEditor() {
     national_id: string | null;
   }>("/patients/me");
   return (
-    <Form op="profile" label="Save profile">
+    <Form op="profile" label={uiText("Save profile")}>
       <div className={s.grid2}>
         {[
-          ["full_name", "Full name", p.full_name, 150],
-          ["full_name_ar", "Arabic full name", p.full_name_ar, 150],
-          ["email", "Email", p.email, 190],
-          ["city", "City", p.city, 150],
-          ["national_id", "National ID", p.national_id, 20],
+          ["full_name", uiText("Full name"), p.full_name, 150],
+          ["full_name_ar", uiText("Arabic full name"), p.full_name_ar, 150],
+          ["email", uiText("Email"), p.email, 190],
+          ["city", uiText("City"), p.city, 150],
+          ["national_id", uiText("National ID"), p.national_id, 20],
         ].map(([name, label, value, max]) => (
           <label key={String(name)}>
             {label}
@@ -34,8 +36,7 @@ export default async function ProfileEditor() {
           </label>
         ))}
         <label>
-          Date of birth
-          <input
+          {uiText("Date of birth")}{" "}<input
             name="date_of_birth"
             className={s.input}
             type="date"
@@ -43,19 +44,18 @@ export default async function ProfileEditor() {
           />
         </label>
         <label>
-          Gender
-          <select
+          {uiText("Gender")}{" "}<select
             className={s.input}
             name="gender"
             defaultValue={p.gender ?? ""}
           >
-            <option value="">Not specified</option>
+            <option value="">{uiText("Not specified")}</option>
             <option value="0">0</option>
             <option value="1">1</option>
           </select>
         </label>
       </div>
-      <p>Phone changes require a separate verified identity flow.</p>
+      <p>{uiText("Phone changes require a separate verified identity flow.")}</p>
     </Form>
   );
 }

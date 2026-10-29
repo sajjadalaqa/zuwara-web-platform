@@ -1,4 +1,6 @@
-﻿"use client";
+"use client";
+import { useUiText } from "@/i18n/use-ui-text";
+
 import { useRef, useState } from "react";
 import Script from "next/script";
 import { useLocale } from "next-intl";
@@ -8,6 +10,7 @@ import { paymentSessionAction, verifyPaymentAction, paymentStatusAction } from "
 import s from "@/app/[locale]/dashboard/wallet/wallet.module.css";
 declare global { interface Window { myfatoorah?: { init: (config: { sessionId: string; containerId: string; shouldHandlePaymentUrl: boolean; callback: (response: { paymentId?: string; redirectionUrl?: string }) => void }) => void } } }
 export default function Payment({ initial, scriptUrl, hostedUrl }: { initial: Checkout; scriptUrl: string; hostedUrl: string | null }) {
+  const uiText = useUiText();
   const ar = useLocale() === "ar", router = useRouter();
   const [checkout, setCheckout] = useState(initial), [busy, setBusy] = useState(false), [error, setError] = useState("");
   const [sessionId, setSessionId] = useState<string | null>(null), [sdkReady, setSdkReady] = useState(false);
@@ -47,7 +50,7 @@ export default function Payment({ initial, scriptUrl, hostedUrl }: { initial: Ch
   }
   const review = checkout.status === "review_required";
   return <section className={s.card}>
-    <div className={s.cardHead}><h2>{ar ? "الدفع" : "Payment"}</h2><strong>{checkout.amount} {checkout.currency}</strong></div>
+    <div className={s.cardHead}><h2>{ar ? "الدفع" : uiText("Payment")}</h2><strong>{checkout.amount} {checkout.currency}</strong></div>
     {checkout.paid ? <p role="status">{ar ? "تم تأكيد الدفع" : "Payment confirmed"}</p> : review ? <p role="alert">{ar ? "الدفع قيد المراجعة. تواصل مع الدعم ولا تدفع مجدداً." : "This payment needs review. Contact support; do not pay again."}</p> : <>
       {hostedUrl ? <a className={s.addBtn} href={hostedUrl}>{ar ? "متابعة الدفع" : "Continue payment"}</a> : <button className={s.addBtn} disabled={busy || Boolean(sessionId)} onClick={begin}>{ar ? "فتح الدفع الآمن" : "Open secure payment"}</button>}
       {sessionId && <Script src={scriptUrl} strategy="afterInteractive" onReady={()=>{setSdkReady(true);initialize(sessionId);}} onError={()=>setError(ar ? "تعذر تحميل بوابة الدفع." : "The payment form could not load.")} />}
@@ -55,6 +58,6 @@ export default function Payment({ initial, scriptUrl, hostedUrl }: { initial: Ch
       <button className={s.addBtn} disabled={busy} onClick={()=>void verify()}>{ar ? "التحقق من الدفع" : "Verify payment"}</button>
     </>}
     <button className={s.addBtn} disabled={busy} onClick={async()=>{setBusy(true);try{setCheckout(await paymentStatusAction(initial.checkout_id));}catch{setError(ar ? "تعذر تحميل الحالة." : "Unable to load status.");}finally{setBusy(false);}}}>{ar ? "تحديث الحالة" : "Refresh status"}</button>
-    {error && <p role="alert">{error}</p>}
+    {error && <p role="alert">{uiText(error)}</p>}
   </section>;
 }

@@ -1,3 +1,4 @@
+import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import { CalendarPlus, CalendarX2, ChevronLeft, ChevronRight } from "lucide-react";
 import AppointmentCard from "./AppointmentCard";
@@ -17,6 +18,7 @@ export default async function AppointmentsPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<SearchParams>;
 }) {
+  const uiText = await getUiText();
   const { locale } = await params;
   const sp = await searchParams;
   const isAr = locale === "ar";
@@ -91,7 +93,7 @@ export default async function AppointmentsPage({
           </div>
 
           {pages > 1 && (
-            <nav className={s.pager} aria-label="Pagination">
+            <nav className={s.pager} aria-label={uiText("Pagination")}>
               <Link
                 href={pageHref(data.page - 1)}
                 scroll={false}

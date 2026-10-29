@@ -1048,6 +1048,9 @@
 .root :global(.doctor-profile-intro > form){display:grid;justify-items:start;gap:6px;margin:0 0 9px}
 .root :global(.doctor-profile-intro > form button){display:inline-flex;align-items:center;gap:9px;padding:12px 16px;min-height:43px;font-size:14px;font-weight:600;color:#723c91;background:white;border:1px solid #cba5df;border-radius:11px;box-shadow:0 3px 9px #68308808;cursor:pointer}
 .root :global(.save-provider-form button:disabled){cursor:default}
+.root :global(.doctor-profile-intro > form .save-consultant-button){width:44px;height:44px;min-height:44px;padding:0;justify-content:center;border-radius:50%;flex-shrink:0;transition:background-color .2s ease,border-color .2s ease}
+.root :global(.save-consultant-button:hover:not(:disabled)){background:#f5eafa;border-color:#9860b6}
+.root :global(.save-consultant-button[aria-pressed="true"]){background:#f1e5f8;border-color:#9860b6}
 .root :global(.save-provider-form p[role="status"]){font-size:14px;line-height:1.8;color:#24744f;margin:0}
 .root :global(.save-provider-form p[role="alert"]){font-size:14px;line-height:1.8;color:#aa3655;margin:0}
 .root :global(.doctor-profile-metrics){display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:15px;padding-top:14px;border-color:#e2d2ed;color:#7e678b;font-size:12px}

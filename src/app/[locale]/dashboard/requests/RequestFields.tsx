@@ -1,4 +1,5 @@
 "use client";
+import { useUiText } from "@/i18n/use-ui-text";
 import { useState, useRef, useId } from "react";
 import { Search, Check, X, CalendarDays } from "lucide-react";
 import s from "./requests-ui.module.css";
@@ -9,6 +10,7 @@ export default function RequestFields({
   services: { id: number; name: string }[];
   ar: boolean;
 }) {
+  const uiText = useUiText();
   const [query, setQuery] = useState(""),
     [selected, setSelected] = useState<number[]>([]),
     [error, setError] = useState(false);
@@ -54,7 +56,7 @@ export default function RequestFields({
             <CalendarDays size={14} />
             {ar
               ? "\u0627\u0644\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0645\u0641\u0636\u0644"
-              : "Preferred date"}
+              : uiText("Preferred date")}
             <small>
               {ar ? "\u0627\u062e\u062a\u064a\u0627\u0631\u064a" : "Optional"}
             </small>
@@ -90,7 +92,7 @@ export default function RequestFields({
             <i>*</i>
           </label>
           <span>
-            {selected.length}/20 {ar ? "\u0645\u062d\u062f\u062f" : "selected"}
+            {selected.length}/20 {ar ? "\u0645\u062d\u062f\u062f" : uiText("selected")}
           </span>
         </div>
         <p className={s.hint}>

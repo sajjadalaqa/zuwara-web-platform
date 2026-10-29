@@ -1,5 +1,5 @@
 "use client";
-
+import { useUiText } from "@/i18n/use-ui-text";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useParams, useRouter } from "next/navigation";
@@ -57,6 +57,7 @@ export default function DashboardShell({
   bell: React.ReactNode; // server-rendered <NotificationBell /> passed from layout.tsx
   children: React.ReactNode;
 }) {
+  const uiText = useUiText();
   const pathname = usePathname();
   const router = useRouter();
   const params = useParams<{ locale?: string }>();
@@ -96,7 +97,7 @@ export default function DashboardShell({
       const result = await logoutAction();
       if (result.ok) { router.replace(`${prefix}/login-page`); router.refresh(); }
       else setLogoutError(result.error);
-    } catch { setLogoutError("Unable to sign out. Please try again."); }
+    } catch { setLogoutError(uiText("Unable to sign out. Please try again.")); }
     finally { setLoggingOut(false); }
   };
 
@@ -226,7 +227,7 @@ export default function DashboardShell({
       </div>
 
       {/* ===== Mobile bottom nav ===== */}
-      <nav className={s.bottomNav} aria-label="Primary">
+      <nav className={s.bottomNav} aria-label={uiText("Primary")}>
         {renderTab(bottom[0])}
         {renderTab(bottom[1])}
         <Link href={href("/healthcare/doctors")} className={s.bookBtn} aria-label={isAr ? "احجز" : "Book"}>
@@ -245,7 +246,7 @@ export default function DashboardShell({
         <div className={s.grab} />
         <div className={s.sheetTop}>
           <span className={s.sheetTitle}>{isAr ? "القائمة" : "Menu"}</span>
-          <button className={s.iconBtn} onClick={() => setSheet(false)} aria-label="Close">
+          <button className={s.iconBtn} onClick={() => setSheet(false)} aria-label={uiText("Close")}>
             <X size={20} />
           </button>
         </div>
