@@ -1,11 +1,13 @@
 "use client";
 import { useUiText } from "@/i18n/use-ui-text";
-import { Link, useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { ConsultantAuthLink as Link } from "@/components/auth/ConsultantAuthLink";
 import { useState, type FormEvent } from "react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { PhoneField, SubmitButton } from "@/components/auth/Field";
 import { Icon } from "@/components/auth/icons";
 import { requestOtpAction } from "@/lib/auth/actions";
+import { consultantAuthHref } from "@/lib/auth/consultant-return";
 import s from "@/components/auth/auth.module.css";
 
 export default function LoginPage() {
@@ -23,7 +25,7 @@ export default function LoginPage() {
     setLoading(true); setError("");
     try {
       const result = await requestOtpAction({ intent: "login", country_code: dial, phone_number: number });
-      if (result.ok) router.push("/verify-otp-page"); else setError(result.error);
+      if (result.ok) router.push(consultantAuthHref("/verify-otp-page", window.location.search)); else setError(result.error);
     } catch { setError(uiText("Unable to connect. Please try again.")); }
     finally { setLoading(false); }
   }

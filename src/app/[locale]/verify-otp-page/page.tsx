@@ -1,7 +1,9 @@
 "use client";
 import { useUiText } from "@/i18n/use-ui-text";
-import { Link, useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { ConsultantAuthLink as Link } from "@/components/auth/ConsultantAuthLink";
 import { otpStatusAction, resendOtpAction, verifyOtpAction } from "@/lib/auth/actions";
+import { consultantSignInDestination } from "@/lib/auth/consultant-return";
 import { useEffect, useRef, useState, type ClipboardEvent, type FormEvent, type KeyboardEvent } from "react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { SubmitButton } from "@/components/auth/Field";
@@ -57,7 +59,7 @@ export default function VerifyOtpPage() {
     setError(""); setLoading(true);
     try {
       const result = await verifyOtpAction(digits.join(""));
-      if (result.ok) { router.replace("/dashboard"); router.refresh(); }
+      if (result.ok) { router.replace(consultantSignInDestination(window.location.search)); router.refresh(); }
       else setError(result.error);
     } catch { setError(uiText("Unable to connect. Please try again.")); }
     finally { setLoading(false); }

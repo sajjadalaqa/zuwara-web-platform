@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { patientApi, requireSession } from "@/lib/auth/session";
 import { seal, unseal } from "@/lib/auth/seal";
 import { halalas } from "@/lib/api/pagination";
-export type BookingInput = { doctor_id: number; patient_id: number | null; date: string; time: string; duration_minutes: number; consultation_type: string; problem: string; payment_method: "wallet" | "myfatoorah" | "tamara"; coupon_id?: number; coupon_code?: string };
+export type BookingInput = { doctor_id: number; patient_id: number | null; date: string; time: string; duration_minutes: number; consultation_type: "online" | "clinic"; problem: string; payment_method: "wallet" | "myfatoorah" | "tamara"; coupon_id?: number; coupon_code?: string };
 export type BookingDoctor = { id: number; name: string; name_ar: string | null; consultation_types: string[]; duration_options: { minutes: number; price_halalas: number }[] };
 export async function bookingDoctor(id: string) {
   if (!/^[1-9]\d*$/.test(id)) throw new Error("Invalid consultant.");
@@ -14,7 +14,7 @@ function validate(input: BookingInput) {
       input.patient_id !== null && (!Number.isSafeInteger(input.patient_id) || input.patient_id < 1) ||
       !/^\d{4}-\d{2}-\d{2}$/.test(input.date) || !/^(?:[01]\d|2[0-3])[0-5]\d$/.test(input.time) ||
       !Number.isSafeInteger(input.duration_minutes) || input.duration_minutes < 1 || input.duration_minutes > 480 ||
-      !/^[a-z_]{1,30}$/.test(input.consultation_type) || typeof input.problem !== "string" || input.problem.length > 4000 ||
+      !["online", "clinic"].includes(input.consultation_type) || typeof input.problem !== "string" || input.problem.length > 4000 ||
       !["wallet", "myfatoorah", "tamara"].includes(input.payment_method)) throw new Error("Invalid booking selection.");
   if ((input.coupon_id !== undefined || input.coupon_code) && (!Number.isSafeInteger(input.coupon_id) || Number(input.coupon_id)<1 || typeof input.coupon_code!=="string" || !input.coupon_code.trim() || input.coupon_code.length>100)) throw new Error("Invalid coupon.");
   return { doctor_id: input.doctor_id, patient_id: input.patient_id, date: input.date, time: input.time,

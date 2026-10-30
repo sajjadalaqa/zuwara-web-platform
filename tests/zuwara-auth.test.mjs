@@ -23,6 +23,25 @@ test("session cookies hide tokens and reject tampering, wrong keys, and wrong pu
   assert.throws(() => seal(data, "short", "zuwara_session"));
 });
 const { zuwaraV2 } = await loadTypeScript("../src/lib/api/zuwara/v2.ts");
+
+test("booking validation retains rejected field names without exposing submitted values or backend messages", async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = async () => Response.json({
+      success: false,
+      error: { code: "VALIDATION_FAILED", message: "Private symptom text", details: { errors: { consultation_type: ["Private rejected value"], time: ["Private appointment detail"] } } },
+      meta: { request_id: "validation-reference" },
+    }, { status: 422 });
+    await assert.rejects(zuwaraV2("/appointments/preview", { method: "POST", body: {} }), error => {
+      assert.equal(error.code, "VALIDATION_FAILED");
+      assert.equal(error.requestId, "validation-reference");
+      assert.deepEqual(error.validationFields, ["consultation_type", "time"]);
+      assert.equal(JSON.stringify(error).includes("Private"), false);
+      assert.equal(error.message.includes("Private"), false);
+      return true;
+    });
+  } finally { globalThis.fetch = originalFetch; }
+});
 test("BFF requests keep tokens in headers, disable caching and redirects, and retain error identifiers", async () => {
   const originalFetch = globalThis.fetch;
   const originalBase = process.env.ZUWARA_V2_API_BASE_URL;

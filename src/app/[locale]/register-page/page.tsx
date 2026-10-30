@@ -1,7 +1,9 @@
 "use client";
 import { useUiText } from "@/i18n/use-ui-text";
-import { Link, useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { ConsultantAuthLink as Link } from "@/components/auth/ConsultantAuthLink";
 import { useState, type FormEvent } from "react";
+import { consultantAuthHref } from "@/lib/auth/consultant-return";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Field, PhoneField, SubmitButton } from "@/components/auth/Field";
 import { isEmail } from "@/components/auth/validators";
@@ -30,7 +32,7 @@ export default function RegisterPage() {
     try {
       const result = await requestOtpAction({ intent: "register", country_code: f.dial, phone_number: phone,
         full_name: `${f.firstName.trim()} ${f.lastName.trim()}`, email: f.email.trim(), referral_code: f.referral.trim() || undefined });
-      if (result.ok) router.push("/verify-otp-page"); else setErrors({ form: result.error });
+      if (result.ok) router.push(consultantAuthHref("/verify-otp-page", window.location.search)); else setErrors({ form: result.error });
     } catch { setErrors({ form: uiText("Unable to connect. Please try again.") }); }
     finally { setLoading(false); }
   }

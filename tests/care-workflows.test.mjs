@@ -330,3 +330,72 @@ test("coupon preview and creation use the same backend-resolved ID and canonical
   assert.equal(bodies.length,2);assert.equal(bodies[0].coupon_id,7);assert.equal(bodies[0].coupon_code,"SAVE10");assert.deepEqual(bodies[0],bodies[1]);assert.equal(bodies[1].discount,undefined);
  }finally{if(original===undefined)delete process.env.NEXT_SERVER_SESSION_SECRET;else process.env.NEXT_SERVER_SESSION_SECRET=original;}
 });
+
+test("booking preview errors give bilingual recovery guidance without exposing internal diagnostics", async () => {
+  const { bookingPreviewError } = await load("../src/lib/api/zuwara/booking-errors.ts", {});
+  assert.match(bookingPreviewError("INSUFFICIENT_WALLET", false), /another payment method/);
+  assert.match(bookingPreviewError("VALIDATION_FAILED", false, ["time"]), /Choose another time/);
+  assert.match(bookingPreviewError("VALIDATION_FAILED", false, ["consultation_type"]), /consultation option/);
+  assert.match(bookingPreviewError("VALIDATION_FAILED", true, ["consultation_type"]), /[\u0600-\u06ff]/);
+  assert.match(bookingPreviewError("VALIDATION_FAILED", false, ["consultation_type"], "This consultant does not offer online consultations."), /different type or consultant/);
+  assert.match(bookingPreviewError("VALIDATION_FAILED", true, ["consultation_type"], "This consultant does not offer online consultations."), /[\u0600-\u06ff]/);
+  assert.doesNotMatch(bookingPreviewError("INTERNAL_SECRET_DETAIL", false), /INTERNAL_SECRET_DETAIL/);
+});
+
+test("booking choices use only advertised contract values without converting communication channels", async () => {
+  const { bookingConsultationOptions } = await load("../src/lib/api/zuwara/booking-options.ts", {});
+  assert.deepEqual(bookingConsultationOptions(["chat", "audio", "video", "clinic"]), ["clinic"]);
+  assert.deepEqual(bookingConsultationOptions(["chat", "audio", "video"]), []);
+  assert.deepEqual(bookingConsultationOptions(["online", "clinic", "online"]), ["online", "clinic"]);
+  assert.deepEqual(bookingConsultationOptions(["offline", "in_person", "1", "Online"]), []);
+});
+
+test("booking preview rejects unsupported types before contacting the API and preserves valid choices", async () => {
+  const original = process.env.NEXT_SERVER_SESSION_SECRET;
+  process.env.NEXT_SERVER_SESSION_SECRET = "booking-contract-test-secret-longer-than-thirty-two-characters";
+  const calls = [];
+  try {
+    const api = await load("../src/lib/api/zuwara/booking.ts", {
+      randomUUID, seal, unseal, halalas,
+      requireSession: async () => ({ user: { id: "contract-owner" } }),
+      patientApi: async (path, options) => {
+        calls.push({ path, options });
+        if (path === "/appointments/preview") return { data: { pricing: { payable: { halalas: 100 }, currency: "SAR" }, can_create: true, slot_reserved: false } };
+        assert.equal(path, "/appointments");
+        return { data: { appointment: { id: 123 }, requires_payment: true } };
+      },
+    });
+    const input = { doctor_id: 126, patient_id: null, date: "2026-11-02", time: "1000", duration_minutes: 15, problem: "Test concern", payment_method: "myfatoorah" };
+    for (const consultation_type of ["chat", "audio", "video", "offline", "in_person", 1, "1"]) {
+      await assert.rejects(api.previewBooking({ ...input, consultation_type }), /Invalid booking selection/);
+    }
+    assert.equal(calls.length, 0);
+    for (const consultation_type of ["online", "clinic"]) {
+      calls.length = 0;
+      const quote = await api.previewBooking({ ...input, consultation_type });
+      await api.createBooking(quote.token);
+      assert.equal(calls[0].options.body.consultation_type, consultation_type);
+      assert.deepEqual(calls[1].options.body, calls[0].options.body);
+      assert.equal(calls[0].options.body.amount, undefined);
+    }
+  } finally {
+    if (original === undefined) delete process.env.NEXT_SERVER_SESSION_SECRET;
+    else process.env.NEXT_SERVER_SESSION_SECRET = original;
+  }
+});
+
+test("the preview server action rejects stale channel selections without trying another type", async () => {
+  let calls = 0;
+  const actions = await load("../src/app/[locale]/healthcare/doctors/[slug]/book/actions.ts", {
+    previewBooking: async () => { calls++; throw new Error("Unexpected preview"); },
+    createBooking: async () => { throw new Error("Unexpected creation"); },
+    consultantSlots: async () => [], ZuwaraV2Error,
+  });
+  for (const consultation_type of ["chat", "video", "offline", "in_person", 1, ""]) {
+    const result = await actions.previewAction({ consultation_type });
+    assert.equal(result.ok, false);
+    assert.equal(result.code, "VALIDATION_FAILED");
+    assert.deepEqual(result.fields, ["consultation_type"]);
+  }
+  assert.equal(calls, 0);
+});

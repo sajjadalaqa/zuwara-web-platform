@@ -3,6 +3,8 @@ import { useLocale } from "next-intl";
 import { getUiText } from "@/i18n/server-ui-text";
 import { UserRound, Stethoscope, MapPin, GraduationCap, BadgeCheck } from "lucide-react";
 import SaveProvider from "@/components/SaveProvider";
+import BookingSignInSuccess from "@/components/healthcare/BookingSignInSuccess";
+import { readSession } from "@/lib/auth/session";
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { DoctorPhoto } from "@/components/healthcare/DoctorPhoto";
@@ -62,9 +64,11 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
   const durations = (profile.durationOptions ?? []).filter((item) => item.enabled);
   const isAr = (await getLocale()) === "ar";
   const bookingHref = canonical + "/book";
+  const showSignInSuccess = first(query.bookingSignIn) === "success" && !!(await readSession());
   const about = isAr ? (profile.aboutAr ?? profile.educationalJourneyAr ?? profile.about ?? profile.educationalJourney) : (profile.about ?? profile.educationalJourney);
 
   return <>
+    {showSignInSuccess && <BookingSignInSuccess bookingHref={bookingHref}/>}
     <JsonLd data={{
       "@context": "https://schema.org",
       "@type": "Physician",

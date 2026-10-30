@@ -1,16 +1,20 @@
 import { getUiText } from "@/i18n/server-ui-text";
 import { idFromSlug } from "@/lib/api/zuwara/slugs";
-import { notFound } from "next/navigation";
-import { patientApi } from "@/lib/auth/session";
+import { notFound, redirect } from "next/navigation";
+import { patientApi, readSession } from "@/lib/auth/session";
 import { bookingDoctor } from "@/lib/api/zuwara/booking";
 import { ZuwaraV2Error } from "@/lib/api/zuwara/v2";
 import ConsultationBooking from "./ConsultationBooking";
 export default async function BookConsultation({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const uiText = await getUiText();
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const parsedId = idFromSlug(slug) ?? (/^[1-9]\d*$/.test(slug) ? Number(slug) : null);
   const id = parsedId ? String(parsedId) : null;
   if (!id) notFound();
+  if (!(await readSession())) {
+    const target = `/healthcare/doctors/${slug}`;
+    redirect(`${locale === "ar" ? "/ar" : "/en"}/login-page?consultantReturn=${encodeURIComponent(target)}`);
+  }
   let doctor;
   try { doctor = await bookingDoctor(id); } catch (error) { if (error instanceof ZuwaraV2Error && error.status === 404) notFound(); throw error; }
   const { data } = await patientApi<{ id: number }[]>("/patients/dependents");

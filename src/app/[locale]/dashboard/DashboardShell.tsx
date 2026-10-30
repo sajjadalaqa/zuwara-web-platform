@@ -2,6 +2,7 @@
 import { useUiText } from "@/i18n/use-ui-text";
 import Image from "next/image";
 import Link from "next/link";
+import { Link as LocaleLink } from "@/i18n/navigation";
 import { usePathname, useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -76,9 +77,6 @@ export default function DashboardShell({
   const label = (i: { en: string; ar: string }) => (isAr ? i.ar : i.en);
   const href = (h: string) => `${prefix}${h}`;
   const bottom = bottomKeys.map((k) => allItems.find((i) => i.key === k)!);
-  const enHref = rel;
-  const arHref = `/ar${rel}`;
-  const langHref = isAr ? enHref : arHref;
   const badgeFor = (key: string) => (key === "messages" ? user.unreadMessages : 0);
 
   useEffect(() => {
@@ -137,14 +135,14 @@ export default function DashboardShell({
             </button>
             {langOpen && (
               <div className={s.menu}>
-                <Link href={enHref} className={s.menuItem} onClick={() => setLangOpen(false)}>
+                <LocaleLink href={rel} locale="en" className={s.menuItem} onClick={() => setLangOpen(false)}>
                   <span>English</span>
                   {!isAr && <Check size={16} />}
-                </Link>
-                <Link href={arHref} className={s.menuItem} onClick={() => setLangOpen(false)}>
+                </LocaleLink>
+                <LocaleLink href={rel} locale="ar" className={s.menuItem} onClick={() => setLangOpen(false)}>
                   <span>العربية</span>
                   {isAr && <Check size={16} />}
-                </Link>
+                </LocaleLink>
               </div>
             )}
           </div>
@@ -288,11 +286,11 @@ export default function DashboardShell({
           <section>
             <p className={s.groupTitle}>{isAr ? "التفضيلات" : "Preferences"}</p>
             <div className={s.list}>
-              <Link href={langHref} className={s.row}>
+              <LocaleLink href={rel} locale={isAr ? "en" : "ar"} className={s.row} onClick={() => setSheet(false)}>
                 <span className={s.rowIcon}><Globe size={20} /></span>
                 <span className={s.rowLabel}>{isAr ? "English" : "العربية"}</span>
                 <ChevronRight size={18} className={s.chev} />
-              </Link>
+              </LocaleLink>
               <button className={`${s.row} ${s.rowDanger}`} type="button" onClick={handleLogout}>
                 <span className={s.rowIcon}><LogOut size={20} /></span>
                 <span className={s.rowLabel}>{isAr ? "تسجيل الخروج" : "Logout"}</span>

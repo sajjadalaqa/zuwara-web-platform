@@ -5,8 +5,16 @@ export async function slotsAction(id: number, date: string, duration: number) {
   return consultantSlots(id, date, duration);
 }
 export async function previewAction(input: BookingInput) {
+  if (input?.consultation_type !== "online" && input?.consultation_type !== "clinic") {
+    return { ok: false as const, code: "VALIDATION_FAILED", fields: ["consultation_type"], requestId: undefined, typeHint: undefined };
+  }
   try { return { ok: true as const, quote: await previewBooking(input) }; }
-  catch (error) { if (error instanceof ZuwaraV2Error) return { ok: false as const }; throw error; }
+  catch (error) {
+    if (error instanceof ZuwaraV2Error) {
+      return { ok: false as const, code: error.code, requestId: error.requestId, fields: error.validationFields, typeHint: error.consultationTypeHint };
+    }
+    throw error;
+  }
 }
 export async function createBookingAction(token: string) {
   try { return { ok: true as const, booking: await createBooking(token) }; }

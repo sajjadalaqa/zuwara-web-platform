@@ -5,8 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { BookingDoctor, BookingInput } from "@/lib/api/zuwara/booking";
+import { bookingPreviewError } from "@/lib/api/zuwara/booking-errors";
+import { bookingConsultationOptions } from "@/lib/api/zuwara/booking-options";
 import { slotsAction, previewAction, createBookingAction } from "./actions";
-import { ArrowLeft, ArrowRight, CalendarDays, Clock3, UserRound, Stethoscope, Wallet, CreditCard, Check, ShieldCheck, Ticket, Video, MapPin, LoaderCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarDays, Clock3, UserRound, Stethoscope, Wallet, CreditCard, Check, ShieldCheck, Ticket, LoaderCircle } from "lucide-react";
 import { doctorSlug } from "@/lib/api/zuwara/slugs";
 import s from "./consultation-booking.module.css";
 export default function ConsultationBooking({ doctor, dependents, today }: { doctor: BookingDoctor; dependents: number[]; today: string }) {
@@ -14,7 +16,10 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
   const ar = useLocale() === "ar", router = useRouter();
   const [date, setDate] = useState(today), [duration, setDuration] = useState(doctor.duration_options[0]?.minutes ?? 0);
   const [time, setTime] = useState(""), [patient, setPatient] = useState<number | null>(null), [problem, setProblem] = useState("");
-  const [method, setMethod] = useState<BookingInput["payment_method"]>("wallet"), [type, setType] = useState(doctor.consultation_types[0] ?? "online");
+  const consultationTypes = bookingConsultationOptions(doctor.consultation_types);
+  // Keep the API-required category using the first supported catalogue option.
+  const type = consultationTypes[0] ?? "";
+  const [method, setMethod] = useState<BookingInput["payment_method"]>("wallet");
   const [slots, setSlots] = useState<string[]>([]), [busy, setBusy] = useState(false), [error, setError] = useState("");
   const [couponCode,setCouponCode]=useState("");
   const [quote, setQuote] = useState<{ token: string; payableHalalas: number; currency: string; breakdown?: { service:number;discount:number;subtotal:number;tax:number } } | null>(null);
@@ -28,11 +33,19 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
   }, [doctor.id, date, duration, ar]);
   function changed() { setQuote(null); setTime(""); setSlots([]); setSlotLoading(true); setUncertain(false); }
   async function preview(e: React.FormEvent) {
-    e.preventDefault(); if (busy || !time) return; setBusy(true); setError("");
+    e.preventDefault(); if (busy || !time) return;
+    if (!type || !consultationTypes.includes(type)) { setError(bookingPreviewError("VALIDATION_FAILED", ar, ["consultation_type"])); return; }
+    if (!problem.trim()) { setError(bookingPreviewError("VALIDATION_FAILED", ar, ["problem"])); return; }
+    setBusy(true); setError("");
     try {
       const result = await previewAction({ doctor_id: doctor.id, patient_id: patient, date, time, duration_minutes: duration, consultation_type: type, problem, payment_method: method, ...(couponCode.trim()?{coupon_code:couponCode.trim()}:{}) });
-      if (!result.ok) throw new Error(); setQuote(result.quote);
-    } catch { setError(ar ? "تعذر حساب السعر. تحقق من اختياراتك وحاول مجدداً." : "Unable to preview this booking. Check your selection and try again."); }
+      if (!result.ok) {
+        setQuote(null);
+        setError(bookingPreviewError(result.code, ar, result.fields, result.typeHint));
+        return;
+      }
+      setQuote(result.quote);
+    } catch { setError(bookingPreviewError("API_UNAVAILABLE", ar)); }
     finally { setBusy(false); }
   }
   async function confirm() {
@@ -60,7 +73,7 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
     const hour = Number(value.slice(0, 2));
     return `${hour % 12 || 12}:${value.slice(2)} ${hour >= 12 ? "PM" : "AM"}`;
   };
-  const typeLabel = (value: string) => value === "online" ? t("Video consultation", "\u0627\u0633\u062a\u0634\u0627\u0631\u0629 \u0645\u0631\u0626\u064a\u0629") : value === "offline" || value === "clinic" || value === "in_person" ? t("In person", "\u062d\u0636\u0648\u0631\u064a\u0629") : value.replace(/_/g, " ");
+
   const paymentLabels = {wallet:t("Wallet", "\u0627\u0644\u0645\u062d\u0641\u0638\u0629"), myfatoorah:"MyFatoorah", tamara:"Tamara"};
   const profileHref = "/healthcare/doctors/" + doctorSlug(doctor.name, doctor.id);
   return (
@@ -89,8 +102,8 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
               <section className={s.section}>
                 <div className={s.sectionHead}><span className={s.sectionIcon}><UserRound size={20}/></span><div><h2>{t("Who is this appointment for?", "\u0644\u0645\u0646 \u0647\u0630\u0627 \u0627\u0644\u0645\u0648\u0639\u062f\u061f")}</h2><p>{t("Tell your consultant a little about your visit.", "\u0623\u062e\u0628\u0631 \u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u064a \u0639\u0646 \u0633\u0628\u0628 \u0627\u0644\u0632\u064a\u0627\u0631\u0629.")}</p></div></div>
                 <label className={s.field}>{t("Patient", "\u0627\u0644\u0645\u0631\u064a\u0636")}<select disabled={disabled} value={patient ?? ""} onChange={e=>{setPatient(e.target.value ? Number(e.target.value) : null);setQuote(null);}}><option value="">{t("Myself", "\u0623\u0646\u0627")}</option>{dependents.map(id=><option key={id} value={id}>{t("Saved patient #", "\u0627\u0644\u0645\u0631\u064a\u0636 \u0627\u0644\u0645\u0633\u062c\u0644 #")}{id}</option>)}</select></label>
-                <fieldset className={s.choiceGroup}><legend>{t("Consultation type", "\u0646\u0648\u0639 \u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u0629")}</legend><div className={s.choices}>{doctor.consultation_types.map(value=><label className={s.choice} key={value}><input type="radio" name="consultation-type" value={value} checked={type===value} disabled={disabled} onChange={()=>{setType(value);setQuote(null);}}/>{value==="online" ? <Video size={20}/> : <MapPin size={20}/>}<span>{typeLabel(value)}</span><span className={s.radioMark}/></label>)}</div></fieldset>
-                <label className={s.field}>{t("Reason for your visit", "\u0633\u0628\u0628 \u0627\u0644\u0632\u064a\u0627\u0631\u0629")}<textarea required maxLength={4000} rows={4} value={problem} disabled={disabled} placeholder={t("Describe your symptoms, concerns, or what you would like to discuss...", "\u0627\u0643\u062a\u0628 \u0627\u0644\u0623\u0639\u0631\u0627\u0636 \u0623\u0648 \u0645\u0627 \u062a\u0648\u062f \u0645\u0646\u0627\u0642\u0634\u062a\u0647...")} onChange={e=>{setProblem(e.target.value);setQuote(null);}}/><span className={s.fieldHint}>{t("Help your consultant prepare for your appointment.", "\u0633\u0627\u0639\u062f \u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u064a \u0639\u0644\u0649 \u0627\u0644\u0627\u0633\u062a\u0639\u062f\u0627\u062f \u0644\u0645\u0648\u0639\u062f\u0643.")}</span></label>
+                {!type && <p className={s.slotMessage} role="status">{t("Booking options for this consultant are temporarily unavailable. Please choose another consultant or contact support.", "خيارات الحجز لهذا الاستشاري غير متاحة مؤقتاً. يرجى اختيار استشاري آخر أو التواصل مع الدعم.")}</p>}
+                <label className={s.field}>{t("Explain your problem", "اشرح مشكلتك")}<textarea required maxLength={4000} rows={4} value={problem} disabled={disabled} placeholder={t("Describe your symptoms, concerns, or what you would like to discuss...", "\u0627\u0643\u062a\u0628 \u0627\u0644\u0623\u0639\u0631\u0627\u0636 \u0623\u0648 \u0645\u0627 \u062a\u0648\u062f \u0645\u0646\u0627\u0642\u0634\u062a\u0647...")} onChange={e=>{setProblem(e.target.value);setQuote(null);}}/><span className={s.fieldHint}>{t("Help your consultant prepare for your appointment.", "\u0633\u0627\u0639\u062f \u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u064a \u0639\u0644\u0649 \u0627\u0644\u0627\u0633\u062a\u0639\u062f\u0627\u062f \u0644\u0645\u0648\u0639\u062f\u0643.")}</span></label>
               </section>
               <section className={s.section}>
                 <div className={s.sectionHead}><span className={s.sectionIcon}><Wallet size={20}/></span><div><h2>{t("Payment details", "\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u062f\u0641\u0639")}</h2><p>{t("Choose how you would like to pay.", "\u0627\u062e\u062a\u0631 \u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639.")}</p></div></div>
@@ -99,7 +112,7 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
               </section>
               <div className={s.formFoot}>
                 {error && <p className={s.error} role="alert">{uiText(error)}</p>}
-                <button type="submit" className={s.primary} disabled={busy || !time || uncertain || slotLoading}>{busy ? <LoaderCircle size={18} className={s.spinner}/> : null}{busy ? t("Please wait...", "\u064a\u0631\u062c\u0649 \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631...") : t("Review appointment price", "\u0645\u0631\u0627\u062c\u0639\u0629 \u0633\u0639\u0631 \u0627\u0644\u0645\u0648\u0639\u062f")}<ArrowRight size={17} className={s.directional}/></button>
+                <button type="submit" className={s.primary} disabled={busy || !time || !type || !consultationTypes.includes(type) || uncertain || slotLoading}>{busy ? <LoaderCircle size={18} className={s.spinner}/> : null}{busy ? t("Please wait...", "\u064a\u0631\u062c\u0649 \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631...") : t("Review appointment price", "\u0645\u0631\u0627\u062c\u0639\u0629 \u0633\u0639\u0631 \u0627\u0644\u0645\u0648\u0639\u062f")}<ArrowRight size={17} className={s.directional}/></button>
                 <p className={s.footHint}>{t("Review the total before confirming your booking.", "\u0631\u0627\u062c\u0639 \u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a \u0642\u0628\u0644 \u062a\u0623\u0643\u064a\u062f \u0627\u0644\u062d\u062c\u0632.")}</p>
               </div>
             </form>
@@ -110,7 +123,6 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
               <div><dt><CalendarDays size={16}/>{t("Date", "\u0627\u0644\u062a\u0627\u0631\u064a\u062e")}</dt><dd>{dateLabel}</dd></div>
               <div><dt><Clock3 size={16}/>{t("Time", "\u0627\u0644\u0648\u0642\u062a")}</dt><dd>{time ? timeLabel(time) : t("Not selected", "\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0627\u062e\u062a\u064a\u0627\u0631")}</dd></div>
               <div><dt>{t("Duration", "\u0627\u0644\u0645\u062f\u0629")}</dt><dd>{duration} {t("minutes", "\u062f\u0642\u064a\u0642\u0629")}</dd></div>
-              <div><dt>{t("Consultation", "\u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u0629")}</dt><dd>{typeLabel(type)}</dd></div>
               <div><dt>{t("Patient", "\u0627\u0644\u0645\u0631\u064a\u0636")}</dt><dd>{patient ? t("Saved patient #", "\u0627\u0644\u0645\u0631\u064a\u0636 #")+patient : t("Myself", "\u0623\u0646\u0627")}</dd></div>
               <div><dt>{t("Payment", "\u0627\u0644\u062f\u0641\u0639")}</dt><dd>{paymentLabels[method]}</dd></div>
             </dl>
