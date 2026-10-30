@@ -1,4 +1,4 @@
-.dialog { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; border: 1px solid #e8d8f5; border-radius: 24px; padding: 32px; color: #28133e; background: white; text-align: center; box-shadow: 0 24px 80px #28133e33; }
+.dialog { position: fixed; inset: 0; margin: auto; width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; border: 1px solid #e8d8f5; border-radius: 24px; padding: 32px; color: #28133e; background: white; text-align: center; box-shadow: 0 24px 80px #28133e33; }
 .dialog::backdrop { background: #1f103766; backdrop-filter: blur(4px); }
 .dialog h2 { margin: 16px 0 10px; font-size: 24px; }
 .dialog p { line-height: 1.7; color: #71657c; }
