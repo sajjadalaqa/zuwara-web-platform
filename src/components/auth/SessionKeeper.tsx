@@ -11,7 +11,10 @@ export default function SessionKeeper() {
       pending.current = true;
       try {
         const result = await refreshBrowserSession();
-        if (!result.ok) router.replace("/session-refresh-page");
+        if (!result.ok) {
+          router.replace("/login-page?reason=session-expired");
+          router.refresh();
+        }
       } catch { /* Retry on the next timer or visibility change after a connection failure. */ }
       finally { pending.current = false; }
     };

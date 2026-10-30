@@ -2,7 +2,8 @@
 import { useUiText } from "@/i18n/use-ui-text";
 import { useRouter } from "@/i18n/navigation";
 import { ConsultantAuthLink as Link } from "@/components/auth/ConsultantAuthLink";
-import { useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
+import SessionExpiredNotice from "@/components/auth/SessionExpiredNotice";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { PhoneField, SubmitButton } from "@/components/auth/Field";
 import { Icon } from "@/components/auth/icons";
@@ -34,6 +35,7 @@ export default function LoginPage() {
       <div><h2>{uiText("Sign In")}</h2><p><strong>{uiText("Welcome back.")}</strong> {uiText("Sign in to manage your bookings and care.")}</p></div>
       
     </div>
+    <Suspense fallback={null}><SessionExpiredNotice /></Suspense>
     <form className={s.form} onSubmit={onSubmit} noValidate>
       <PhoneField label={uiText("Phone Number")} dial={dial} number={phone} onDial={setDial} onNumber={setPhone} />
       <p>{uiText("We’ll send a 6-digit verification code to your phone.")}</p>

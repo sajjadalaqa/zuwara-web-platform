@@ -49,6 +49,11 @@ export async function readSession() {
   if (!(Date.parse(data.session.refresh_expires_at) > Date.now())) return null;
   return data;
 }
+export async function readHeaderSession() {
+  const session = await readSession();
+  const sessionExpiresAt = session ? Date.parse(session.session.access_expires_at) : 0;
+  return { signedIn: sessionExpiresAt > Date.now(), sessionExpiresAt };
+}
 export async function saveSession(data: SessionData) {
   if (!data?.user?.id || !data.session?.access_token || !data.session.refresh_token ||
       !(Date.parse(data.session.access_expires_at) > Date.now()) ||
@@ -86,7 +91,7 @@ export async function requireSession() {
   const prefix = locale === "ar" ? "/ar" : "";
   const data = await readSession();
   if (!data) redirect(`${prefix}/login-page`);
-  if (Date.parse(data.session.access_expires_at) <= Date.now() + 15_000) redirect(`${prefix}/session-refresh-page`);
+  if (Date.parse(data.session.access_expires_at) <= Date.now() + 15_000) redirect(`${prefix}/login-page?reason=session-expired`);
   return data;
 }
 export async function patientApi<T>(path: string, options: Parameters<typeof zuwaraV2<T>>[1] = {}) {
@@ -94,7 +99,7 @@ export async function patientApi<T>(path: string, options: Parameters<typeof zuw
   const locale = options.locale ?? await getLocale();
   try { return await zuwaraV2<T>(path, { ...options, token: data.session.access_token, locale }); }
   catch (error) {
-    if (error instanceof ZuwaraV2Error && error.status === 401) redirect(`${locale === "ar" ? "/ar" : ""}/login-page`);
+    if (error instanceof ZuwaraV2Error && error.status === 401) redirect(`${locale === "ar" ? "/ar" : ""}/login-page?reason=session-expired`);
     throw error;
   }
 }

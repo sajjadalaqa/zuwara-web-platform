@@ -3,7 +3,7 @@ import { useUiText } from "@/i18n/use-ui-text";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { Icon } from "./Icon";
 import styles from "./Header.module.css";
 
@@ -27,7 +27,22 @@ function GlobeIcon() {
   );
 }
 
-export function Header({ signedIn = false }: { signedIn?: boolean }) {
+export function Header({ signedIn = false, sessionExpiresAt = 0 }: { signedIn?: boolean; sessionExpiresAt?: number }) {
+  const subscribe = useCallback((onChange: () => void) => {
+    const remaining = sessionExpiresAt - Date.now();
+    const timer = remaining > 0 ? window.setTimeout(onChange, Math.min(remaining + 1, 2_147_483_647)) : undefined;
+    window.addEventListener("focus", onChange);
+    document.addEventListener("visibilitychange", onChange);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("focus", onChange);
+      document.removeEventListener("visibilitychange", onChange);
+    };
+  }, [sessionExpiresAt]);
+  const activeSession = useSyncExternalStore(subscribe,
+    () => signedIn && sessionExpiresAt > Date.now(),
+    () => signedIn);
+
   const uiText = useUiText();
   const t = useTranslations("Header");
   const locale = useLocale();
@@ -107,12 +122,12 @@ export function Header({ signedIn = false }: { signedIn?: boolean }) {
             );
           })}
 <Link
-  href={signedIn ? "/dashboard" : "/register-page"}
+  href={activeSession ? "/dashboard" : "/register-page"}
   className={styles.getStarted}
   onClick={() => setOpen(false)}
   style={{ "--i": links.length } as CSSProperties}
 >
-  {t(signedIn ? "nav.dashboard" : "nav.getStarted")}
+  {t(activeSession ? "nav.dashboard" : "nav.getStarted")}
 </Link>
           {/* Inside the mobile menu only */}
           <div className={styles.mobileActions}>

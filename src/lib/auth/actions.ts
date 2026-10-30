@@ -1,4 +1,5 @@
 "use server";
+import { revalidatePath } from "next/cache";
 import { getLocale } from "next-intl/server";
 import { zuwaraV2, ZuwaraV2Error } from "@/lib/api/zuwara/v2";
 import { clearPending, clearSession, readPending, readSession, savePending, saveSession, type OtpInput, type SessionData } from "./session";
@@ -64,6 +65,7 @@ export async function verifyOtpAction(otp: string): Promise<Result> {
     if (!/^\d{6}$/.test(otp)) return { ok: false, error: "Enter the 6-digit code." };
     const response = await zuwaraV2<SessionData>("/auth/otp/verify", { method: "POST", body: { challenge_id: pending.challenge_id, otp }, locale: pending.locale });
     await saveSession(response.data);
+    revalidatePath("/[locale]", "layout");
     await clearPending();
     return { ok: true };
   } catch (error) { return failure(error); }
@@ -75,9 +77,13 @@ export async function refreshSessionAction(): Promise<Result> {
     if (Date.parse(current.session.access_expires_at) > Date.now() + 60_000) return { ok: true };
     const response = await zuwaraV2<SessionData>("/auth/refresh", { method: "POST", token: current.session.refresh_token });
     await saveSession(response.data);
+    revalidatePath("/[locale]", "layout");
     return { ok: true };
   } catch (error) {
-    if (error instanceof ZuwaraV2Error && [401, 403].includes(error.status)) await clearSession();
+    if (error instanceof ZuwaraV2Error && [401, 403].includes(error.status)) {
+      await clearSession();
+      revalidatePath("/[locale]", "layout");
+    }
     return failure(error);
   }
 }
@@ -90,5 +96,6 @@ export async function logoutAction(): Promise<Result> {
   }
   await clearSession();
   await clearPending();
+  revalidatePath("/[locale]", "layout");
   return { ok: true };
 }
