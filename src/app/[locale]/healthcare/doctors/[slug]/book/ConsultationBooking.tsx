@@ -58,6 +58,7 @@ export default function ConsultationBooking({ doctor, dependents, today }: { doc
         setError(ar ? "تعذر إتمام الحجز. تحقق من المواعيد والرصيد أو أعد محاولة الطلب نفسه." : "The booking could not complete. Check availability and balance, or retry the same request.");
         return;
       }
+      try { sessionStorage.setItem("zuwara-created-appointment:" + result.booking.id, "1"); } catch { /* Booking remains successful if browser storage is unavailable. */ }
       router.push("/dashboard/appointments/" + result.booking.id + (result.booking.requiresPayment ? "/pay?method=" + result.booking.paymentMethod : ""));
       router.refresh();
     } catch { setUncertain(true); setError(ar ? "لم يتم تأكيد الحجز. أعد المحاولة بنفس الطلب أو تحقق من سجل المواعيد قبل بدء حجز جديد." : "The booking was not confirmed. Retry this request or check appointment history before starting another booking."); }

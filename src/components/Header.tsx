@@ -27,7 +27,7 @@ function GlobeIcon() {
   );
 }
 
-export function Header() {
+export function Header({ signedIn = false }: { signedIn?: boolean }) {
   const uiText = useUiText();
   const t = useTranslations("Header");
   const locale = useLocale();
@@ -107,12 +107,12 @@ export function Header() {
             );
           })}
 <Link
-  href="/register-page"
+  href={signedIn ? "/dashboard" : "/register-page"}
   className={styles.getStarted}
   onClick={() => setOpen(false)}
   style={{ "--i": links.length } as CSSProperties}
 >
-  {t("nav.getStarted")}
+  {t(signedIn ? "nav.dashboard" : "nav.getStarted")}
 </Link>
           {/* Inside the mobile menu only */}
           <div className={styles.mobileActions}>

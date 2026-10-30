@@ -5,6 +5,7 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/Header";
+import { readSession } from "@/lib/auth/session";
 import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_INDEXABLE, SITE_URL } from "@/data/site";
@@ -60,6 +61,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
+  const signedIn = Boolean(await readSession());
 
   return (
     <NextIntlClientProvider>
@@ -75,7 +77,7 @@ export default async function LocaleLayout({
             }}
           />
           <a className="skip-link" href="#main-content">{uiText("Skip to content")}</a>
-          <SiteChrome><Header /></SiteChrome>
+          <SiteChrome><Header signedIn={signedIn} /></SiteChrome>
 <main id="main-content">{children}</main>
 <SiteChrome><Footer /></SiteChrome>
     </NextIntlClientProvider>

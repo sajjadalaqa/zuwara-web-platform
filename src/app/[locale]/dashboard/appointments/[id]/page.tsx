@@ -10,6 +10,7 @@ import { copy } from "../copy";
 import { dayNum, fullDate, money, monthShort, timeStr } from "../format";
 import { getAppointment } from "../service";
 import JoinButton from "./JoinButton";
+import BookingSuccess from "./BookingSuccess";
 import { detailCopy } from "./detailCopy";
 import s from "./detail.module.css";
 
@@ -57,6 +58,7 @@ export default async function AppointmentDetailPage({
 
   return (
     <div className={s.page}>
+      <BookingSuccess key={id} id={id} />
       <Link href={`${prefix}/dashboard/appointments`} className={s.back}>
         <ArrowLeft size={16} className={s.rtlFlip} />
         {t.back}
