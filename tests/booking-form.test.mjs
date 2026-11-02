@@ -16,7 +16,7 @@ function load(filename, dependencies = {}) {
   return exports;
 }
 
-function render(types, locale) {
+function render(types, locale, walletBalance = null) {
   const component = load('src/app/[locale]/healthcare/doctors/[slug]/book/ConsultationBooking.tsx', {
     '@/i18n/use-ui-text': { useUiText: () => value => value },
     'next-intl': { useLocale: () => locale },
@@ -29,7 +29,7 @@ function render(types, locale) {
   }).default;
   return renderToStaticMarkup(React.createElement(component, {
     doctor: { id: 126, name: 'Test consultant', name_ar: null, consultation_types: types, duration_options: [{ minutes: 15, price_halalas: 100 }] },
-    dependents: [], today: '2026-11-02',
+    dependents: [], today: '2026-11-02', walletBalance,
   }));
 }
 
@@ -56,4 +56,23 @@ test('a catalogue containing only channels cannot silently enable online booking
   assert.doesNotMatch(html, /<input[^>]*name="consultation-type"/);
   assert.match(html, /Booking options for this consultant are temporarily unavailable/);
   assert.match(html, /<button[^>]*type="submit"[^>]*disabled/);
+});
+
+test('wallet payment shows the available balance in both languages, including zero', () => {
+  for (const locale of ['en', 'ar']) {
+    for (const balanceHalalas of [0, 12345]) {
+      const html = render(['online'], locale, { balanceHalalas, currency: 'SAR' });
+      const amount = new Intl.NumberFormat(locale === 'ar' ? 'ar-SA' : 'en-GB', { style: 'currency', currency: 'SAR' }).format(balanceHalalas / 100);
+      assert.ok(html.includes(amount));
+      assert.ok(html.includes(locale === 'ar' ? '\u0627\u0644\u0631\u0635\u064a\u062f'.replace(/\\u([\da-f]{4})/gi, (_, code) => String.fromCharCode(parseInt(code, 16))) : 'Balance'));
+      assert.equal((html.match(/name="payment-method"/g) || []).length, 3);
+    }
+  }
+});
+
+test('an unavailable wallet balance does not appear as a zero balance', () => {
+  const html = render(['online'], 'en');
+  assert.ok(html.includes('Balance unavailable'));
+  assert.ok(!html.includes('SAR\u00a00.00'));
+  assert.equal((html.match(/name="payment-method"/g) || []).length, 3);
 });

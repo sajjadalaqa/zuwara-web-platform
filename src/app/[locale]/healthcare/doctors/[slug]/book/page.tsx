@@ -1,10 +1,20 @@
 import { getUiText } from "@/i18n/server-ui-text";
 import { idFromSlug } from "@/lib/api/zuwara/slugs";
-import { notFound, redirect } from "next/navigation";
+import { notFound, redirect, unstable_rethrow } from "next/navigation";
 import { patientApi, readSession } from "@/lib/auth/session";
 import { bookingDoctor } from "@/lib/api/zuwara/booking";
 import { ZuwaraV2Error } from "@/lib/api/zuwara/v2";
 import ConsultationBooking from "./ConsultationBooking";
+async function bookingWalletBalance() {
+  try {
+    const { data } = await patientApi<{ balance_halalas: number; currency: string }>("/wallet");
+    if (!data || !Number.isSafeInteger(data.balance_halalas) || data.balance_halalas < 0 || typeof data.currency !== "string" || !/^[A-Z]{3}$/.test(data.currency)) return null;
+    return { balanceHalalas: data.balance_halalas, currency: data.currency };
+  } catch (error) {
+    unstable_rethrow(error);
+    return null;
+  }
+}
 export default async function BookConsultation({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const uiText = await getUiText();
   const { slug, locale } = await params;
@@ -17,9 +27,9 @@ export default async function BookConsultation({ params }: { params: Promise<{ l
   }
   let doctor;
   try { doctor = await bookingDoctor(id); } catch (error) { if (error instanceof ZuwaraV2Error && error.status === 404) notFound(); throw error; }
-  const { data } = await patientApi<{ id: number }[]>("/patients/dependents");
+  const [{ data }, walletBalance] = await Promise.all([patientApi<{ id: number }[]>("/patients/dependents"), bookingWalletBalance()]);
   if (!Array.isArray(data)) throw new Error(uiText("Invalid patient list."));
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Riyadh", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-  return <ConsultationBooking doctor={doctor} dependents={data.map(p=>p.id)} today={today} />;
+  return <ConsultationBooking doctor={doctor} dependents={data.map(p=>p.id)} today={today} walletBalance={walletBalance} />;
 }
 
