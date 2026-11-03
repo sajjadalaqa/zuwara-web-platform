@@ -77,8 +77,8 @@
 .form:disabled select,.form:disabled textarea { opacity:.65; }
 .wide { grid-column:1/-1; }
 .paymentGroup { --brand:#602d8c; width:100%; }
-.paymentGroup .paymentOptions { grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr)); }
-.paymentGroup .paymentOptions label { display:flex; align-items:center; flex-wrap:nowrap; font-size:12px; }
+.paymentGroup .paymentOptions { grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr)); max-width:580px; gap:9px; }
+.paymentGroup .paymentOptions label { display:flex; align-items:center; flex-wrap:nowrap; min-height:52px; padding:9px 11px; gap:8px; font-size:12px; }
 .preference { margin:0; padding:0; border:0; }
 .preference legend { padding:0; margin-bottom:12px; color:#443451; font-size:13px; font-weight:700; }
 .segments { display:flex; gap:7px; padding:7px; overflow-x:auto; border:1px solid var(--line); border-radius:16px; background:var(--p-50); scrollbar-width:thin; scrollbar-color:#d6c0ed transparent; }
