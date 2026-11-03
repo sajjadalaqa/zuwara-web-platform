@@ -48,6 +48,14 @@ test('instant booking context survives login, registration and OTP without chang
   assert.equal(consultantSignInDestination('?consultantReturn=https://example.com&bookingFlow=instant'), '/dashboard');
 });
 
+test('public instant entry returns to the consultant directory after sign-in', () => {
+  const query = '?consultantReturn=%2Fhealthcare%2Fdoctors&bookingFlow=public-instant';
+  assert.equal(consultantReturn(query), '/healthcare/doctors');
+  assert.equal(consultantReturn('?consultantReturn=%2Fhealthcare%2Fdoctors'), null);
+  for (const path of ['/login-page', '/register-page', '/verify-otp-page']) assert.equal(consultantAuthHref(path, query), path + query);
+  assert.equal(consultantSignInDestination(query), '/healthcare/doctors?bookingSignIn=success&bookingFlow=public-instant');
+});
+
 test('instant sign-in popup continues with the selected consultant and retains the dashboard choice', () => {
   for (const locale of ['en', 'ar']) {
     const Popup = load('src/components/healthcare/BookingSignInSuccess.tsx', {

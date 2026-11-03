@@ -60,6 +60,18 @@ test('public creation sends payment with a stable retry key and never a doctor o
   assert.equal(calls[0].options.body.payable_amount, undefined);
   assert.equal(calls[0].options.idempotencyKey, calls[1].options.idempotencyKey);
 });
+
+test('public matching forwards the chosen gender, category and real interest IDs without a doctor', async () => {
+  const { api, calls } = adapter();
+  await api.previewInstant('public', { ...input, gender_preference: 'female', category_id: 3, interests: [1, 7] });
+  await api.createInstant('public', { ...input, gender_preference: 'female', category_id: 3, interests: [1, 7] }, 'matching-key-123');
+  for (const call of calls) {
+    assert.equal(call.options.body.gender_preference, 'female');
+    assert.equal(call.options.body.category_id, 3);
+    assert.deepEqual(call.options.body.interests, [1, 7]);
+    assert.equal(call.options.body.doctor_id, undefined);
+  }
+});
 test('instant payment, cancellation, session and confirmation use only request-bound routes', async () => {
   const { api, calls } = adapter();
   await api.payInstant(uuid, { payment_method: 'wallet' }, 'pay-key-123');
@@ -107,6 +119,7 @@ function renderRequest(data, locale = 'en') {
     if (name === 'next/script') return { __esModule: true, default: () => null };
     if (name === '@/i18n/navigation') return { Link: ({ children, ...props }) => React.createElement('a', props, children) };
     if (name === './instant.module.css') return {};
+    if (name === '@/app/[locale]/healthcare/doctors/[slug]/book/consultation-booking.module.css') return {};
     return requireDependency(name);
   }, exports);
   return renderToStaticMarkup(React.createElement(exports.default, { locale, identity: 'patient', settings: { enabled: true, durations: [] }, initial: { success: true, data }, history: { success: true, data: [] }, categories: [], consultants: [], dependents: [], selectedDoctor: '', cardEnabled: false }));
@@ -121,6 +134,16 @@ test('only an accepted request with an appointment ID exposes the appointment sc
     const accepted = renderRequest({ ...row, request_status: 'accepted', appointment_id: 42, can_pay: false }, locale);
     assert.ok(accepted.includes('href="/dashboard/appointments/42"'));
   }
+});
+
+test('public form offers gender, category and duration preferences without inventing an interests catalogue', () => {
+  const html = renderRequest(null);
+  assert.ok(html.includes('Preferred consultant gender'));
+  assert.equal((html.match(/name="instant-gender"/g) ?? []).length, 3);
+  assert.ok(html.includes('name="instant-category"'));
+  assert.ok(html.includes('Consultation duration'));
+  assert.ok(html.includes('Interest options are currently unavailable'));
+  assert.ok(!html.includes('Pay and request a consultant'));
 });
 test('existing and uncertain checkouts cannot expose a new private payment or a payment resume action', () => {
   for (const status of ['creating', 'verifying', 'review_required', 'unknown']) {

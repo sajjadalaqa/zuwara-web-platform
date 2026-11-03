@@ -9,6 +9,11 @@ import {
   type HealthcareFilterValues,
 } from "@/components/healthcare/HealthcareFilters";
 import { searchZuwaraDoctors } from "@/lib/api/zuwara/doctors";
+import { getLocale } from "next-intl/server";
+import { readHeaderSession } from "@/lib/auth/session";
+import BookingSignInSuccess from "@/components/healthcare/BookingSignInSuccess";
+import { Zap, ArrowUpRight } from "lucide-react";
+import instantStyles from "./public-instant.module.css";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -76,15 +81,24 @@ export default async function DoctorsPage({
   const selectedCategory = result.categories.find(
     (item) => item.id === categoryId,
   );
+  const ar = await getLocale() === "ar";
+  const { signedIn } = await readHeaderSession();
+  const instantHref = signedIn ? "/dashboard/instant?type=public" : "/login-page?consultantReturn=%2Fhealthcare%2Fdoctors&bookingFlow=public-instant";
 
   return (
     <>
+      {signedIn && first(params.bookingSignIn) === "success" && first(params.bookingFlow) === "public-instant" && <BookingSignInSuccess bookingHref="/dashboard/instant?type=public" directory />}
       <CareHero
         directory
         title={
           selectedCategory ? selectedCategory.title + " consultants" : undefined
         }
       />
+      <div className="container"><section className={instantStyles.banner}>
+        <span className={instantStyles.icon}><Zap size={26} /></span>
+        <div className={instantStyles.copy}><span>{ar ? "استشارة دون اختيار استشاري محدد" : "LET US FIND YOUR CONSULTANT"}</span><h2>{ar ? "موعد فوري عام" : "Public instant appointment"}</h2><p>{ar ? "حدد تفضيلاتك وادفع بعد مراجعة السعر. نرسل طلبك إلى الاستشاريين المؤهلين المتاحين." : "Choose your preferences and review the price. After payment, we send your request to eligible available consultants."}</p></div>
+        <Link href={instantHref} className={instantStyles.action}>{ar ? "طلب موعد فوري" : "Request instant appointment"}<ArrowUpRight size={18} /></Link>
+      </section></div>
       <section
         id="consultant-directory"
         className="content-section doctor-directory"

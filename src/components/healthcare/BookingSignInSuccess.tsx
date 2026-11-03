@@ -5,7 +5,7 @@ import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import s from "./booking-sign-in-success.module.css";
 
-export default function BookingSignInSuccess({ bookingHref }: { bookingHref: string }) {
+export default function BookingSignInSuccess({ bookingHref, directory = false }: { bookingHref: string; directory?: boolean }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const ar = useLocale() === "ar";
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function BookingSignInSuccess({ bookingHref }: { bookingHref: str
     <div className={s.actions}>
       <Link href={bookingHref} className="button button-primary">{ar ? "متابعة الحجز" : "Continue booking"}</Link>
       <Link href="/dashboard" className="button">{ar ? "الذهاب إلى لوحة التحكم" : "Go to your dashboard"}</Link>
-      <button type="button" onClick={() => dialog.current?.close()}>{ar ? "البقاء في صفحة الاستشاري" : "Stay on consultant page"}</button>
+      <button type="button" onClick={() => dialog.current?.close()}>{directory ? (ar ? "البقاء في قائمة الاستشاريين" : "Stay on consultants page") : (ar ? "البقاء في صفحة الاستشاري" : "Stay on consultant page")}</button>
     </div>
   </dialog>;
 }

@@ -76,6 +76,23 @@
 }
 .form:disabled select,.form:disabled textarea { opacity:.65; }
 .wide { grid-column:1/-1; }
+.paymentGroup { --brand:#602d8c; width:100%; }
+.paymentGroup .paymentOptions { grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr)); }
+.paymentGroup .paymentOptions label { display:flex; align-items:center; flex-wrap:nowrap; font-size:12px; }
+.preference { margin:0; padding:0; border:0; }
+.preference legend { padding:0; margin-bottom:12px; color:#443451; font-size:13px; font-weight:700; }
+.segments { display:flex; gap:7px; padding:7px; overflow-x:auto; border:1px solid var(--line); border-radius:16px; background:var(--p-50); scrollbar-width:thin; scrollbar-color:#d6c0ed transparent; }
+.segments label { position:relative; flex:1 0 auto; display:flex; align-items:center; justify-content:center; padding:13px 18px; min-height:46px; border:1px solid transparent; border-radius:12px; color:var(--muted); font-size:12px; font-weight:600; text-align:center; cursor:pointer; transition:background .18s,color .18s; }
+.segments input { position:absolute; opacity:0; width:1px; height:1px; }
+.segments label:hover { color:var(--p-700); background:var(--p-100); }
+.segments label:focus-within { outline:2px solid var(--p-600); outline-offset:1px; }
+.segments .segmentSelected,.segments .segmentSelected:hover { color:#fff; background:linear-gradient(135deg,var(--p-700),var(--p-600)); box-shadow:0 4px 10px #5b2a8c14; }
+.durationOptions label { min-width:130px; background:#fff; border-color:var(--line); }
+.durationOptions small { display:block; margin-top:5px; font-size:10px; opacity:.8; }
+.preference .preferenceHint { margin:10px 0 0; color:var(--muted); font-size:11px; line-height:1.8; }
+.interestOptions { display:flex; flex-wrap:wrap; gap:10px; padding:14px; border:1px solid var(--line); border-radius:14px; background:var(--p-50); }
+.interestOptions label { display:flex; align-items:center; gap:8px; padding:9px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; cursor:pointer; font-size:12px; }
+.interestOptions input { width:16px; height:16px; accent-color:var(--p-700); }
 .typeChoice { margin:0 0 3px; padding:0; border:0; }
 .typeChoice legend { padding:0; margin-bottom:11px; color:#443451; font-size:12px; font-weight:700; }
 .typeGrid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
