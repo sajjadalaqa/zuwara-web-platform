@@ -110,6 +110,9 @@
 .page summary { padding:12px 16px; cursor:pointer; color:var(--p-700); font-size:12px; font-weight:600; }
 .response { max-height:420px; overflow:auto; margin:0; white-space:pre-wrap; overflow-wrap:anywhere; font-size:11px; line-height:1.7; background:var(--p-50); color:#443451; padding:16px; border-top:1px solid var(--line); }
 .error { padding:13px 16px; border:1px solid #f5d5dc; border-radius:12px; background:#fff1f3; color:#a52d35; font-size:12px; line-height:1.7; }
+.error .errorDetails { margin-top:10px; border:0; border-top:1px solid #f5d5dc; border-radius:0; background:transparent; }
+.errorDetails summary { padding:8px 0 0; color:#995865; font-size:11px; }
+.errorDetails p { padding-top:6px; font-size:10px; overflow-wrap:anywhere; }
 .history { display:grid; gap:10px; }
 .history button { display:flex; align-items:center; gap:12px; width:100%; text-align:start; padding:15px; background:#fff; border:1px solid var(--line); border-radius:13px; color:var(--ink); cursor:pointer; font:inherit; font-size:12px; line-height:1.6; }
 .history button:hover { background:var(--p-50); border-color:#d6c0ed; }

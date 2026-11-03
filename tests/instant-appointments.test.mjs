@@ -6,6 +6,23 @@ import { createRequire } from 'node:module';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
+function errorModule() {
+  const source = fs.readFileSync(new URL('../src/lib/api/zuwara/instant-errors.ts', import.meta.url), 'utf8');
+  const { outputText } = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } });
+  const exports = {};
+  new Function('exports', outputText)(exports);
+  return exports;
+}
+
+test('availability errors explain the backend rejection without suggesting a confirmed booking or payment', () => {
+  const { instantErrorMessage } = errorModule();
+  assert.match(instantErrorMessage('NO_INSTANT_CONSULTANTS', 'en'), /No eligible consultant.*choose another consultant/);
+  assert.ok(!instantErrorMessage('NO_INSTANT_CONSULTANTS', 'en').includes('NO_INSTANT_CONSULTANTS'));
+  assert.match(instantErrorMessage('NO_INSTANT_CONSULTANTS', 'ar'), /لا يوجد استشاري/);
+  assert.match(instantErrorMessage('INSTANT_OPERATION_REVIEW', 'en'), /before making another payment/);
+  assert.match(instantErrorMessage('UNRECOGNIZED', 'en'), /contact support before paying again/);
+});
+
 function adapter() {
   const calls = [];
   const response = { success: true, data: { request_uuid: '12345678-1234-1234-1234-123456789abc', appointment_id: null, checkout: null, pricing_summary: null, can_pay: false, extra_backend_field: { retained: true } }, meta: { request_id: 'test' } };
@@ -81,6 +98,7 @@ function renderRequest(data, locale = 'en') {
   const exports = {};
   new Function('require', 'exports', outputText)(name => {
     if (name === './actions') return {};
+    if (name === '@/lib/api/zuwara/instant-errors') return errorModule();
     if (name === 'next/script') return { __esModule: true, default: () => null };
     if (name === '@/i18n/navigation') return { Link: ({ children, ...props }) => React.createElement('a', props, children) };
     if (name === './instant.module.css') return {};

@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import type { V2Envelope } from "@/lib/api/zuwara/v2";
 import type { InstantRequest, InstantSettings, InstantInput, InstantType, PaymentMethod, HistoryCard, Pricing, InstantCheckout } from "@/lib/api/zuwara/instant";
 import type { ZuwaraCategory } from "@/lib/api/zuwara/types";
+import { instantErrorMessage } from "@/lib/api/zuwara/instant-errors";
 import { statusAction, historyAction, previewAction, createAction, payAction, cancelAction, checkoutAction } from "./actions";
 import s from "./instant.module.css";
 const terminal = new Set(["accepted", "declined_all", "expired", "cancelled"]);
@@ -23,6 +24,7 @@ export default function InstantFlow({ locale, identity, settings, initial, histo
   const [patient, setPatient] = useState("");
   const [method, setMethod] = useState<PaymentMethod>("wallet"), [quote, setQuote] = useState<{ fingerprint: string; pricing: Pricing } | null>(null);
   const [error, setError] = useState(""), [busy, setBusy] = useState(false), [, startTransition] = useTransition(), [pending, setPending] = useState<Operation | null>(null);
+  const [errorReference, setErrorReference] = useState<{ code: string; requestId?: string } | null>(null);
   const [clock, setClock] = useState({ remaining: initial.data?.seconds_remaining ?? 0, received: 0 });
   const [seconds, setSeconds] = useState(initial.data?.seconds_remaining ?? 0);
   const [checkout, setCheckout] = useState<InstantCheckout | null>(initial.data?.checkout ?? null), [sessionId, setSessionId] = useState<string | null>(null);
@@ -44,11 +46,12 @@ export default function InstantFlow({ locale, identity, settings, initial, histo
     const remaining = row?.timer_expires_at ? Math.max(0, Math.min(row.seconds_remaining, (Date.parse(row.timer_expires_at) - Date.parse(row.server_time)) / 1000)) : 0;
     setClock({ remaining, received: performance.now() });
   }, [storage]);
+  const fail = useCallback((result: { code: string; requestId?: string }) => { setError(instantErrorMessage(result.code, locale)); setErrorReference(result); }, [locale]);
   const refresh = useCallback(async () => {
     const result = await statusAction(uuid);
     if (result.ok) apply(result.value);
-    else setError(result.code + (result.requestId ? " · " + result.requestId : ""));
-  }, [uuid, apply]);
+    else { setError(instantErrorMessage(result.code, locale)); setErrorReference(result); }
+  }, [uuid, apply, locale]);
   useEffect(() => {
     let disposed = false;
     const timer = setTimeout(async () => {
@@ -71,7 +74,7 @@ export default function InstantFlow({ locale, identity, settings, initial, histo
       }
     }, 0);
     return () => { disposed = true; clearTimeout(timer); };
-  }, [storage, initial, apply]);
+  }, [storage, initial, apply, fail]);
   useEffect(() => {
     const poll = () => {
       if (document.hidden || operation.current || polling.current) return;
@@ -89,10 +92,9 @@ export default function InstantFlow({ locale, identity, settings, initial, histo
   useEffect(() => { if (request?.timer_type && seconds === 0) startTransition(async () => { await refresh(); }); }, [seconds, request?.timer_type, refresh]);
   function run(work: () => Promise<void>) {
     if (operation.current) return;
-    operation.current = true; setBusy(true); setError("");
+    operation.current = true; setBusy(true); setError(""); setErrorReference(null);
     startTransition(async () => { try { await work(); } catch { setError(t("The outcome is unknown. Refresh the request before trying again.", "النتيجة غير مؤكدة. حدّث حالة الطلب قبل المحاولة مجدداً.")); } finally { operation.current = false; setBusy(false); } });
   }
-  function fail(result: { code: string; requestId?: string }) { setError(result.code + (result.requestId ? " · " + result.requestId : "")); }
   async function command(name: Operation["name"], retry?: Operation) {
     if (pending && !retry) return;
     const op = retry ?? { name, type, input, uuid, key: "instant-" + crypto.randomUUID() };
@@ -134,7 +136,7 @@ export default function InstantFlow({ locale, identity, settings, initial, histo
       <span className={s.heroSymbol} aria-hidden="true"><Zap size={54} strokeWidth={1.4} /></span>
     </header>
     <div className={s.pageHead}><div><h2>{t("Instant consultations", "الاستشارات الفورية")}</h2><p>{t("Choose your care. Review your price. We’ll guide you from there.", "اختر استشارتك وراجع السعر، وسنرشدك للخطوة التالية.")}</p></div><button className={s.refresh} disabled={busy} onClick={() => run(refresh)}><RefreshCw size={15} className={busy ? s.spinning : undefined} />{t("Refresh status", "تحديث الحالة")}</button></div>
-    {error && <p className={s.error} role="alert">{error}</p>}
+    {error && <div className={s.error} role="alert"><p>{error}</p>{errorReference && <details className={s.errorDetails}><summary>{t("Details for support", "تفاصيل للدعم")}</summary><p dir="ltr">{errorReference.code}{errorReference.requestId ? " · " + errorReference.requestId : ""}</p></details>}</div>}
     {pending && <section className={s.card}><p>{t("An earlier operation needs recovery. Check its status or retry the same operation. Contact support if review is required.", "تحتاج عملية سابقة إلى استعادة. تحقق من حالتها أو أعد العملية نفسها. تواصل مع الدعم إذا لزمت المراجعة.")}</p><div className={s.actions}><button disabled={busy} onClick={() => run(() => command(pending.name, pending))}>{t("Recover same operation", "استعادة العملية نفسها")}</button></div></section>}
     {request && <section className={s.card}>
       <div className={s.sectionHead}><span className={s.sectionIcon}>{request.request_status === "accepted" ? <CalendarCheck2 size={23} /> : <Clock3 size={23} />}</span><div><span className={s.overline}>{t("YOUR REQUEST", "طلبك")}</span><h2>{states[request.request_status] ?? request.request_status}</h2></div><span className={s.statusBadge} data-status={request.request_status}>{request.type === "private" ? t("Private", "خاص") : t("Public", "عام")}</span></div>
@@ -158,9 +160,9 @@ export default function InstantFlow({ locale, identity, settings, initial, histo
     </section>}
     {!request && settings.enabled && <section className={s.card}><div className={s.sectionHead}><span className={s.sectionIcon}><Zap size={23} /></span><div><h2>{t("New instant request", "طلب فوري جديد")}</h2><p>{t("A few details to find the right care for you.", "تفاصيل بسيطة تساعدنا في تقديم الرعاية المناسبة لك.")}</p></div><span className={s.stepBadge}>{t("Online care", "رعاية عن بُعد")}</span></div>
       <ol className={s.steps} aria-label={t("Booking steps", "خطوات الحجز")}><li className={s.currentStep}><b>1</b>{t("Consultation details", "تفاصيل الاستشارة")}</li><li className={quote?.fingerprint === fingerprint ? s.currentStep : undefined}><b>2</b>{t("Review price", "مراجعة السعر")}</li><li><b>3</b>{t("Send your request", "إرسال الطلب")}</li></ol>
-      <form onSubmit={event => { event.preventDefault(); run(async () => { const result = await previewAction(type, input); if (result.ok) setQuote({ fingerprint, pricing: result.value.data.pricing_summary }); else fail(result); }); }}>
+      <form onChange={() => { setError(""); setErrorReference(null); }} onSubmit={event => { event.preventDefault(); run(async () => { const result = await previewAction(type, input); if (result.ok) setQuote({ fingerprint, pricing: result.value.data.pricing_summary }); else { setQuote(null); fail(result); } }); }}>
       <fieldset disabled={busy || Boolean(pending)} className={s.form} style={{ border: 0, padding: 0 }}>
-        <fieldset className={`${s.typeChoice} ${s.wide}`}><legend>{t("How would you like to connect?", "كيف تود التواصل؟")}</legend><div className={s.typeGrid}>{(["public", "private"] as const).map(option => <label key={option} className={`${s.typeOption} ${type === option ? s.typeSelected : ""}`}><input type="radio" name="instant-type" value={option} checked={type === option} onChange={() => setType(option)} /><span className={s.typeIcon}>{option === "public" ? <Users size={22} /> : <UserRound size={22} />}</span><span><strong>{option === "public" ? t("Find an available consultant", "ابحث عن استشاري متاح") : t("Choose your consultant", "اختر استشاريك")}</strong><small>{option === "public" ? t("Pay first, then we’ll find a match.", "ادفع أولاً، ثم نبحث لك عن استشاري.") : t("Send a request. Pay after acceptance.", "أرسل الطلب وادفع بعد الموافقة.")}</small></span><span className={s.radioMark} aria-hidden="true" /></label>)}</div></fieldset>
+        <fieldset className={`${s.typeChoice} ${s.wide}`}><legend>{t("Choose your instant consultation type", "اختر نوع الاستشارة الفورية")}</legend><div className={s.typeGrid}>{(["public", "private"] as const).map(option => <label key={option} className={`${s.typeOption} ${type === option ? s.typeSelected : ""}`}><input type="radio" name="instant-type" value={option} checked={type === option} onChange={() => setType(option)} /><span className={s.typeIcon}>{option === "public" ? <Users size={22} /> : <UserRound size={22} />}</span><span><strong>{option === "public" ? t("Public instant consultation", "استشارة فورية عامة") : t("Private instant consultation", "استشارة فورية خاصة")}</strong><small>{option === "public" ? t("We match you with an eligible consultant. Payment is required before matching.", "نبحث لك عن استشاري مؤهل. يتم الدفع قبل البحث عن استشاري.") : t("You select one consultant. Send a request and pay only after they accept.", "اختر استشارياً محدداً. أرسل الطلب وادفع فقط بعد موافقته.")}</small></span><span className={s.radioMark} aria-hidden="true" /></label>)}</div></fieldset>
         <label>{t("Patient", "المريض")}<select value={patient} onChange={event => setPatient(event.target.value)}><option value="">{t("Myself", "نفسي")}</option>{dependents.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label>
         {type === "private" && <label>{t("Consultant", "الاستشاري")}<select required value={doctor} onChange={event => setDoctor(event.target.value)}><option value="">{t("Select consultant", "اختر الاستشاري")}</option>{consultants.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label>}
         <label>{t("Duration", "المدة")}<select required value={duration} onChange={event => setDuration(event.target.value)}>{settings.durations.map(row => <option key={row.id} value={row.id}>{row.minutes} {t("minutes", "دقيقة")} · {(row.service_price_halalas / 100).toFixed(2)} {row.currency}</option>)}</select></label>
