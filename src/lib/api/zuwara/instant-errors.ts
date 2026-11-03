@@ -1,5 +1,5 @@
 const messages: Record<string, [string, string]> = {
-  NO_INSTANT_CONSULTANTS: ["No eligible consultant is available for this request right now. Try again later or choose another consultant.", "لا يوجد استشاري مؤهل متاح لهذا الطلب حالياً. حاول لاحقاً أو اختر استشارياً آخر."],
+  NO_INSTANT_CONSULTANTS: ["No consultant is available for this instant request right now. Try again later or choose another consultant.", "لا يوجد استشاري متاح لهذا الطلب الفوري حالياً. حاول لاحقاً أو اختر استشارياً آخر."],
   INSTANT_UNAVAILABLE: ["This instant consultation is currently unavailable. Choose another consultant or try again later.", "هذه الاستشارة الفورية غير متاحة حالياً. اختر استشارياً آخر أو حاول لاحقاً."],
   INSTANT_V2_DISABLED: ["Instant consultations are temporarily unavailable. Please try again later.", "الاستشارات الفورية غير متاحة مؤقتاً. يرجى المحاولة لاحقاً."],
   ACTIVE_INSTANT_REQUEST: ["You already have an active instant request. Refresh status to continue with that request.", "لديك طلب استشارة فورية نشط. حدّث الحالة لمتابعة الطلب الحالي."],
@@ -15,7 +15,13 @@ const messages: Record<string, [string, string]> = {
   COUPON_UNAVAILABLE: ["This coupon is not available for this consultation. Review your selection before continuing.", "هذه القسيمة غير متاحة لهذه الاستشارة. راجع اختيارك قبل المتابعة."],
 };
 
-export function instantErrorMessage(code: string, locale: string): string {
+export function instantErrorMessage(code: string, locale: string, type?: "public" | "private"): string {
+  if (["NO_INSTANT_CONSULTANTS", "INSTANT_UNAVAILABLE"].includes(code) && type) {
+    const availability: [string, string] = type === "private"
+      ? ["Your selected consultant cannot take this private instant request right now. Choose another consultant or try again later.", "الاستشاري الذي اخترته لا يستطيع استقبال طلبك الفوري الخاص حالياً. اختر استشارياً آخر أو حاول لاحقاً."]
+      : ["No consultant is available for your public instant request with these selections right now. Try a different specialty or try again later.", "لا يوجد استشاري متاح لطلبك الفوري العام وفق هذه الخيارات حالياً. جرّب تخصصاً آخر أو حاول لاحقاً."];
+    return availability[locale === "ar" ? 1 : 0];
+  }
   const message = messages[code] ?? ["We couldn’t complete this step. Refresh the request to check its status. If a payment may be in progress, contact support before paying again.", "تعذر إكمال هذه الخطوة. حدّث الطلب للتحقق من حالته. إذا كانت هناك دفعة قيد المعالجة، تواصل مع الدعم قبل الدفع مجدداً."];
   return message[locale === "ar" ? 1 : 0];
 }

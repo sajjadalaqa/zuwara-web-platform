@@ -16,11 +16,16 @@ function errorModule() {
 
 test('availability errors explain the backend rejection without suggesting a confirmed booking or payment', () => {
   const { instantErrorMessage } = errorModule();
-  assert.match(instantErrorMessage('NO_INSTANT_CONSULTANTS', 'en'), /No eligible consultant.*choose another consultant/);
+  assert.match(instantErrorMessage('NO_INSTANT_CONSULTANTS', 'en'), /No consultant.*choose another consultant/);
   assert.ok(!instantErrorMessage('NO_INSTANT_CONSULTANTS', 'en').includes('NO_INSTANT_CONSULTANTS'));
   assert.match(instantErrorMessage('NO_INSTANT_CONSULTANTS', 'ar'), /لا يوجد استشاري/);
   assert.match(instantErrorMessage('INSTANT_OPERATION_REVIEW', 'en'), /before making another payment/);
   assert.match(instantErrorMessage('UNRECOGNIZED', 'en'), /contact support before paying again/);
+  assert.match(instantErrorMessage('NO_INSTANT_CONSULTANTS', 'en', 'private'), /Your selected consultant.*private instant request.*Choose another consultant/);
+  assert.match(instantErrorMessage('NO_INSTANT_CONSULTANTS', 'en', 'public'), /public instant request.*different specialty/);
+  assert.match(instantErrorMessage('NO_INSTANT_CONSULTANTS', 'ar', 'private'), /الاستشاري الذي اخترته/);
+  assert.match(instantErrorMessage('NO_INSTANT_CONSULTANTS', 'ar', 'public'), /طلبك الفوري العام/);
+  assert.ok(!instantErrorMessage('NO_INSTANT_CONSULTANTS', 'en', 'private').includes('disabled'));
 });
 
 function adapter() {

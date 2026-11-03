@@ -46,7 +46,7 @@ export default function InstantFlow({ locale, identity, settings, initial, histo
     const remaining = row?.timer_expires_at ? Math.max(0, Math.min(row.seconds_remaining, (Date.parse(row.timer_expires_at) - Date.parse(row.server_time)) / 1000)) : 0;
     setClock({ remaining, received: performance.now() });
   }, [storage]);
-  const fail = useCallback((result: { code: string; requestId?: string }) => { setError(instantErrorMessage(result.code, locale)); setErrorReference(result); }, [locale]);
+  const fail = useCallback((result: { code: string; requestId?: string }, requestType?: InstantType) => { setError(instantErrorMessage(result.code, locale, requestType)); setErrorReference(result); }, [locale]);
   const refresh = useCallback(async () => {
     const result = await statusAction(uuid);
     if (result.ok) apply(result.value);
@@ -101,7 +101,7 @@ export default function InstantFlow({ locale, identity, settings, initial, histo
     sessionStorage.setItem(storage, JSON.stringify(op)); setPending(op);
     const result = op.name === "create" ? await createAction(op.type, op.input, op.key) : op.name === "pay" ? await payAction(op.uuid!, op.input, op.key) : await cancelAction(op.uuid!, op.key);
     if (!result.ok) {
-      fail(result); await refresh();
+      fail(result, op.type); await refresh();
       // Only definitive rejections permit a new operation. Unknown financial outcomes retain the original key.
       if ([400, 403, 404, 422].includes(result.status ?? 0) || ["INSTANT_UNAVAILABLE", "NO_INSTANT_CONSULTANTS", "INSUFFICIENT_WALLET", "INSTANT_ATTEMPT_LIMIT", "INSTANT_V2_DISABLED", "COUPON_UNAVAILABLE", "CONTRACT_BOOKING_REQUIRED"].includes(result.code)) { sessionStorage.removeItem(storage); setPending(null); }
       return;
@@ -160,7 +160,7 @@ export default function InstantFlow({ locale, identity, settings, initial, histo
     </section>}
     {!request && settings.enabled && <section className={s.card}><div className={s.sectionHead}><span className={s.sectionIcon}><Zap size={23} /></span><div><h2>{t("New instant request", "طلب فوري جديد")}</h2><p>{t("A few details to find the right care for you.", "تفاصيل بسيطة تساعدنا في تقديم الرعاية المناسبة لك.")}</p></div><span className={s.stepBadge}>{t("Online care", "رعاية عن بُعد")}</span></div>
       <ol className={s.steps} aria-label={t("Booking steps", "خطوات الحجز")}><li className={s.currentStep}><b>1</b>{t("Consultation details", "تفاصيل الاستشارة")}</li><li className={quote?.fingerprint === fingerprint ? s.currentStep : undefined}><b>2</b>{t("Review price", "مراجعة السعر")}</li><li><b>3</b>{t("Send your request", "إرسال الطلب")}</li></ol>
-      <form onChange={() => { setError(""); setErrorReference(null); }} onSubmit={event => { event.preventDefault(); run(async () => { const result = await previewAction(type, input); if (result.ok) setQuote({ fingerprint, pricing: result.value.data.pricing_summary }); else { setQuote(null); fail(result); } }); }}>
+      <form onChange={() => { setError(""); setErrorReference(null); }} onSubmit={event => { event.preventDefault(); run(async () => { const result = await previewAction(type, input); if (result.ok) setQuote({ fingerprint, pricing: result.value.data.pricing_summary }); else { setQuote(null); fail(result, type); } }); }}>
       <fieldset disabled={busy || Boolean(pending)} className={s.form} style={{ border: 0, padding: 0 }}>
         <fieldset className={`${s.typeChoice} ${s.wide}`}><legend>{t("Choose your instant consultation type", "اختر نوع الاستشارة الفورية")}</legend><div className={s.typeGrid}>{(["public", "private"] as const).map(option => <label key={option} className={`${s.typeOption} ${type === option ? s.typeSelected : ""}`}><input type="radio" name="instant-type" value={option} checked={type === option} onChange={() => setType(option)} /><span className={s.typeIcon}>{option === "public" ? <Users size={22} /> : <UserRound size={22} />}</span><span><strong>{option === "public" ? t("Public instant consultation", "استشارة فورية عامة") : t("Private instant consultation", "استشارة فورية خاصة")}</strong><small>{option === "public" ? t("We match you with an eligible consultant. Payment is required before matching.", "نبحث لك عن استشاري مؤهل. يتم الدفع قبل البحث عن استشاري.") : t("You select one consultant. Send a request and pay only after they accept.", "اختر استشارياً محدداً. أرسل الطلب وادفع فقط بعد موافقته.")}</small></span><span className={s.radioMark} aria-hidden="true" /></label>)}</div></fieldset>
         <label>{t("Patient", "المريض")}<select value={patient} onChange={event => setPatient(event.target.value)}><option value="">{t("Myself", "نفسي")}</option>{dependents.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label>
