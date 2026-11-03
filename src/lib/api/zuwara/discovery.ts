@@ -25,7 +25,7 @@ export function doctorView(row: V2Doctor): ZuwaraDoctor {
   if (!Number.isSafeInteger(row.id) || row.id < 1 || !row.name || !Array.isArray(row.duration_options)) throw new Error("Invalid consultant.");
   return { id: row.id, doctorNumber: row.doctor_number, name: row.name, nameAr: row.name_ar, imageUrl: row.photo ?? row.image_url,
     designation: row.designation, designationAr: row.designation_ar, experienceYears: row.experience_years, rating: row.rating,
-    reviewsCount: row.rating_count ?? row.reviews_count, acceptsInstant: row.accepts_instant?.public,
+    reviewsCount: row.rating_count ?? row.reviews_count, acceptsInstant: row.accepts_instant?.public, acceptsPrivateInstant: row.accepts_instant?.private,
     happyClients: row.patients_served, startingPrice: row.starting_price, currency: row.currency,
     categoryId: row.category?.id ?? null, categoryTitle: row.category?.title ?? null, categoryTitleAr: row.category?.title_ar ?? null,
     classificationTitle: row.classification?.title ?? null, classificationTitleAr: row.classification?.title_ar ?? null,

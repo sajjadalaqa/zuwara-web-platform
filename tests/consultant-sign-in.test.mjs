@@ -35,6 +35,33 @@ test('return destinations reject external URLs, other flows and injected query p
   }
 });
 
+test('instant booking context survives login, registration and OTP without changing normal sign-in', () => {
+  const instantSearch = search + '&bookingFlow=instant';
+  for (const path of ['/login-page', '/register-page', '/verify-otp-page']) {
+    assert.equal(consultantAuthHref(path, instantSearch), path + instantSearch);
+    assert.equal(consultantAuthHref(path, search), path + search);
+    assert.equal(consultantAuthHref(path, '?bookingFlow=instant'), path);
+  }
+  assert.equal(consultantSignInDestination(instantSearch), target + '?bookingSignIn=success&bookingFlow=instant');
+  assert.equal(consultantSignInDestination(search + '&bookingFlow=https://example.com'), target + '?bookingSignIn=success');
+  assert.equal(consultantSignInDestination('?bookingFlow=instant'), '/dashboard');
+  assert.equal(consultantSignInDestination('?consultantReturn=https://example.com&bookingFlow=instant'), '/dashboard');
+});
+
+test('instant sign-in popup continues with the selected consultant and retains the dashboard choice', () => {
+  for (const locale of ['en', 'ar']) {
+    const Popup = load('src/components/healthcare/BookingSignInSuccess.tsx', {
+      'next-intl': { useLocale: () => locale },
+      '@/i18n/navigation': { Link: ({ children, ...props }) => React.createElement('a', props, children) },
+      './booking-sign-in-success.module.css': {},
+    }).default;
+    const html = renderToStaticMarkup(React.createElement(Popup, { bookingHref: '/dashboard/instant?doctor=126' }));
+    assert.ok(html.includes('href="/dashboard/instant?doctor=126"'));
+    assert.ok(html.includes('href="/dashboard"'));
+    assert.ok(!html.includes(target + '/book'));
+  }
+});
+
 test('success popup offers booking, dashboard and dismissal actions in both languages', () => {
   for (const locale of ['en', 'ar']) {
     const Popup = load('src/components/healthcare/BookingSignInSuccess.tsx', {

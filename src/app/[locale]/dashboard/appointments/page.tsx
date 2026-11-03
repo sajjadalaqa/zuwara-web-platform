@@ -60,6 +60,8 @@ export default async function AppointmentsPage({
         </Link>
       </header>
 
+      <Link href={`${prefix}/dashboard/instant`} className={s.bookBtn}>{isAr ? "الاستشارات الفورية" : "Instant consultations"}</Link>
+
       <Toolbar
         locale={locale}
         status={status}

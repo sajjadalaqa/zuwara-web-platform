@@ -32,6 +32,7 @@ export async function zuwaraV2<T>(path: string, options: {
     headers: {
       Accept: "application/json", ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
       "X-Request-ID": randomUUID(), lang: options.locale === "ar" ? "ar" : "en",
+      ...(path.startsWith("/instant-appointments") ? { "Accept-Language": options.locale === "ar" ? "ar" : "en" } : {}),
       ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
       ...(options.idempotencyKey ? { "Idempotency-Key": options.idempotencyKey } : {}),
     },

@@ -6,10 +6,12 @@ export function consultantReturn(search: string): string | null {
 
 export function consultantAuthHref(path: string, search: string): string {
   const target = consultantReturn(search);
-  return target ? `${path}?consultantReturn=${encodeURIComponent(target)}` : path;
+  const instant = new URLSearchParams(search).get("bookingFlow") === "instant";
+  return target ? `${path}?consultantReturn=${encodeURIComponent(target)}${instant ? "&bookingFlow=instant" : ""}` : path;
 }
 
 export function consultantSignInDestination(search: string): string {
   const target = consultantReturn(search);
-  return target ? `${target}?bookingSignIn=success` : "/dashboard";
+  const instant = new URLSearchParams(search).get("bookingFlow") === "instant";
+  return target ? `${target}?bookingSignIn=success${instant ? "&bookingFlow=instant" : ""}` : "/dashboard";
 }

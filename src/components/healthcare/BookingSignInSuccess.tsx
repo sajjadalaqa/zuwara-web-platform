@@ -12,6 +12,7 @@ export default function BookingSignInSuccess({ bookingHref }: { bookingHref: str
     dialog.current?.showModal();
     const url = new URL(window.location.href);
     url.searchParams.delete("bookingSignIn");
+    url.searchParams.delete("bookingFlow");
     window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
   }, []);
   return <dialog ref={dialog} className={s.dialog} aria-labelledby="booking-sign-in-title" dir={ar ? "rtl" : "ltr"}>

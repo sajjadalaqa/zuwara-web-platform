@@ -1,7 +1,8 @@
 import { healthcareText } from "@/i18n/healthcare-text";
 import { useLocale } from "next-intl";
 import { getUiText } from "@/i18n/server-ui-text";
-import { UserRound, Stethoscope, MapPin, GraduationCap, BadgeCheck } from "lucide-react";
+import { UserRound, Stethoscope, MapPin, GraduationCap, BadgeCheck, Zap, ArrowUpRight } from "lucide-react";
+import bookingStyles from "./profile-booking.module.css";
 import SaveProvider from "@/components/SaveProvider";
 import BookingSignInSuccess from "@/components/healthcare/BookingSignInSuccess";
 import { readSession } from "@/lib/auth/session";
@@ -64,11 +65,16 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
   const durations = (profile.durationOptions ?? []).filter((item) => item.enabled);
   const isAr = (await getLocale()) === "ar";
   const bookingHref = canonical + "/book";
-  const showSignInSuccess = first(query.bookingSignIn) === "success" && !!(await readSession());
+  const session = await readSession();
+  const signedIn = !!session && Date.parse(session.session.access_expires_at) > Date.now() + 15_000;
+  const instantBookingHref = `/dashboard/instant?doctor=${profile.id}`;
+  const instantRequestHref = signedIn ? instantBookingHref : `/login-page?consultantReturn=${encodeURIComponent(canonical)}&bookingFlow=instant`;
+  const showSignInSuccess = first(query.bookingSignIn) === "success" && signedIn;
+  const continueBookingHref = first(query.bookingFlow) === "instant" ? instantBookingHref : bookingHref;
   const about = isAr ? (profile.aboutAr ?? profile.educationalJourneyAr ?? profile.about ?? profile.educationalJourney) : (profile.about ?? profile.educationalJourney);
 
   return <>
-    {showSignInSuccess && <BookingSignInSuccess bookingHref={bookingHref}/>}
+    {showSignInSuccess && <BookingSignInSuccess bookingHref={continueBookingHref}/>}
     <JsonLd data={{
       "@context": "https://schema.org",
       "@type": "Physician",
@@ -104,6 +110,15 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
         <h2>{isAr ? "\u062e\u0637\u0648\u062a\u0643 \u0627\u0644\u0642\u0627\u062f\u0645\u0629 \u0644\u0644\u0631\u0639\u0627\u064a\u0629." : "Ready for your next step?"}</h2>
         <p style={{fontSize:14,lineHeight:1.8,color:"var(--text-secondary)",marginBottom:24}}>{isAr ? "\u0627\u062e\u062a\u0631 \u0627\u0644\u062a\u0627\u0631\u064a\u062e \u0648\u0627\u0644\u0648\u0642\u062a \u0648\u0645\u062f\u0629 \u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u0629 \u0641\u064a \u0635\u0641\u062d\u0629 \u0627\u0644\u062d\u062c\u0632." : "Choose your date, time, and consultation duration together on the booking page."}</p>
         <Link href={bookingHref} className="button button-primary" style={{width:"100%"}}>{isAr ? "\u0627\u062d\u062c\u0632 \u0645\u0648\u0639\u062f\u0643" : uiText("Book an appointment")}<Icon name="arrow" size={17}/></Link>
+        {profile.acceptsPrivateInstant && <>
+          <div className={bookingStyles.divider}><span>{isAr ? "أو اختر استشارة فورية" : "Or connect with instant care"}</span></div>
+          <section className={bookingStyles.instant} aria-labelledby="private-instant-heading">
+            <div className={bookingStyles.heading}><span className={bookingStyles.icon}><Zap size={20} strokeWidth={1.8} /></span><div><span className={bookingStyles.eyebrow}>{isAr ? "استشارة فورية خاصة" : "PRIVATE INSTANT CARE"}</span><h3 id="private-instant-heading">{isAr ? "تفضّل التواصل الآن؟" : "Prefer to connect now?"}</h3></div></div>
+            <p className={bookingStyles.description}>{isAr ? "أرسل طلباً لهذا الاستشاري. يمكنك الدفع بعد موافقته على طلبك." : "Send this consultant a private request. You’ll only pay after they accept."}</p>
+            <Link href={instantRequestHref} className={bookingStyles.action}><span>{isAr ? "طلب استشارة فورية" : "Request instant consultation"}</span><ArrowUpRight size={17} /></Link>
+            <span className={bookingStyles.note}>{isAr ? "عبر الإنترنت · حسب توفر الاستشاري" : "Online consultation · Subject to availability"}</span>
+          </section>
+        </>}
         <p className="schedule-disclaimer"><Icon name="shield" size={17}/>{isAr ? "\u064a\u062a\u0645 \u062a\u0623\u0643\u064a\u062f \u0627\u0644\u062a\u0648\u0641\u0631 \u0648\u0627\u0644\u0633\u0639\u0631 \u0642\u0628\u0644 \u0625\u062a\u0645\u0627\u0645 \u0627\u0644\u062d\u062c\u0632." : "Availability and final pricing are checked before your appointment is confirmed."}</p>
       </aside>
     </div></section>

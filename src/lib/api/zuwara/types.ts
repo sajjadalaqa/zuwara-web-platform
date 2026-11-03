@@ -18,6 +18,7 @@ export type ZuwaraDoctor = {
   happyClients: number;
   reviewsCount?: number;
   acceptsInstant?: boolean;
+  acceptsPrivateInstant?: boolean;
   startingPrice: string;
   currency: string;
   categoryId: number | null;
