@@ -108,7 +108,7 @@ test('instant MyFatoorah initiation requires explicit web acceptance activation'
   finally { if (before !== undefined) process.env.INSTANT_MYFATOORAH_WEB_ENABLED = before; }
 });
 
-function renderRequest(data, locale = 'en') {
+function renderRequest(data, locale = 'en', props = {}) {
   const requireDependency = createRequire(import.meta.url);
   const source = fs.readFileSync(new URL('../src/app/[locale]/dashboard/instant/InstantFlow.tsx', import.meta.url), 'utf8');
   const { outputText } = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true } });
@@ -122,7 +122,7 @@ function renderRequest(data, locale = 'en') {
     if (name === '@/app/[locale]/healthcare/doctors/[slug]/book/consultation-booking.module.css') return {};
     return requireDependency(name);
   }, exports);
-  return renderToStaticMarkup(React.createElement(exports.default, { locale, identity: 'patient', settings: { enabled: true, durations: [] }, initial: { success: true, data }, history: { success: true, data: [] }, categories: [], consultants: [], dependents: [], selectedDoctor: '', cardEnabled: false }));
+  return renderToStaticMarkup(React.createElement(exports.default, { locale, identity: 'patient', settings: { enabled: true, durations: [] }, initial: { success: true, data }, history: { success: true, data: [] }, categories: [], consultants: [], dependents: [], selectedDoctor: '', cardEnabled: false, ...props }));
 }
 test('only an accepted request with an appointment ID exposes the appointment screen', () => {
   for (const locale of ['en', 'ar']) {
@@ -130,7 +130,8 @@ test('only an accepted request with an appointment ID exposes the appointment sc
     const pending = renderRequest(row, locale);
     assert.ok(!pending.includes('href="/dashboard/appointments/'));
     assert.ok(pending.includes(locale === 'ar' ? 'دفع الطلب المقبول' : 'Pay for accepted request'));
-    assert.ok(pending.includes(locale === 'ar' ? 'استجابة الطلب الكاملة' : 'Full request response'));
+    assert.ok(!pending.includes('<pre'));
+    assert.ok(!pending.includes('Full request response'));
     const accepted = renderRequest({ ...row, request_status: 'accepted', appointment_id: 42, can_pay: false }, locale);
     assert.ok(accepted.includes('href="/dashboard/appointments/42"'));
   }
@@ -144,6 +145,15 @@ test('public form offers gender, category and duration preferences without inven
   assert.ok(html.includes('Consultation duration'));
   assert.ok(html.includes('Interest options are currently unavailable'));
   assert.ok(!html.includes('Pay and request a consultant'));
+});
+
+test('public interests render real English/Arabic options and distinguish empty results from a failed lookup', () => {
+  const initialInterests = [{ id: 17, title: 'Nutrition interest', title_ar: 'اهتمام بالتغذية', interest_code: 'NUT-1' }];
+  assert.ok(renderRequest(null, 'en', { initialInterests }).includes('Nutrition interest'));
+  assert.ok(renderRequest(null, 'ar', { initialInterests }).includes('اهتمام بالتغذية'));
+  assert.ok(renderRequest(null, 'en', { initialInterests }).includes('Search interests'));
+  assert.ok(renderRequest(null, 'en', { initialInterests: [] }).includes('No interests are listed for this category yet'));
+  assert.ok(renderRequest(null, 'en', { initialInterests: null }).includes('Retry loading interests'));
 });
 test('existing and uncertain checkouts cannot expose a new private payment or a payment resume action', () => {
   for (const status of ['creating', 'verifying', 'review_required', 'unknown']) {

@@ -14,7 +14,7 @@ export type InstantRequest = {
   timer_type: "doctor_response" | "payment" | null; timer_expires_at: string | null; timer_duration_minutes: number | null; timer_duration_seconds: number | null;
   seconds_remaining: number; server_time: string; replayed?: boolean; [key: string]: unknown;
 };
-export type InstantSettings = { enabled: boolean; durations: { id: number; minutes: number; service_price_halalas: number; currency: string }[]; doctor_response_minutes: number; private_payment_minutes: number; max_private_attempts: number; private_retry_window_hours: number; interests?: { id: number; title: string; title_ar?: string | null }[] };
+export type InstantSettings = { enabled: boolean; durations: { id: number; minutes: number; service_price_halalas: number; currency: string }[]; doctor_response_minutes: number; private_payment_minutes: number; max_private_attempts: number; private_retry_window_hours: number };
 export type HistoryCard = Pick<InstantRequest, "request_uuid" | "type" | "request_status" | "paid" | "appointment_id" | "duration_minutes"> & { created_at: string };
 export type InstantInput = { duration_id: number; consultation_type: "online"; communication_type?: "video" | "audio" | "chat"; doctor_id?: number; patient_id?: number; category_id?: number; gender_preference?: "male" | "female" | "both"; interests?: number[]; coupon_id?: number; coupon_code?: string; problem?: string; payment_method?: PaymentMethod; wallet_recharge_id?: number };
 const base = "/instant-appointments";
