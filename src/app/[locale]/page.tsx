@@ -13,6 +13,7 @@ import { getZuwaraHomeData } from "@/lib/api/zuwara/home";
 import { doctorSlug } from "@/lib/api/zuwara/slugs";
 import { APP_STORE_URL, GOOGLE_PLAY_URL } from "@/data/site";
 import { ContactSection } from "@/components/ContactSection";
+import AppDownloadCard from "@/components/AppDownloadCard";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
 import { TestimonialsSlider } from "./testimonials-slider";
 import j from "./healthcare-steps.module.css";
@@ -103,6 +104,7 @@ export default async function Home({ params }: Props) {
       />
 
       <HeroSlider />
+      <AppDownloadCard locale={locale} />
       <StatsCards />
       <AboutSection />
       <ServicesSection />
