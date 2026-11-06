@@ -35,6 +35,12 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      {
+        source: "/",
+        destination: "/ar",
+        permanent: false,
+        missing: [{ type: "cookie", key: "NEXT_LOCALE", value: "(en|ar)" }],
+      },
       { source: "/privacy", destination: "/privacy-policy", permanent: true },
       {
         source: "/ar/privacy",
