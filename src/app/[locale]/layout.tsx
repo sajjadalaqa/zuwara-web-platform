@@ -10,6 +10,7 @@ import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_INDEXABLE, SITE_URL } from "@/data/site";
 import SiteChrome from "./SiteChrome";
+import AppDownloadCard from "@/components/AppDownloadCard";
 import LocaleDocument from "./LocaleDocument";
 
 export function generateStaticParams() {
@@ -79,7 +80,7 @@ export default async function LocaleLayout({
           <a className="skip-link" href="#main-content">{uiText("Skip to content")}</a>
           <SiteChrome><Header signedIn={signedIn} sessionExpiresAt={sessionExpiresAt} /></SiteChrome>
 <main id="main-content">{children}</main>
-<SiteChrome><Footer /></SiteChrome>
+<SiteChrome><Footer /><AppDownloadCard locale={locale} /></SiteChrome>
     </NextIntlClientProvider>
   );
 }

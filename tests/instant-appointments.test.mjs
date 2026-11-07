@@ -115,6 +115,7 @@ function renderRequest(data, locale = 'en', props = {}) {
   const exports = {};
   new Function('require', 'exports', outputText)(name => {
     if (name === './actions') return {};
+    if (name === './ConsultantSelect') return { __esModule: true, default: () => null };
     if (name === '@/lib/api/zuwara/instant-errors') return errorModule();
     if (name === 'next/script') return { __esModule: true, default: () => null };
     if (name === '@/i18n/navigation') return { Link: ({ children, ...props }) => React.createElement('a', props, children) };

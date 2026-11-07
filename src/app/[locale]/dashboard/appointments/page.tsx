@@ -1,6 +1,6 @@
 import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
-import { CalendarPlus, CalendarX2, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarPlus, CalendarX2, ChevronLeft, ChevronRight, Zap } from "lucide-react";
 import AppointmentCard from "./AppointmentCard";
 import Toolbar from "./Toolbar";
 import { copy } from "./copy";
@@ -54,13 +54,17 @@ export default async function AppointmentsPage({
           <h2>{t.title}</h2>
           <p>{t.subtitle}</p>
         </div>
-        <Link href={`${prefix}/healthcare/doctors`} className={s.bookBtn}>
-          <CalendarPlus size={17} />
-          {t.book}
-        </Link>
+        <div className={s.headerActions}>
+          <Link href={`${prefix}/healthcare/doctors`} className={s.bookBtn}>
+            <CalendarPlus size={17} />
+            {t.book}
+          </Link>
+          <Link href={`${prefix}/dashboard/instant`} className={s.bookBtn}>
+            <Zap size={17} />
+            {isAr ? "الاستشارات الفورية" : "Instant consultations"}
+          </Link>
+        </div>
       </header>
-
-      <Link href={`${prefix}/dashboard/instant`} className={s.bookBtn}>{isAr ? "الاستشارات الفورية" : "Instant consultations"}</Link>
 
       <Toolbar
         locale={locale}

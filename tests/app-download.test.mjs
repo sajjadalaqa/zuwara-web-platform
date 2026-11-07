@@ -32,7 +32,7 @@ test('desktop or unknown devices can choose their store on the localized downloa
   const response = route.GET(new Request('https://zuwara.net/api/app-download?lang=ar&redirect=https://example.com'));
   assert.equal(response.headers.get('Location'), '/ar/download');
 });
-test('homepage card offers both store links and a minimize control in both languages before QR hydration', () => {
+test('app download card offers both store links and a minimize control in both languages before QR hydration', () => {
   for (const locale of ['en', 'ar']) {
     const Card = load('src/components/AppDownloadCard.tsx', {
       '@/data/site': stores,
@@ -44,5 +44,19 @@ test('homepage card offers both store links and a minimize control in both langu
     assert.ok(html.includes(stores.GOOGLE_PLAY_URL.replaceAll('&', '&amp;')));
     assert.ok(html.includes(locale === 'ar' ? 'تصغير بطاقة تحميل التطبيق' : 'Minimize app download card'));
     assert.ok(html.includes(`dir="${locale === 'ar' ? 'rtl' : 'ltr'}"`));
+  }
+});
+
+test('shared website chrome shows the QR card on public pages and hides it on all dashboard routes', () => {
+  const Card = load('src/components/AppDownloadCard.tsx', {
+    '@/data/site': stores,
+    'next/image': { __esModule: true, default: () => null },
+    './AppDownloadCard.module.css': {},
+  }).default;
+  for (const pathname of ['/', '/ar', '/about', '/ar/healthcare/doctors/test-65', '/en/services', '/login-page', '/ar/download', '/dashboard', '/dashboard/instant', '/ar/dashboard', '/en/dashboard/wallet', '/ar/dashboard/appointments/5/chat']) {
+    const Chrome = load('src/app/[locale]/SiteChrome.tsx', { 'next/navigation': { usePathname: () => pathname } }).default;
+    const html = renderToStaticMarkup(React.createElement(Chrome, null, React.createElement(Card, { locale: pathname.startsWith('/ar') ? 'ar' : 'en' })));
+    const dashboard = pathname.split('/').includes('dashboard');
+    assert.equal(html.includes('home-app-download'), !dashboard, pathname);
   }
 });

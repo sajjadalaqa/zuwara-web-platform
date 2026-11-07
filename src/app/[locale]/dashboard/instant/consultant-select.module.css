@@ -1,0 +1,19 @@
+.field { position:relative; display:grid; align-content:start; gap:8px; min-width:0; }
+.field > label { color:#443451; font-size:12px; font-weight:700; }
+.control { display:flex; align-items:center; min-height:46px; border:1px solid #e1d6ec; border-radius:11px; background:#fff; transition:border-color .18s,box-shadow .18s; }
+.control:focus-within { border-color:#6d35a6; box-shadow:0 0 0 3px #6d35a612; }
+.control[data-open="true"] { background:#f8f4fd; border-color:#6d35a6; }
+.searchIcon { flex:0 0 16px; margin-inline-start:13px; color:#9d82af; }
+.control .input { width:100%; min-width:0; padding:12px 10px; border:0; outline:0; border-radius:11px; background:transparent; color:#17102a; font:inherit; font-size:13px; font-weight:400; }
+.input::placeholder { color:#a08aae; }.input:disabled { opacity:.6; }
+.control .toggle { display:grid; place-items:center; flex:0 0 35px; align-self:stretch; padding:0; border:0; border-radius:0 10px 10px 0; background:transparent; color:#6d35a6; cursor:pointer; }
+.toggle svg { transition:transform .18s; }.control[data-open="true"] .toggle svg { transform:rotate(180deg); }
+.menu { position:absolute; z-index:45; top:calc(100% + 7px); inset-inline:0; overflow:hidden; padding:6px; border:1px solid #e0d0ee; border-radius:14px; background:#fff; box-shadow:0 12px 36px -8px #3b14662b,0 3px 10px #3b14660a; }
+.hint { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 9px 11px; color:#9a82aa; font-size:10px; border-bottom:1px solid #f0e8f7; }
+.hint span { padding:2px 6px; border-radius:5px; background:#f3ecf9; color:#805199; font-variant-numeric:tabular-nums; }
+.options { max-height:240px; overflow-y:auto; margin:4px 0 0; padding:0; list-style:none; scrollbar-width:thin; scrollbar-color:#d6c0ed transparent; }
+.options li { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:41px; padding:10px 12px; border-radius:8px; color:#443451; font-size:13px; line-height:1.6; cursor:pointer; overflow-wrap:anywhere; }
+.options li[data-active="true"] { background:#f8f4fd; color:#3b1466; }
+.options li[aria-selected="true"] { background:#efe6fa; color:#5b2a8c; font-weight:600; }.options svg { flex-shrink:0; }
+.options .empty { color:#9a82aa; cursor:default; font-size:12px; }
+@media(prefers-reduced-motion:reduce) { .control,.toggle svg { transition:none; } }

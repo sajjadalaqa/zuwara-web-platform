@@ -11,6 +11,8 @@
 .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .head h2 { margin: 0; font-size: 22px; font-weight: 800; color: var(--p-900); }
 .head p { margin: 3px 0 0; font-size: 13px; color: var(--muted); }
+.headerActions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-inline-start: auto; flex-shrink: 0; }
+.headerActions .bookBtn { width: fit-content; max-width: 100%; }
 .bookBtn {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 16px; border: 0; border-radius: 14px;
