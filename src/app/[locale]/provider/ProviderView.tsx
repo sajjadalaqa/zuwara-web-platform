@@ -133,6 +133,23 @@ export default function ProviderView({ providers }: { providers: Provider[] }) {
         </div>
       </section>
 
+      <section className={styles.registration} aria-labelledby="provider-registration-title">
+        <div className={styles.registrationEmblem} aria-hidden="true">
+          <Svg><path d="M12 3l8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="M12 8v8M8 12h8"/></Svg>
+        </div>
+        <div className={styles.registrationCopy}>
+          <span className={styles.registrationEyebrow}>{isAr ? "انضم إلى شبكة زوارة" : "GROW WITH ZUWARA"}</span>
+          <h2 id="provider-registration-title">{isAr ? "رعايتك تصنع الفرق." : "Your care. A greater impact."}</h2>
+          <p>{isAr ? "هل أنت مقدم خدمة أو ممارس؟ انضم إلى زوارة وكن جزءاً من رحلة رعاية أفضل." : "Are you a provider or practitioner? Join Zuwara and be part of a better care journey."}</p>
+        </div>
+        <div className={styles.registrationAction}>
+          <a href="https://dashboardvisit.zuwara.sa/auth/register" className={styles.registrationLink}>
+            {isAr ? "انضم كمقدم خدمة أو ممارس" : "Join as a provider or practitioner"}
+            <span><ArrowIcon /></span>
+          </a>
+          <span className={styles.registrationHint}>{isAr ? "ابدأ عبر بوابة التسجيل" : "Get started through our registration portal"}</span>
+        </div>
+      </section>
       <section className={styles.listWrap}>
         {visible.length === 0 ? (
           <div className={styles.empty}>

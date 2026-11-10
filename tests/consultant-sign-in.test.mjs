@@ -101,3 +101,22 @@ test('unauthenticated consultant booking redirects with a locale-preserving retu
     await assert.rejects(page({ params: Promise.resolve({ locale, slug: 'doctor-test-126' }) }), error => error.message === `/${locale}/login-page${search}`);
   }
 });
+
+test('Arabic doctor booking returns survive login and OTP instead of falling back to dashboard', () => {
+  const arabicTarget = '/healthcare/doctors/\u062e\u0644\u0648\u062f-\u0635\u0627\u0644\u062d-49';
+  for (const returnPath of [arabicTarget, encodeURI(arabicTarget)]) {
+    const query = '?consultantReturn=' + encodeURIComponent(returnPath);
+    assert.equal(consultantReturn(query), arabicTarget);
+    const otpUrl = consultantAuthHref('/verify-otp-page', query);
+    assert.equal(consultantSignInDestination(otpUrl.slice(otpUrl.indexOf('?'))), arabicTarget + '?bookingSignIn=success');
+    assert.equal(consultantSignInDestination(query + '&bookingFlow=instant'), arabicTarget + '?bookingSignIn=success&bookingFlow=instant');
+  }
+});
+
+test('encoded return paths still reject traversal, external redirects and query injection', () => {
+  for (const path of ['/healthcare/doctors/../dashboard', '//example.com', target + '?next=/dashboard', target + '/book', '/healthcare/doctors/test\\49', '%E0%A4%A']) {
+    const query = '?consultantReturn=' + encodeURIComponent(encodeURI(path));
+    assert.equal(consultantReturn(query), null);
+    assert.equal(consultantSignInDestination(query), '/dashboard');
+  }
+});

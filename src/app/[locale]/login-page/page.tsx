@@ -43,6 +43,6 @@ export default function LoginPage() {
       <SubmitButton loading={loading}>{uiText("Send Verification Code")}</SubmitButton>
     </form>
     <div className={s.foot}><span>{uiText("Don't Have An Account?")}{" "}<Link href="/register-page" className={s.link}>{uiText("Sign Up")}</Link></span></div>
-    <Link href="/register-page" className={s.alt}><Icon name="heart" size={16} /> {uiText("Want To Register As Provider Or Practitioner?")}</Link>
+    <a href="https://dashboardvisit.zuwara.sa/auth/register" className={s.alt}><Icon name="heart" size={16} /> {uiText("Want To Register As Provider Or Practitioner?")}</a>
   </AuthLayout>;
 }

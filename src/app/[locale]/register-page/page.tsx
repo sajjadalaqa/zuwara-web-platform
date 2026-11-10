@@ -6,6 +6,7 @@ import { useState, type FormEvent } from "react";
 import { consultantAuthHref } from "@/lib/auth/consultant-return";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Field, PhoneField, SubmitButton } from "@/components/auth/Field";
+import { Icon } from "@/components/auth/icons";
 import { isEmail } from "@/components/auth/validators";
 import { requestOtpAction } from "@/lib/auth/actions";
 import s from "@/components/auth/auth.module.css";
@@ -50,5 +51,6 @@ export default function RegisterPage() {
       <SubmitButton loading={loading}>{uiText("Register")}</SubmitButton>
     </form>
     <div className={s.foot}><span>{uiText("Already Have Account?")}{" "}<Link href="/login-page" className={s.link}>{uiText("Sign In")}</Link></span></div>
+    <a href="https://dashboardvisit.zuwara.sa/auth/register" className={s.alt}><Icon name="heart" size={16} /> {uiText("Want To Register As Provider Or Practitioner?")}</a>
   </AuthLayout>;
 }
