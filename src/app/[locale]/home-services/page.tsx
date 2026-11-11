@@ -7,8 +7,10 @@ import { Icon } from "@/components/Icon";
 import { getD4hCategories } from "@/lib/api/d4h/catalog";
 import { CategoryExplorer } from "./CategoryExplorer";
 import styles from "./HomeServices.module.css";
+import CategoryServices from "./CategoryServices";
+import { notFound, redirect } from "next/navigation";
 
-type Props = { params: Promise<{ locale: string }> };
+type Props = { params: Promise<{ locale: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -38,12 +40,19 @@ const faqIds = ["everywhere", "account", "source", "missing"] as const;
 
 const d = (i: number) => ({ "--i": i }) as CSSProperties;
 
-export default async function HomeServicesPage({ params }: Props) {
+export default async function HomeServicesPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("HomeServices");
 
-  const { categories } = await getD4hCategories();
+  const { categories } = await getD4hCategories(locale);
+  const query = await searchParams;
+  const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
+  const categoryId = first(query.category_id), slug = first(query.category);
+  const selected = categories.find(c => categoryId ? String(c.id) === categoryId : slug ? c.slug === slug : false);
+  if ((categoryId || slug) && !selected) notFound();
+  if (selected?.screenType) redirect((locale === "ar" ? "/ar" : "") + selected.href);
+  if (selected) return <CategoryServices category={selected} locale={locale} subcategoryId={first(query.subcategory_id)} />;
   const totalServices = categories.reduce((sum, c) => sum + Number(c.serviceCount || 0), 0);
 
   return (

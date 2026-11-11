@@ -1,3 +1,4 @@
+import styles from "@/components/discovery/Discovery.module.css";
 import { healthcareText } from "@/i18n/healthcare-text";
 import { getLocale } from "next-intl/server";
 import { getUiText } from "@/i18n/server-ui-text";
@@ -54,14 +55,14 @@ export default async function SpecialtyDetailPage({ params }: Props) {
       url: `${SITE_URL}${canonical}`,
       about: { "@type": "MedicalSpecialty", name: specialty.title },
     }}/>
-    <section className="specialty-detail-hero">
+    <section className={styles.detailHero}>
       <div className="container">
         <Breadcrumbs items={[{ label: uiText("Home"), href: "/" }, { label: uiText("Healthcare"), href: "/healthcare" }, { label: uiText("Specialties"), href: "/healthcare/specialties" }, { label: specialty.title }]}/>
-        <div className="specialty-detail-heading">
-          <div className="specialty-detail-icon"><SpecialtyImage src={specialty.imageUrl}/></div>
+        <div className={styles.detailHeading}>
+          <div className={styles.detailIcon}><SpecialtyImage src={specialty.imageUrl}/></div>
           <div><span className="eyebrow">{uiText("Healthcare specialty")}</span><h1>{healthcareText(specialty, "title", displayLocale)}</h1></div>
         </div>
-        <div className="specialty-detail-summary"><strong>{search.doctors.length}</strong><span>{uiText("active")}{" "}{search.doctors.length === 1 ? "consultant" : "consultants"} {uiText("currently listed in this specialty")}</span><Link href={`/healthcare/doctors?category=${specialty.id}`}>{uiText("Refine results")}{" "}<Icon name="arrow" size={17}/></Link></div>
+        <div className={styles.detailSummary}><strong>{search.doctors.length}</strong><span>{uiText("active")}{" "}{search.doctors.length === 1 ? "consultant" : "consultants"} {uiText("currently listed in this specialty")}</span><Link href={`/healthcare/doctors?category=${specialty.id}`}>{uiText("Refine results")}{" "}<Icon name="arrow" size={17}/></Link></div>
       </div>
     </section>
     <section className="content-section"><div className="container">

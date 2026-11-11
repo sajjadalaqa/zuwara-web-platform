@@ -218,3 +218,58 @@
 :global([dir="rtl"]) .go svg {
   transform: scaleX(-1);
 }
+
+/* Compact services introduction; original category cards remain unchanged. */
+.heroOuter { padding-top: 20px; }
+.hero { padding: 24px 30px; border-radius: 24px; }
+.heroGrid { grid-template-columns: minmax(0,1fr) 250px; gap: 30px; }
+.hero .title { font-size: clamp(26px,2.8vw,36px); line-height: 1.12; margin-top: 10px; }
+.hero .lead { margin-top: 10px; font-size: 13px; line-height: 1.65; max-width: 65ch; }
+.hero .actions { margin-top: 16px; }
+.hero .btnPrimary,.hero .btnGhost { min-height: 40px; padding: 9px 16px; font-size: 12px; }
+.heroMedia { max-width: 240px; aspect-ratio: 4 / 3; }
+.glance { width: 160px; padding: 9px 11px; right: -4%; }
+.glanceHead { font-size: 10px; gap: 6px; }
+.glanceStats { margin-top: 7px; }
+.glanceStats strong { font-size: 20px; }
+.glanceStats small { font-size: 9px; }
+.hero .trust { display: none; }
+@media(max-width:750px) {
+  .hero { padding: 22px; }
+  .heroGrid { grid-template-columns: minmax(0,1fr); gap: 0; }
+  .heroMedia { display: none; }
+  .hero .title { font-size: 28px; }
+}
+
+/* Rounded photo with a smaller stats card overlapping only its lower edge. */
+.heroMedia { position:relative; display:block; width:100%; max-width:240px; height:254px; aspect-ratio:auto; align-self:center; }
+.heroMedia .mediaBlob { display:block; inset:4% -2% 12% 5%; animation:none; }
+.heroMedia .photo { position:relative; inset:auto; width:100%; height:210px; border:5px solid #fff; border-radius:42% 58% 55% 45% / 48% 44% 56% 52%; box-shadow:0 15px 28px -20px #602d8c90; }
+.heroMedia .photo img { object-fit:cover; object-position:center 30%; }
+.heroMedia .glance { position:absolute; inset:auto; inset-inline-end:-4px; bottom:0; width:174px; margin:0; padding:9px 11px; border-radius:15px; animation:none; transform:none; border:1px solid #f2e8fa; background:#fffffffa; box-shadow:0 12px 24px -16px #602d8c80; }
+.heroMedia .glanceHead { gap:6px; font-size:10px; }
+.heroMedia .glanceIcon { width:23px; height:23px; border-radius:7px; }
+.heroMedia .glanceStats { gap:8px; margin-top:6px; }
+.heroMedia .glanceStats strong { font-size:19px; }
+.heroMedia .glanceStats small { font-size:9px; margin-top:3px; line-height:1.3; }
+/* Smaller booking guide, independent of the original service-category cards. */
+.band { padding-block:36px; margin-top:44px; }
+.bandGrid { grid-template-columns:250px minmax(0,1fr); gap:32px; }
+.stepsMedia { width:100%; max-width:230px; aspect-ratio:1; }
+.stepsFrame { border-width:4px; box-shadow:0 15px 30px -22px #602d8c70; }
+.band .heading h2 { font-size:30px; }
+.band .heading p { font-size:13px; max-width:65ch; }
+.band .steps { margin-top:22px; }
+@media(max-width:1000px) and (min-width:701px) { .bandGrid { grid-template-columns:180px minmax(0,1fr); gap:24px; } .stepsMedia { max-width:180px; } .band .steps { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:750px) { .heroMedia { display:block; justify-self:center; max-width:230px; height:244px; margin-top:18px; } .heroMedia .photo { height:200px; } }
+@media(max-width:700px) { .band { padding-block:28px; } .bandGrid { grid-template-columns:minmax(0,1fr); gap:20px; } .stepsMedia { max-width:175px; } .band .heading h2 { font-size:26px; } .band .steps { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* Smaller request banner, keeping the existing image, copy and destination. */
+.ctaWrap { padding-block:36px 44px; }
+.cta { min-height:0; padding:25px 32px; border-radius:24px; }
+.ctaCopy { max-width:48%; }
+.ctaCopy .eyebrow { font-size:10px; }
+.ctaCopy h2 { margin:8px 0 10px; font-size:clamp(25px,2.5vw,32px); line-height:1.2; }
+.ctaCopy p { margin:0 0 15px; font-size:13px; line-height:1.65; }
+.ctaBtn { min-height:38px; padding:10px 15px; border-radius:11px; font-size:12px; }
+@media(max-width:640px) { .ctaWrap { padding-block:28px 34px; } .cta { padding:22px; border-radius:20px; } .ctaCopy { max-width:100%; } .ctaCopy p { max-width:42ch; } }

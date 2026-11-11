@@ -4,6 +4,10 @@ export type D4hCategory = {
   description: string | null;
   imageUrl: string | null;
   serviceCount: number;
+  nameAr?: string;
+  href: string;
+  slug: string;
+  screenType: number;
 };
 
 export type D4hCategoryData = {

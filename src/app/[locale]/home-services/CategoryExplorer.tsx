@@ -8,7 +8,7 @@ import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
 import styles from "./HomeServices.module.css";
 
-type Category = { id: string | number; name: string; imageUrl?: string | null; serviceCount: number };
+type Category = { id: string | number; name: string; href: string; imageUrl?: string | null; serviceCount: number };
 
 export function CategoryExplorer({ categories }: { categories: Category[] }) {
   const t = useTranslations("HomeServices.categories");
@@ -46,7 +46,7 @@ export function CategoryExplorer({ categories }: { categories: Category[] }) {
           {results.map((item, index) => (
             <Link
               key={item.id}
-              href={`/home-services?category_id=${item.id}`}
+              href={item.href}
               className={styles.card}
               style={{ "--i": index % 8 } as CSSProperties}
             >

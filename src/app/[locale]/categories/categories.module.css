@@ -7,7 +7,7 @@
   --purple-50: #f8f4ff;
   --ink: #1b1033;
   --muted: #6b6482;
-  background: linear-gradient(180deg, #f6effd 0%, #efe4fb 55%, #e9dcf8 100%);
+  background: radial-gradient(ellipse 600px 420px at 50% 160px, rgba(107, 47, 179, .12), transparent 100%), linear-gradient(180deg, #f6effd 0%, #efe4fb 55%, #e9dcf8 100%);
   color: var(--ink);
   min-height: 70vh;
   padding-block-end: 80px;
@@ -21,13 +21,7 @@
   text-align: center;
   overflow: hidden;
 }
-.hero::before {
-  content: "";
-  position: absolute; inset-inline: 0; inset-block-start: -120px; margin-inline: auto;
-  width: min(720px, 90vw); aspect-ratio: 1;
-  background: radial-gradient(circle, rgba(107, 47, 179, .16), transparent 65%);
-  pointer-events: none;
-}
+.hero::before { content: none; }
 .badge {
   position: relative;
   display: inline-block; padding: 7px 16px; border-radius: 999px;
@@ -81,6 +75,7 @@
   content: ""; position: absolute; inset-inline-end: -40px; inset-block-start: -40px;
   width: 120px; height: 120px; border-radius: 50%;
   background: radial-gradient(circle, rgba(107, 47, 179, .12), transparent 70%);
+  pointer-events: none;
 }
 .card:hover, .card:focus-visible {
   transform: translateY(-5px); border-color: #cdb5ee;
@@ -94,7 +89,7 @@
   box-shadow: 0 10px 20px -14px rgba(91, 42, 158, .5);
   transition: background .25s, color .25s;
 }
-.card:hover .iconWrap { background: linear-gradient(145deg, var(--purple-600), var(--purple-900)); color: #fff; }
+.card:hover .iconWrap, .card:focus-visible .iconWrap { background: linear-gradient(145deg, #f8f2fe, #e8d8f7); border-color: #b98bdc; color: var(--purple-700); }
 .cardTitle { margin: 18px 0 6px; font-size: 18px; font-weight: 700; line-height: 1.3; }
 .cardText { margin: 0 0 18px; color: var(--muted); font-size: 14px; line-height: 1.6; }
 .cardCta {

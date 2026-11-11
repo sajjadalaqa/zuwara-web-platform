@@ -9,13 +9,16 @@ import {
   ArrowUpRight, SearchX, type LucideIcon,
 } from "lucide-react";
 import styles from "./categories.module.css";
+import { SafeImage } from "@/components/SafeImage";
 
 export type Category = {
   id: number | string;
   slug: string;
+  href: string;
+  imageUrl?: string | null;
   name: string;
   nameAr?: string;
-  description?: string;
+  description?: string | null;
   descriptionAr?: string;
   icon?: string;
 };
@@ -89,8 +92,8 @@ export default function CategoriesView({ categories }: { categories: Category[] 
               const Icon = ICONS[c.icon ?? ""] ?? Stethoscope;
               return (
                 <li key={c.id}>
-                  <Link href={`/home-services?category=${c.slug}`} className={styles.card}>
-                    <span className={styles.iconWrap}><Icon size={30} strokeWidth={1.7} /></span>
+                  <Link href={c.href} className={styles.card}>
+                    <span className={styles.iconWrap}>{c.imageUrl ? <SafeImage src={c.imageUrl} alt="" width={40} height={40} fallbackIcon="home" /> : <Icon size={30} strokeWidth={1.7} />}</span>
                     <h2 className={styles.cardTitle}>{label(c)}</h2>
                     <p className={styles.cardText}>
                       {(isAr ? c.descriptionAr : c.description) ?? t("cardHint")}
