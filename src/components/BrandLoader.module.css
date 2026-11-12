@@ -1,6 +1,6 @@
 .screen{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;min-height:100dvh;background:var(--primary-light,#f1eaf6);color:var(--primary,#602d8c);isolation:isolate;cursor:progress}
-.brand{display:flex;flex-direction:column;align-items:center;gap:34px;animation:appear .35s ease-out both}
-.logo{display:block;width:clamp(200px,28vw,340px);height:auto}
+.brand{display:flex;flex-direction:column;align-items:center;gap:24px;animation:appear .35s ease-out both}
+.logo{display:block;width:42px;height:60px;object-fit:contain}
 .track{width:80px;height:3px;overflow:hidden;border-radius:99px;background:#602d8c1a;direction:ltr}
 .track span{display:block;width:32px;height:100%;border-radius:inherit;background:var(--primary,#602d8c);animation:travel 1.5s ease-in-out infinite}
 @keyframes appear{from{opacity:0}to{opacity:1}}

@@ -147,7 +147,7 @@ export function HeroSlider() {
                   alt={slide.alt[lang]}
                   fill
                   sizes="(max-width: 1288px) 100vw, 1240px"
-                  priority={index === 0}
+                  preload={index === 0}
                   className={`${styles.img} ${slide.mobileImage ? styles.imgDesktop : ""}`}
                   style={{ objectPosition: slide.position ?? "center" }}
                 />
@@ -158,7 +158,7 @@ export function HeroSlider() {
                     alt={slide.alt[lang]}
                     fill
                     sizes="100vw"
-                    priority={index === 0}
+                    preload={index === 0}
                     className={`${styles.img} ${styles.imgMobile}`}
                     style={{ objectPosition: slide.position ?? "center" }}
                   />
