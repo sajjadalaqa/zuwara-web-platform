@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { ShoppingCart, Trash2, Plus, Minus, CheckCircle2, LayoutGrid, ArrowRight } from "lucide-react";
+import { ShoppingCart, Trash2, Plus, Minus, CheckCircle2, LayoutGrid, ArrowRight, Info, MapPin, LockKeyhole } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useServiceCart, useCartReady, setCartQuantity, completeCart } from "@/components/cart/store";
 import { cartCopy, cartError } from "@/lib/cart/copy";
@@ -48,6 +48,7 @@ export default function CartView({locale,identity}:{locale:string;identity:strin
   });}
   async function resume(){await work(async()=>{if(!recovery)return;const result=recovery.receipt?await resumeCartAction(recovery.receipt):await createCartAction(recovery.token);if(!result.ok){setError(cartError(result.code,locale));return;}const next={...recovery,receipt:result.value.receipt};saveRecovery(next);setRecovery(next);settled(result.value,next);});}
   async function pay(){await work(async()=>{if(!group||group.paid||!recovery)return;const result=await payCartAction(group.receipt);if(!result.ok){setError(cartError(result.code,locale));return;}if(!result.value){setError(t.paymentPending);return;}settled({...group,paid:true},recovery);});}
+  const labels=ar?{selected:"الخدمات المختارة",summary:"ملخص الطلب",unit:"سعر الوحدة",line:"الإجمالي التقديري للخدمة",units:"وحدات",saved:"محفوظة في سلتك"}:{selected:"Your selected services",summary:"Order summary",unit:"Unit price",line:"Estimated line total",units:"units",saved:"Saved in your cart"};
   const login="/login-page?consultantReturn=%2Fcart&bookingFlow=cart";
   if(!ready)return <div className={styles.page}><div className="container"><p role="status">{t.loading}</p></div></div>;
   return <div className={styles.page}><div className="container">
@@ -57,8 +58,23 @@ export default function CartView({locale,identity}:{locale:string;identity:strin
     {group&&<section className={styles.panel}><h2>{group.paid?<><CheckCircle2 size={20} aria-hidden="true"/> {t.paid}</>:t.reserved}</h2><p className={styles.receipt}>{t.reference}: <bdi dir="ltr">{group.id}</bdi></p><p className={styles.amount}>{amount(group.amountHalalas)}</p>{!group.paid&&<><p className={styles.note}>{t.paymentPending}</p><button type="button" className={styles.primary} disabled={busy} onClick={()=>void pay()}>{busy?t.loading:t.pay}</button></>}<div className={styles.links}>{!group.paid&&<Link href="/dashboard/wallet" target="_blank" rel="noopener noreferrer" className={styles.secondary}>{t.wallet}</Link>}<Link href="/dashboard/home-visits" className={styles.secondary}>{t.history}</Link><Link href="/home-services" className={styles.browseButton}><span className={styles.browseIcon}><LayoutGrid size={16} aria-hidden="true"/></span><span>{t.browse}</span><ArrowRight size={16} className={styles.browseArrow} aria-hidden="true"/></Link></div></section>}
     {!cart.items.length&&!group&&!recovery&&<div className={styles.empty}><ShoppingCart size={38}/><h2>{t.empty}</h2><p>{t.emptyText}</p><Link href="/home-services" className={styles.primary}>{t.browse}</Link></div>}
     {!!cart.items.length&&!group&&<div className={styles.layout}>
-      <div className={styles.items}>{cart.items.map(item=><article className={styles.item} key={item.serviceId}><div><h2>{ar?item.nameAr||item.name:item.name}</h2><p>{item.unitHalalas===null?t.unknownPrice:amount(item.unitHalalas)}</p></div><div className={styles.itemActions}><div className={styles.quantity} aria-label={t.quantity}><button type="button" disabled={locked} onClick={()=>edit(item,item.quantity-1)} aria-label={t.quantity+" -1"}><Minus size={14}/></button><output>{item.quantity}</output><button type="button" disabled={locked||item.quantity>=QUANTITY_LIMIT} onClick={()=>edit(item,item.quantity+1)} aria-label={t.quantity+" +1"}><Plus size={14}/></button></div><button type="button" disabled={locked} onClick={()=>edit(item,0)} className={styles.remove} aria-label={t.remove+": "+item.name}><Trash2 size={16}/></button></div></article>)}</div>
-      <aside className={styles.panel}><h2>{t.cart}</h2><div className={styles.summary}><span>{t.estimate}</span><strong>{estimate===null?"—":amount(estimate)}</strong></div><p className={styles.note}>{t.estimateNote}</p><p className={styles.note}>{t.oneVisit}</p>{!identity?<><p className={styles.note}>{t.signInNote}</p><Link href={login} className={styles.primary}>{t.signIn}</Link></>:<button type="button" disabled={locked} className={styles.primary} onClick={()=>void prepare()}>{busy?t.loading:options?t.refresh:t.checkout}</button>}<div className={styles.links}><Link href="/home-services" className={styles.browseButton}><span className={styles.browseIcon}><LayoutGrid size={16} aria-hidden="true"/></span><span>{t.browse}</span><ArrowRight size={16} className={styles.browseArrow} aria-hidden="true"/></Link></div></aside>
+      <section className={styles.selection} aria-labelledby="cart-services-heading">
+        <div className={styles.selectionHeading}><h2 id="cart-services-heading">{labels.selected}</h2><span className={styles.serviceCount}>{cart.items.length}</span></div>
+        <div className={styles.items}>{cart.items.map((item,index)=><article className={styles.item} key={item.serviceId}>
+          <div className={styles.itemInfo}><span className={styles.itemNumber} aria-hidden="true">{String(index+1).padStart(2,"0")}</span><div className={styles.itemText}><h2>{ar?item.nameAr||item.name:item.name}</h2><p className={styles.unitPrice}>{item.unitHalalas===null?t.unknownPrice:<><span>{labels.unit}</span><bdi>{amount(item.unitHalalas)}</bdi></>}</p></div></div>
+          <div className={styles.itemActions}><div className={styles.quantity} aria-label={t.quantity}><button type="button" disabled={locked} onClick={()=>edit(item,item.quantity-1)} aria-label={t.quantity+" -1"}><Minus size={14}/></button><output aria-live="polite">{item.quantity}</output><button type="button" disabled={locked||item.quantity>=QUANTITY_LIMIT} onClick={()=>edit(item,item.quantity+1)} aria-label={t.quantity+" +1"}><Plus size={14}/></button></div><button type="button" disabled={locked} onClick={()=>edit(item,0)} className={styles.remove} aria-label={t.remove+": "+item.name} title={t.remove}><Trash2 size={16}/></button></div>
+          <div className={styles.itemFooter}><span className={styles.savedLabel}><CheckCircle2 size={13} aria-hidden="true"/>{labels.saved}</span><div className={styles.lineTotal}><span>{labels.line}</span><strong>{item.unitHalalas===null?t.unknownPrice:amount(item.unitHalalas*item.quantity)}</strong></div></div>
+        </article>)}</div>
+      </section>
+      <aside className={styles.panel+" "+styles.orderPanel}>
+        <div className={styles.orderHeading}><span className={styles.orderIcon}><ShoppingCart size={19} aria-hidden="true"/></span><h2>{labels.summary}</h2><span className={styles.orderCount}>{cart.items.reduce((sum,item)=>sum+item.quantity,0)} {labels.units}</span></div>
+        <div className={styles.orderBody}>
+          <div className={styles.totalBox}><span>{t.estimate}</span><strong>{estimate===null?"\u2014":amount(estimate)}</strong><p>{t.estimateNote}</p></div>
+          <p className={styles.orderNote}><MapPin size={16} aria-hidden="true"/><span>{t.oneVisit}</span></p>
+          {!identity?<><p className={styles.orderNote}><Info size={16} aria-hidden="true"/><span>{t.signInNote}</span></p><Link href={login} className={styles.primary}><LockKeyhole size={15} aria-hidden="true"/>{t.signIn}<ArrowRight size={15} className={styles.browseArrow} aria-hidden="true"/></Link></>:<button type="button" disabled={locked} className={styles.primary} onClick={()=>void prepare()}>{busy?t.loading:options?t.refresh:t.checkout}<ArrowRight size={15} className={styles.browseArrow} aria-hidden="true"/></button>}
+          <div className={styles.links}><Link href="/home-services" className={styles.browseButton}><span className={styles.browseIcon}><LayoutGrid size={16} aria-hidden="true"/></span><span>{t.browse}</span><ArrowRight size={16} className={styles.browseArrow} aria-hidden="true"/></Link></div>
+        </div>
+      </aside>
     </div>}
     {stale&&!group&&!recovery&&<p className={styles.alert}>{t.changed}</p>}
     {options&&!stale&&!group&&!recovery&&<section className={styles.checkout}>
