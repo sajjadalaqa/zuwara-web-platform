@@ -1,3 +1,4 @@
+import { SITE_CONTACT, contactAddress } from "@/data/contact";
 import { getUiText } from "@/i18n/server-ui-text";
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
@@ -58,7 +59,7 @@ export default async function Terms(){
    <nav className={s.toc} aria-label={arLocale?"محتويات الصفحة":"On this page"}><p className={s.tocTitle}>{arLocale?"محتويات الصفحة":"On this page"}</p><ol className={s.tocList}>{sections.map(section=><li key={section.id}><a href={"#"+section.id}>{section.title}</a></li>)}</ol></nav>
    <article className={s.content}>
     <p className={s.notice}>{arLocale?"هذه مسودة موسعة للمراجعة وليست شروطاً قانونية نهائية معتمدة. يجب اعتماد النص النهائي والسياسات الخاصة بالخدمات قبل نشرها كشروط ملزمة.":"This expanded draft is provided for review and is not the final approved legal agreement. Final wording and service-specific policies must be approved before publication as binding terms."}</p>
-    {sections.map(section=><section id={section.id} key={section.id} className={s.section}><h2>{section.title}</h2>{section.body.map(paragraph=><p key={paragraph}>{paragraph}</p>)}{section.list&&<ul className={s.list}>{section.list.map(item=><li key={item}>{item}</li>)}</ul>}{section.privacy&&<p><Link className={s.mail} href="/privacy-policy">{arLocale?"اقرأ سياسة الخصوصية":"Read the Privacy Policy"}</Link></p>}{section.contact&&<><p><Link className={s.mail} href="/account-deletion">{arLocale?"معلومات حذف الحساب":"Account-deletion information"}</Link></p><address className={s.address}><strong>{arLocale?"شركة علاقة لخدمات الأعمال":"ALAQA Business Services Company"}</strong><span>{arLocale?"الرياض، المملكة العربية السعودية":"Riyadh, Saudi Arabia"}</span></address><a className={s.mail} dir="ltr" href="mailto:contact@zuwara.net">contact@zuwara.net</a></>}</section>)}
+    {sections.map(section=><section id={section.id} key={section.id} className={s.section}><h2>{section.title}</h2>{section.body.map(paragraph=><p key={paragraph}>{paragraph}</p>)}{section.list&&<ul className={s.list}>{section.list.map(item=><li key={item}>{item}</li>)}</ul>}{section.privacy&&<p><Link className={s.mail} href="/privacy-policy">{arLocale?"اقرأ سياسة الخصوصية":"Read the Privacy Policy"}</Link></p>}{section.contact&&<><p><Link className={s.mail} href="/account-deletion">{arLocale?"معلومات حذف الحساب":"Account-deletion information"}</Link></p><address className={s.address}><strong>{arLocale?"شركة علاقة لخدمات الأعمال":"ALAQA Business Services Company"}</strong><span>{contactAddress(arLocale ? "ar" : "en").full}</span></address><a className={s.mail} dir="ltr" href={`mailto:${SITE_CONTACT.email}`}>{SITE_CONTACT.email}</a></>}</section>)}
    </article>
   </div>
  </div>;

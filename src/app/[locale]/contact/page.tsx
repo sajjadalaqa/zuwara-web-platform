@@ -1,3 +1,6 @@
+import { useLocale } from "next-intl";
+import { FaLinkedinIn } from "react-icons/fa6";
+import { SITE_CONTACT, contactAddress } from "@/data/contact";
 import { getUiText } from "@/i18n/server-ui-text";
 import { useUiText } from "@/i18n/use-ui-text";
 import type { Metadata } from "next";
@@ -18,25 +21,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 
-// Replace with Zuwara's real details
-const CONTACT = {
-  phone: "+1-888-238-3997",
-  email: "example@gmail.com",
-  street: "4121 NW Urbandale Dr",
-  cityLine: "Urbandale, Iowa, 50322, USA",
-  hoursWeek: "Mon – Fri: 9:00 AM – 6:00 PM (EST)",
-  hoursWeekend: "Sat – Sun: Closed",
-};
-
-const fullAddress = `${CONTACT.street}, ${CONTACT.cityLine}`;
-const mapEmbed = `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&z=14&output=embed`;
-const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
+const CONTACT = SITE_CONTACT;
+const mapLink = SITE_CONTACT.mapLink;
 
 const chips = ["Quick response", "Friendly support", "Your health matters"];
 const d = (i: number) => ({ "--i": i }) as CSSProperties;
 
 export default function ContactPage() {
   const uiText = useUiText();
+  const locale = useLocale();
+  const address = contactAddress(locale);
+  const fullAddress = address.full;
+  const mapEmbed = `https://maps.google.com/maps?q=${encodeURIComponent(SITE_CONTACT.address.en.full)}&z=16&output=embed`;
   return (
     <>
       {/* HERO */}
@@ -90,33 +86,25 @@ export default function ContactPage() {
                 <span className={styles.infoIcon}><Glyph name="phone" size={22} /></span>
                 <div>
                   <small>{uiText("Phone Number")}</small>
-                  <a href={`tel:${CONTACT.phone.replace(/[^+\d]/g, "")}`}>{CONTACT.phone}</a>
-                  <em>{uiText("Mon – Fri, 9:00 AM – 6:00 PM (EST)")}</em>
+                  <a href={CONTACT.phoneHref} dir="ltr">{CONTACT.phone}</a>
                 </div>
               </li>
               <li>
                 <span className={styles.infoIcon}><Glyph name="mail" size={22} /></span>
                 <div>
                   <small>{uiText("Email Address")}</small>
-                  <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-                  <em>{uiText("We reply within 24 hours")}</em>
+                  <a href={`mailto:${CONTACT.email}`} dir="ltr">{CONTACT.email}</a>
                 </div>
               </li>
               <li>
                 <span className={styles.infoIcon}><Glyph name="pin" size={22} /></span>
                 <div>
                   <small>{uiText("Our Location")}</small>
-                  <strong>{CONTACT.street},<br />{CONTACT.cityLine}</strong>
-                  <em>{uiText("Visit us at our office")}</em>
+                  <strong>{address.street},<br />{address.cityLine}</strong>
+                  <em>{SITE_CONTACT.company[locale === "ar" ? "ar" : "en"]}</em>
                 </div>
               </li>
-              <li>
-                <span className={styles.infoIcon}><Glyph name="clock" size={22} /></span>
-                <div>
-                  <small>{uiText("Business Hours")}</small>
-                  <strong>{uiText(CONTACT.hoursWeek)}<br />{uiText(CONTACT.hoursWeekend)}</strong>
-                </div>
-              </li>
+              <li><span className={styles.infoIcon}><FaLinkedinIn size={22} aria-hidden="true" /></span><div><small>LinkedIn</small><a href={SITE_CONTACT.linkedin} target="_blank" rel="noopener noreferrer" dir="ltr">linkedin.com/in/zuwara</a></div></li>
             </ul>
           </div>
 
@@ -140,7 +128,7 @@ export default function ContactPage() {
       allowFullScreen
     />
     <div className={styles.mapLabel}>
-      <strong>{CONTACT.street}</strong>
+      <strong>{address.street}</strong>
       <span>{fullAddress}</span>
       <a href={mapLink} target="_blank" rel="noopener noreferrer">{uiText("View larger map")}</a>
     </div>

@@ -1,3 +1,4 @@
+import { SITE_CONTACT } from "@/data/contact";
 import type { Metadata } from "next";
 import styles from "./privacy.module.css";
 
@@ -28,7 +29,7 @@ type Content = {
   sections: Section[];
 };
 
-const CONTACT_EMAIL = "contact@zuwara.net";
+const CONTACT_EMAIL = SITE_CONTACT.email;
 
 const en: Content = {
   metaTitle: "Privacy Policy | Zuwara",
@@ -41,7 +42,7 @@ const en: Content = {
   updated: "October 18, 2026",
   tocLabel: "On this page",
   company: "ALAQA Business Services Company",
-  city: "Riyadh, Saudi Arabia",
+  city: SITE_CONTACT.address.en.full,
   sections: [
     {
       id: "information-we-collect",
@@ -130,7 +131,7 @@ const ar: Content = {
   updated: "١٨ أكتوبر ٢٠٢٦",
   tocLabel: "محتويات الصفحة",
   company: "شركة علاقة لخدمات الأعمال",
-  city: "الرياض، المملكة العربية السعودية",
+  city: SITE_CONTACT.address.ar.full,
   sections: [
     {
       id: "information-we-collect",

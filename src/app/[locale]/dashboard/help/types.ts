@@ -22,8 +22,8 @@ export type FaqResult = {
 
 export type SupportInfo = {
   email: string;
-  phone: string; // display format, e.g. "+966 11 000 0000"
-  whatsapp: string; // digits only, e.g. "966500000000"
+  phone: string; // International display format.
+  linkedin: string; // Confirmed company profile URL.
   hours: string; // already localized
 };
 

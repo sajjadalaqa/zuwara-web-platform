@@ -1,3 +1,4 @@
+import { SITE_CONTACT } from "@/data/contact";
 import styles from "./DeletionGuide.module.css";
 
 export type DeletionGuideContent = {
@@ -23,7 +24,7 @@ export type DeletionGuideContent = {
   emailSubject: string;
 };
 
-const CONTACT_EMAIL = "contact@zuwara.net";
+const CONTACT_EMAIL = SITE_CONTACT.email;
 
 export function DeletionGuide({ content, locale }: { content: DeletionGuideContent; locale: string }) {
   const mailto = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(content.emailSubject)}`;

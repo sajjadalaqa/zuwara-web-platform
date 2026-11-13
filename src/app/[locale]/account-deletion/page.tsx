@@ -1,3 +1,4 @@
+import { SITE_CONTACT } from "@/data/contact";
 import type { Metadata } from "next";
 import { DeletionGuide, type DeletionGuideContent } from "@/components/DeletionGuide";
 
@@ -36,7 +37,7 @@ const content: Record<"en" | "ar", DeletionGuideContent> = {
     cardTitle: "Cannot access the app?",
     cardText: "Email our privacy team to request permanent account deletion. Use the contact details registered to your Zuwara account so we can verify your request.",
     cardAction: "Request account deletion",
-    emailLabel: "Email contact@zuwara.net",
+    emailLabel: `Email ${SITE_CONTACT.email}`,
     emailSubject: "Zuwara account deletion request",
   },
   ar: {
@@ -71,7 +72,7 @@ const content: Record<"en" | "ar", DeletionGuideContent> = {
     cardTitle: "هل يتعذر عليك الدخول إلى التطبيق؟",
     cardText: "راسل فريق الخصوصية لطلب حذف حسابك نهائيًا. استخدم بيانات الاتصال المسجلة في حساب زوارة حتى نتمكن من التحقق من طلبك.",
     cardAction: "طلب حذف الحساب",
-    emailLabel: "مراسلة contact@zuwara.net",
+    emailLabel: `مراسلة ${SITE_CONTACT.email}`,
     emailSubject: "طلب حذف حساب زوارة",
   },
 };

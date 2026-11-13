@@ -1,3 +1,4 @@
+import { SITE_CONTACT } from "@/data/contact";
 import type { Metadata } from "next";
 import { DeletionGuide, type DeletionGuideContent } from "@/components/DeletionGuide";
 
@@ -36,7 +37,7 @@ const content: Record<"en" | "ar", DeletionGuideContent> = {
     cardTitle: "Send your request",
     cardText: "Email our privacy team and describe the specific personal data you want deleted. We will use your registered contact details to verify the request.",
     cardAction: "Request data deletion",
-    emailLabel: "Email contact@zuwara.net",
+    emailLabel: `Email ${SITE_CONTACT.email}`,
     emailSubject: "Zuwara data deletion request",
   },
   ar: {
@@ -71,7 +72,7 @@ const content: Record<"en" | "ar", DeletionGuideContent> = {
     cardTitle: "أرسل طلبك",
     cardText: "راسل فريق الخصوصية وحدد البيانات الشخصية التي تريد حذفها. سنستخدم بيانات الاتصال المسجلة للتحقق من الطلب.",
     cardAction: "طلب حذف البيانات",
-    emailLabel: "مراسلة contact@zuwara.net",
+    emailLabel: `مراسلة ${SITE_CONTACT.email}`,
     emailSubject: "طلب حذف بيانات زوارة",
   },
 };

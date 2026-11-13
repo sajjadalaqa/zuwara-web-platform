@@ -3,6 +3,24 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@/components/Icon";
 import styles from "./Footer.module.css";
+import { SITE_CONTACT, contactAddress } from "@/data/contact";
+import { Phone, Mail, MapPin } from "lucide-react";
+import { FaLinkedinIn } from "react-icons/fa6";
+
+const contactLabels = {
+  "en": {
+    "heading": "Contact us",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Operating company address"
+  },
+  "ar": {
+    "heading": "تواصل معنا",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "address": "عنوان الشركة المشغلة"
+  }
+};
 
 const footerColumns = [
   {
@@ -55,6 +73,7 @@ export function Footer() {
   const t = useTranslations("Footer");
   const locale = useLocale();
   const otherLocale = locale === "ar" ? "en" : "ar";
+  const contact = contactLabels[locale === "ar" ? "ar" : "en"];
 
   return (
     <footer className={styles.footer}>
@@ -102,6 +121,28 @@ export function Footer() {
             </div>
           ))}
         </nav>
+
+        <section className={styles.contactArea} aria-labelledby="footer-contact-heading">
+          <h3 id="footer-contact-heading" className={styles.contactHeading}>{contact.heading}</h3>
+          <div className={styles.contactList}>
+            <a href={SITE_CONTACT.phoneHref} className={styles.contactLink}>
+              <span className={styles.contactIcon}><Phone size={18} aria-hidden="true" /></span>
+              <span className={styles.contactText}><small>{contact.phone}</small><strong><bdi dir="ltr">{SITE_CONTACT.phone}</bdi></strong></span>
+            </a>
+            <a href={`mailto:${SITE_CONTACT.email}`} className={styles.contactLink}>
+              <span className={styles.contactIcon}><Mail size={18} aria-hidden="true" /></span>
+              <span className={styles.contactText}><small>{contact.email}</small><strong><bdi dir="ltr">{SITE_CONTACT.email}</bdi></strong></span>
+            </a>
+            <a href={SITE_CONTACT.linkedin} className={styles.contactLink} target="_blank" rel="noopener noreferrer">
+              <span className={styles.contactIcon}><FaLinkedinIn size={18} aria-hidden="true" /></span>
+              <span className={styles.contactText}><small>LinkedIn</small><strong><bdi dir="ltr">linkedin.com/in/zuwara</bdi></strong></span>
+            </a>
+            <a href={SITE_CONTACT.mapLink} className={`${styles.contactLink} ${styles.contactAddress}`} target="_blank" rel="noopener noreferrer">
+              <span className={styles.contactIcon}><MapPin size={18} aria-hidden="true" /></span>
+              <span className={styles.contactText}><small>{contact.address}</small><span>{contactAddress(locale).full}</span></span>
+            </a>
+          </div>
+        </section>
 
         <div className={styles.bottom}>
           <p>{t("copyright", { year: String(new Date().getFullYear()) })}</p>

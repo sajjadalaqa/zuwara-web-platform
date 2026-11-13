@@ -1,4 +1,4 @@
-import type { FaqCategory, SupportInfo } from "./types";
+import type { FaqCategory } from "./types";
 
 type Local = { question: string; answer: string };
 export type StoredFaq = { id: string; category: FaqCategory; en: Local; ar: Local };
@@ -72,14 +72,3 @@ export const FAQS: StoredFaq[] = [
     ar: { question: "كيف أحذف حسابي؟", answer: "اذهب إلى ملفي الشخصي ثم قسم حذف الحساب وأكّد بكلمة المرور. يؤدي ذلك إلى إزالة بياناتك نهائياً ولا يمكن التراجع عنه." },
   },
 ];
-
-// TODO (backend): replace these PLACEHOLDER contact details with your real ones.
-export const SUPPORT = {
-  email: "support@zuwara.sa",
-  phone: "+966 11 000 0000",
-  whatsapp: "966500000000",
-  hours: {
-    en: "Sunday to Thursday, 9:00 AM to 6:00 PM (Riyadh time)",
-    ar: "من الأحد إلى الخميس، 9:00 ص إلى 6:00 م (بتوقيت الرياض)",
-  },
-} satisfies Omit<SupportInfo, "hours"> & { hours: { en: string; ar: string } };

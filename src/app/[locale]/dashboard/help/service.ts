@@ -1,6 +1,7 @@
+import { SITE_CONTACT } from "@/data/contact";
 import { requireSession } from "@/lib/auth/session";
 import { cache } from "react";
-import { FAQS, SUPPORT } from "./mock"; // TODO (backend): delete this import
+import { FAQS } from "./mock";
 import { FAQ_CATEGORIES } from "./types";
 import type {
   CategoryFilter,
@@ -62,10 +63,10 @@ export const getSupportInfo = cache(
     // TODO (backend): GET `${API_URL}/support-info` (or keep it in your site settings)
     const lang = locale === "ar" ? "ar" : "en";
     return {
-      email: SUPPORT.email,
-      phone: SUPPORT.phone,
-      whatsapp: SUPPORT.whatsapp,
-      hours: SUPPORT.hours[lang],
+      email: SITE_CONTACT.email,
+      phone: SITE_CONTACT.phone,
+      linkedin: SITE_CONTACT.linkedin,
+      hours: SITE_CONTACT.hours[lang],
     };
   },
 );

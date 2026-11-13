@@ -1,3 +1,4 @@
+import { FaLinkedinIn } from "react-icons/fa6";
 import { getUiText } from "@/i18n/server-ui-text";
 import Link from "next/link";
 import {
@@ -49,11 +50,11 @@ export default async function HelpPage({
 
   const channels = [
     {
-      key: "whatsapp",
-      icon: MessageCircle,
-      label: t.contact.whatsapp,
-      value: t.contact.whatsappSub,
-      href: `https://wa.me/${support.whatsapp}`,
+      key: "linkedin",
+      icon: FaLinkedinIn,
+      label: "LinkedIn",
+      value: "linkedin.com/in/zuwara",
+      href: support.linkedin,
       external: true,
       tone: s.tMint,
       ltr: false,

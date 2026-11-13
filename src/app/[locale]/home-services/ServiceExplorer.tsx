@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import AddToCart from "@/components/cart/AddToCart";
 import { Link } from "@/i18n/navigation";
 import type { CatalogService } from "@/lib/api/d4h/catalog";
 import { Search, SearchX, ArrowRight, ChevronDown, LayoutGrid } from "lucide-react";
@@ -24,6 +25,7 @@ export default function ServiceExplorer({ services, locale }: { services: Catalo
 
           <div className={styles.servicePurchase}>
             {s.price && <div className={styles.pricePanel}><span>{t("Service price", "سعر الخدمة")}</span><strong>{new Intl.NumberFormat(locale,{maximumFractionDigits:2}).format(Number(s.price.final))}<small>{s.price.currency}</small></strong></div>}
+            <AddToCart service={s} />
             <Link className={styles.cardAction} href={"/provider?service_id=" + s.id}>{t("View providers", "عرض مقدمي الخدمة")}<ArrowRight size={16} aria-hidden="true" /></Link>
           </div>
           {description && <details className={styles.serviceDetails}><summary>{t("Service details", "تفاصيل الخدمة")}<ChevronDown size={14} /></summary><p>{description}</p></details>}

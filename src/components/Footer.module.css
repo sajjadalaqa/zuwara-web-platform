@@ -255,3 +255,17 @@
   .column a, .helpLink, .helpLink svg { transition: none; }
   .column a:hover, .helpLink:hover, .helpLink:hover svg { transform: none; }
 }
+/* Official contact channels share the same source as Contact Us and support. */
+.contactArea { padding:24px 0; border-top:1px solid #ffffff1f; }
+.contactHeading { margin:0 0 16px; font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.contactList { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.contactLink { display:flex; align-items:center; gap:12px; min-width:0; padding:13px 16px; border:1px solid #ffffff1f; border-radius:13px; background:#ffffff08; color:#f5edfc; transition:background .2s,border-color .2s; }
+.contactLink:hover { background:#ffffff10; border-color:#c992ef66; }
+.contactLink:focus-visible { outline:2px solid #d9a6f5; outline-offset:3px; }
+.contactIcon { display:grid; place-items:center; flex:0 0 36px; width:36px; height:36px; border-radius:10px; background:#a24bd326; color:#deb9f5; }
+.contactText { display:grid; min-width:0; gap:4px; font-size:12px; line-height:1.7; overflow-wrap:anywhere; }
+.contactText small { font-size:11px; color:#cbb8dc; }
+.contactText strong { font-size:13px; font-weight:600; }
+.contactAddress { grid-column:1 / -1; align-items:flex-start; }
+@media(max-width:760px) { .contactList { grid-template-columns:minmax(0,1fr); } .contactArea { padding-block:22px; } .contactLink { padding:12px 14px; } }
+@media(prefers-reduced-motion:reduce) { .contactLink { transition:none; } }

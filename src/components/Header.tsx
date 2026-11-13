@@ -6,6 +6,7 @@ import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useCallback, useEffect, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { Icon } from "./Icon";
 import styles from "./Header.module.css";
+import CartButton from "./cart/CartButton";
 
 const links = [
   ["home", "/"],
@@ -152,6 +153,7 @@ export function Header({ signedIn = false, sessionExpiresAt = 0 }: { signedIn?: 
         </nav>
 
         <div className={styles.actions}>
+          <CartButton />
           {/* In the top bar on desktop and tablet, hidden on phones (it is in the menu there) */}
           <Link
             href={pathname}
