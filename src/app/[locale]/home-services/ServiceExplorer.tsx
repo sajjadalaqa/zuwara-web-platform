@@ -18,7 +18,7 @@ export default function ServiceExplorer({ services, locale }: { services: Catalo
     <label className={styles.search}><Search size={18} aria-hidden="true" /><input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder={t("Search services in this category...", "ابحث عن خدمة")} aria-label={t("Search services", "ابحث عن خدمة")} /></label>
     <div className={styles.serviceList}>{filtered.map((s,index) => {
       const description = ar ? s.description_ar || s.description : s.description;
-      return <article key={s.id} className={styles.serviceCard} data-tone={index % 4}>
+      return <article key={(s.itemType??"service")+":"+s.id} className={styles.serviceCard} data-tone={index % 4}>
 
         <div className={styles.serviceBody}><h3>{ar ? s.name_ar || s.name : s.name}</h3>
           {description && <p className={styles.description}>{description}</p>}
@@ -26,7 +26,7 @@ export default function ServiceExplorer({ services, locale }: { services: Catalo
           <div className={styles.servicePurchase}>
             {s.price && <div className={styles.pricePanel}><span>{t("Service price", "سعر الخدمة")}</span><strong>{new Intl.NumberFormat(locale,{maximumFractionDigits:2}).format(Number(s.price.final))}<small>{s.price.currency}</small></strong></div>}
             <AddToCart service={s} />
-            <Link className={styles.cardAction} href={"/provider?service_id=" + s.id}>{t("View providers", "عرض مقدمي الخدمة")}<ArrowRight size={16} aria-hidden="true" /></Link>
+            {!s.special&&<Link className={styles.cardAction} href={"/provider?service_id=" + s.id}>{t("View providers", "عرض مقدمي الخدمة")}<ArrowRight size={16} aria-hidden="true" /></Link>}
           </div>
           {description && <details className={styles.serviceDetails}><summary>{t("Service details", "تفاصيل الخدمة")}<ChevronDown size={14} /></summary><p>{description}</p></details>}
 

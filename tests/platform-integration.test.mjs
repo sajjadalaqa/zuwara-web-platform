@@ -9,6 +9,9 @@ async function load(file, deps = {}) {
   const { outputText } = ts.transpileModule(prefix + source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } });
   return import("data:text/javascript;base64," + Buffer.from(outputText).toString("base64"));
 }
+const { bookingSchedule,calendarDate } = await load("src/lib/cart/scheduling.ts");
+const { addressLocationState } = await load("src/lib/cart/address-location.ts");
+const { visitMinutes } = await load("src/lib/cart/model.ts");
 const { pagination, halalas } = await load("src/lib/api/pagination.ts");
 const { seal, unseal } = await load("src/lib/auth/seal.ts");
 const secret = "integration-test-secret-longer-than-thirty-two-characters";
@@ -153,7 +156,7 @@ test("home visits use owned addresses and stored service durations, and payment 
   let identity="patient";const calls=[];let payments=0;
   const group="bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
   const api=await load("src/lib/api/d4h/bookings.ts",{
-    cache:fn=>fn,randomUUID:()=>"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",seal,unseal,pagination,halalas,
+    cache:fn=>fn,randomUUID:()=>"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",seal,unseal,pagination,halalas,visitMinutes,addressLocationState,bookingSchedule,calendarDate,
     requireSession:async()=>({user:{id:identity}}),
     d4hV2:async()=>envelope([{id:650,name:"Home service",name_ar:null,duration:"0:30",visit_type:"on_site"}]),
     d4hPatientApi:async(path,options)=>{
@@ -167,7 +170,7 @@ test("home visits use owned addresses and stored service durations, and payment 
     },
   });
   try{
-    assert.deepEqual(await api.homeSlots(67,650,"2026-11-02"),["10:00"]);
+    assert.deepEqual((await api.homeSlots(67,650,"2026-11-02")).slots,["10:00"]);
     assert.ok(calls[0].path.includes("duration_minutes=30"));
     const quote=await api.previewHome({providerId:67,serviceId:650,addressId:1,date:"2026-11-02",time:"10:00",notes:"Test",amount:1,user_id:999});
     identity="another-patient";await assert.rejects(api.createHome(quote.token));

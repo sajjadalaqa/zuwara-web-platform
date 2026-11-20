@@ -1,4 +1,7 @@
 "use client";
+import ClockTimeField from "@/components/cart/ClockTimeField";
+import {zonedDateTime,todayInTimezone,scheduleNow,selectableBookingTime,type BookingSchedule} from "@/lib/cart/scheduling";
+import {schedulingCopy} from "@/lib/cart/scheduling-copy";
 import { useUiText } from "@/i18n/use-ui-text";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
@@ -42,7 +45,7 @@ type Ymd = { y: number; m: number; d: number };
 
 const initials = (n: string) => n.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
 
-export default function BookingFlow({ provider, services, addresses, identity }: { provider: BookingProvider; services: HomeService[]; addresses: HomeAddress[]; identity: { name: string; phone: string; email: string } }) {
+export default function BookingFlow({ provider, services, addresses, identity, initialServiceId }: { initialServiceId?:number; provider: BookingProvider; services: HomeService[]; addresses: HomeAddress[]; identity: { name: string; phone: string; email: string } }) {
   const uiText = useUiText();
   const t = useTranslations("bookPage");
   const locale = useLocale();
@@ -68,9 +71,10 @@ export default function BookingFlow({ provider, services, addresses, identity }:
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [serviceId, setServiceId] = useState(services[0]?.id ?? 0);
+  const [serviceId, setServiceId] = useState(initialServiceId??services[0]?.id??0);
   const [addressId, setAddressId] = useState(addresses[0]?.id ?? 0);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [schedule,setSchedule]=useState<BookingSchedule|null>(null),[receivedAt,setReceivedAt]=useState(0),[tick,setTick]=useState(()=>Date.now());
   const [slotLoading, setSlotLoading] = useState(false);
   const [slotError, setSlotError] = useState(false);
   const [quote, setQuote] = useState<{token:string;amountHalalas:number}|null>(null);
@@ -78,26 +82,25 @@ export default function BookingFlow({ provider, services, addresses, identity }:
   const [locked, setLocked] = useState(false);
   const SLOTS = availableSlots.map(value => ({value,mins:Number(value.slice(0,2))*60+Number(value.slice(3,5))}));
   useEffect(()=>{
-    if (!date || !serviceId) return;
+    if (!serviceId || !addressId) return;
     let active=true;
     Promise.resolve().then(()=>{
-      if(active){setSlotLoading(true);setSlotError(false);setAvailableSlots([]);}
-      return homeSlotsAction(Number(provider.id),serviceId,date);
-    }).then(rows=>{if(active){setAvailableSlots(rows);setSlotError(false);}})
+      if(active){setSlotLoading(true);setSlotError(false);setAvailableSlots([]);setSchedule(null);setTime(null);setQuote(null);}
+      return homeSlotsAction(Number(provider.id),serviceId,date??todayInTimezone("UTC",1));
+    }).then(rows=>{if(active){setAvailableSlots(rows.slots);setSchedule(rows);setReceivedAt(Date.now());setSlotError(false);}})
       .catch(()=>{if(active){setAvailableSlots([]);setSlotError(true);}})
       .finally(()=>{if(active)setSlotLoading(false);});
     return()=>{active=false;};
-  },[provider.id,serviceId,date]);
+  },[provider.id,serviceId,date,addressId]);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      const n = new Date();
-      setToday({ y: n.getFullYear(), m: n.getMonth(), d: n.getDate(), mins: n.getHours() * 60 + n.getMinutes() });
-      setView({ y: n.getFullYear(), m: n.getMonth() });
-    });
-    return () => cancelAnimationFrame(frame);
-  }, []);
+  useEffect(()=>{
+    if(!schedule)return;
+    const update=()=>{const localNow=Date.now(),current=zonedDateTime(schedule.timezone,scheduleNow(schedule.serverTime,receivedAt,localNow));const y=Number(current.date.slice(0,4)),m=Number(current.date.slice(5,7))-1,d=Number(current.date.slice(8,10));setToday({y,m,d,mins:Number(current.time.slice(0,2))*60+Number(current.time.slice(3,5))});setView(value=>!value||value.y*12+value.m<y*12+m?{y,m}:value);setTick(localNow);};
+    const frame=requestAnimationFrame(update),timer=setInterval(update,30000);return()=>{cancelAnimationFrame(frame);clearInterval(timer);};
+  },[schedule,receivedAt]);
+  const bookingNow=scheduleNow(schedule?.serverTime,receivedAt,tick);
+  const selectedTimeValid=!!schedule&&!!date&&!!time&&selectableBookingTime(schedule,date,time,bookingNow);
 
   useEffect(() => { cardRef.current?.scrollIntoView({ block: "start" }); }, [step]);
 
@@ -141,8 +144,7 @@ export default function BookingFlow({ provider, services, addresses, identity }:
     setView({ y: Math.floor(total / 12), m: total % 12 });
   };
 
-  const slotDisabled = (mins: number) => Boolean(today && date === todayKey && mins < today.mins + 30);
-  const noSlots = Boolean(date) && !slotLoading && SLOTS.every((s) => slotDisabled(s.mins));
+  const noSlots = Boolean(date) && !slotLoading && schedule?.requiresConfiguredSlot!==false && SLOTS.length===0;
   const goToday = () => {
     if (!today) return;
     setView({ y: today.y, m: today.m });
@@ -162,7 +164,7 @@ export default function BookingFlow({ provider, services, addresses, identity }:
   };
 
   const confirm = async () => {
-    if (!date || !time || !validate() || sending) return;
+    if (!date || !time || !validate() || sending || (!quote&&(!schedule||!selectableBookingTime(schedule,date,time,scheduleNow(schedule.serverTime,receivedAt))))) return;
     setSending(true); setFailed(false);
     try {
       if (!quote) {
@@ -232,10 +234,11 @@ export default function BookingFlow({ provider, services, addresses, identity }:
                   <div><strong>{isAr ? "\u0627\u0644\u062d\u062c\u0632 \u063a\u064a\u0631 \u0645\u062a\u0627\u062d \u062d\u0627\u0644\u064a\u0627\u064b" : "Booking is not available yet"}</strong>
                     <p>{!services.length
                       ? isAr ? "\u0644\u0627 \u062a\u0648\u062c\u062f \u062e\u062f\u0645\u0627\u062a \u0645\u062a\u0627\u062d\u0629 \u0644\u0644\u062d\u062c\u0632 \u0644\u062f\u0649 \u0645\u0642\u062f\u0645 \u0627\u0644\u062e\u062f\u0645\u0629 \u062d\u0627\u0644\u064a\u0627\u064b." : "This provider has no home-visit services available. Available times will appear once a service is listed."
-                      : isAr ? "\u0623\u0636\u0641 \u0639\u0646\u0648\u0627\u0646\u0643 \u0641\u064a \u062a\u0637\u0628\u064a\u0642 \u0632\u0648\u0627\u0631\u0629 \u0644\u0644\u0632\u064a\u0627\u0631\u0627\u062a \u0623\u0648 \u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u0627\u0644\u062f\u0639\u0645." : "A saved address is required. Add your address in Zuwara Visit or contact support to continue."}</p>
-                    <Link href={!services.length ? "/provider" : "/contact"}>{!services.length ? isAr ? "\u0627\u0633\u062a\u0643\u0634\u0641 \u0645\u0642\u062f\u0645\u064a \u0627\u0644\u062e\u062f\u0645\u0629" : "Browse other providers" : isAr ? "\u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u0627\u0644\u062f\u0639\u0645" : "Contact support"}</Link>
+                      : isAr ? "\u0623\u0636\u0641 \u0639\u0646\u0648\u0627\u0646\u0643 \u0641\u064a \u062a\u0637\u0628\u064a\u0642 \u0632\u0648\u0627\u0631\u0629 \u0644\u0644\u0632\u064a\u0627\u0631\u0627\u062a \u0623\u0648 \u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u0627\u0644\u062f\u0639\u0645." : "A saved address is required. Add your visit address from Saved addresses, then reload this page to continue."}</p>
+                    <Link href={!services.length ? "/provider" : "/dashboard/addresses"}>{!services.length ? isAr ? "\u0627\u0633\u062a\u0643\u0634\u0641 \u0645\u0642\u062f\u0645\u064a \u0627\u0644\u062e\u062f\u0645\u0629" : "Browse other providers" : isAr ? "\u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u0627\u0644\u062f\u0639\u0645" : "Manage saved addresses"}</Link>
                   </div>
                 </div>}
+                <div className={styles.form}><Field label={t("address")}><select disabled={locked} value={addressId} onChange={e=>{setAddressId(Number(e.target.value));setTime(null);setQuote(null);}}>{addresses.map(a=><option key={a.id} value={a.id}>{a.label}</option>)}</select></Field></div>
                 <div className={styles.pick}>
                   {/* Date */}
                   <section className={styles.pickCol} aria-label={t("selectDate")}>
@@ -289,7 +292,7 @@ export default function BookingFlow({ provider, services, addresses, identity }:
                     <div className={styles.colHead}>
                       <div>
                         <h2><Svg d={I.clock} size={16} /> {t("selectTime")}</h2>
-                        {date && <p>{dateLabel(date)}</p>}
+                        {date && <p>{dateLabel(date)}</p>}{schedule&&<p>{schedulingCopy(locale).timezone}: {schedule.timezone}</p>}
                       </div>
                     </div>
 
@@ -297,13 +300,13 @@ export default function BookingFlow({ provider, services, addresses, identity }:
                       <p className={styles.hint}>{isAr ? "\u0644\u0627 \u062a\u062a\u0648\u0641\u0631 \u0623\u0648\u0642\u0627\u062a \u0644\u0644\u062d\u062c\u0632 \u0628\u062f\u0648\u0646 \u062e\u062f\u0645\u0629 \u0645\u062a\u0627\u062d\u0629." : "Available times require a bookable service from this provider."}</p>
                     ) : !date ? (
                       <p className={styles.hint}>{t("pickDateFirst")}</p>
-                    ) : slotError ? (<p className={styles.fail} role="alert">{isAr ? "تعذر تحميل الأوقات المتاحة. أعد المحاولة." : "Availability could not be loaded. Please retry."}</p>) : slotLoading ? (<p className={styles.hint}>{isAr ? "جارٍ تحميل الأوقات" : "Loading available times"}</p>) : noSlots ? (
+                    ) : slotError ? (<p className={styles.fail} role="alert">{isAr ? "تعذر تحميل الأوقات المتاحة. أعد المحاولة." : "Availability could not be loaded. Please retry."}</p>) : slotLoading ? (<p className={styles.hint}>{isAr ? "جارٍ تحميل الأوقات" : "Loading available times"}</p>) : schedule?.schedulingMode==="clock_picker" ? (<ClockTimeField schedule={schedule} date={date} time={time??""} locale={locale} now={bookingNow} disabled={locked} onChange={value=>{setTime(value);setQuote(null);}}/>) : noSlots ? (
                       <p className={styles.hint}>{t("noSlots")}</p>
                     ) : (
                       <div className={styles.slots} role="group" aria-label={t("selectTime")}>
                         {SLOTS.map((s) => (
                           <button
-                            key={s.value} type="button" disabled={slotDisabled(s.mins)}
+                            key={s.value} type="button"
                             className={`${styles.slot} ${time === s.value ? styles.slotSel : ""}`}
                             aria-pressed={time === s.value}
                             onClick={() => {setTime(s.value);setQuote(null);}}
@@ -317,7 +320,7 @@ export default function BookingFlow({ provider, services, addresses, identity }:
                 </div>
 
                 <div className={styles.actions}>
-                  <button type="button" className={styles.primary} disabled={!date || !time || !services.length || !addresses.length} onClick={() => setStep(2)}>
+                  <button type="button" className={styles.primary} disabled={!date || !time || !services.length || !addresses.length || slotLoading || slotError || !selectedTimeValid} onClick={() => setStep(2)}>
                     {t("continue")}
                   </button>
                 </div>
@@ -356,7 +359,7 @@ export default function BookingFlow({ provider, services, addresses, identity }:
                   </div>
                   {visitType === "home" && (
                     <Field label={t("address")} error={errors.address}>
-                      <select disabled={locked} value={addressId} onChange={e=>{setAddressId(Number(e.target.value));setQuote(null);}}>
+                      <select disabled={locked} value={addressId} onChange={e=>{setAddressId(Number(e.target.value));setTime(null);setQuote(null);setStep(1);}}>
                         {addresses.map(a=><option key={a.id} value={a.id}>{a.label}</option>)}
                       </select>
                     </Field>
@@ -411,7 +414,7 @@ export default function BookingFlow({ provider, services, addresses, identity }:
               <h3>{t("summary")}</h3>
               <dl>
                 <div><dt>{t("date")}</dt><dd>{date ? dateLabel(date) : t("notSelected")}</dd></div>
-                <div><dt>{t("time")}</dt><dd>{time ? timeLabel(time) : t("notSelected")}</dd></div>
+                <div><dt>{t("time")}</dt><dd>{time ? timeLabel(time)+(schedule?" ("+schedule.timezone+")":"") : t("notSelected")}</dd></div>
                 <div><dt>{t("visit")}</dt><dd>{visitLabel}</dd></div>
               </dl>
               {quote && <p>{isAr ? "السعر التقديري: " : "Quoted total: "}{new Intl.NumberFormat(isAr?"ar-SA":"en-GB",{style:"currency",currency:"SAR"}).format(quote.amountHalalas/100)}</p>}

@@ -10,11 +10,14 @@ function provider(value: unknown): D4hProvider {
   // Map only approved patient-facing fields; preserve real zero ratings/counts.
   return { id: Number(row.id), name: row.name, ...(typeof row.biography==="string"?{bio:row.biography}:{}), ...(typeof row.photo==="string"&&/^https?:\/\//.test(row.photo)?{image:row.photo}:{}), ...(typeof row.rating==="number"&&row.rating>=0&&row.rating<=5?{rating:row.rating}:{}), ...(Number.isSafeInteger(row.rating_count)&&Number(row.rating_count)>=0?{reviewsCount:Number(row.rating_count)}:{}) };
 }
-export async function getD4hProviders(locale: string, serviceId?: number): Promise<D4hProvider[]> {
+export async function getD4hProviders(locale: string, serviceId?: number | { serviceIds:number[]; packageIds:number[] }): Promise<D4hProvider[]> {
+  const filters=new URLSearchParams();
+  if(typeof serviceId==="number")filters.set("service_id",String(serviceId));
+  else if(serviceId){for(const id of new Set(serviceId.serviceIds))filters.append("service_ids[]",String(id));for(const id of new Set(serviceId.packageIds))filters.append("package_ids[]",String(id));}
   const providers: D4hProvider[] = [];
   const seen = new Set<number>();
   for (let page = 1; page <= 100; page++) {
-    const payload = await d4hV2<unknown[]>(`/providers?per_page=50&page=${page}${serviceId ? `&service_id=${serviceId}` : ""}`, { locale });
+    const payload = await d4hV2<unknown[]>(`/providers?per_page=50&page=${page}${filters.size ? "&"+filters : ""}`, { locale });
     if (!Array.isArray(payload.data) || !payload.meta?.pagination) throw new D4hV2Error(502, "INVALID_RESPONSE");
     let added = 0;
     for (const item of payload.data) {

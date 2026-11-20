@@ -1,4 +1,5 @@
 export type D4hCategory = {
+  special?:boolean;
   id: number;
   name: string;
   description: string | null;

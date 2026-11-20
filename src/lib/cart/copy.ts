@@ -127,4 +127,4 @@ const ar: Record<keyof typeof en,string> = {
   "CHECKOUT_UNAVAILABLE": "إتمام الحجز غير متاح مؤقتاً. يرجى المحاولة مجدداً."
 };
 export function cartCopy(locale:string){return locale === "ar" ? ar : en;}
-export function cartError(code:string,locale:string){const text=cartCopy(locale);return code in text ? text[code as keyof typeof text] : text.CHECKOUT_UNAVAILABLE;}
+export function cartError(code:string,locale:string){const aliases:Record<string,string>={ADDRESS_NOT_COVERED:"ADDRESS_OUTSIDE_ZONE",SERVICE_ZONE_MISMATCH:"ADDRESS_OUTSIDE_ZONE",PROVIDER_CATALOG_MISMATCH:"SERVICE_UNAVAILABLE",INVALID_SERVICE_CONFIGURATION:"SERVICE_UNAVAILABLE",WALLET_VERIFICATION_PENDING:"paymentPending"};code=aliases[code]??code;const text=cartCopy(locale);return code in text ? text[code as keyof typeof text] : text.CHECKOUT_UNAVAILABLE;}

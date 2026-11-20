@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
-import { getD4hCategories, getD4hServices, getD4hSubcategories } from "@/lib/api/d4h/catalog";
+import { getD4hPackages, getD4hCategories, getD4hServices, getD4hSubcategories } from "@/lib/api/d4h/catalog";
 import type { D4hCategory } from "@/lib/api/d4h/types";
 import { ArrowRight, Grid2X2, Layers3, Stethoscope, ListFilter } from "lucide-react";
 import { SafeImage } from "@/components/SafeImage";
@@ -12,7 +12,8 @@ export default async function CategoryServices({ category, locale, subcategoryId
   const t = (en: string, arabic: string) => ar ? arabic : en;
   const [subcategories, catalog] = await Promise.all([getD4hSubcategories(category.id, locale), getD4hCategories(locale)]);
   if (subcategoryId && !subcategories.some(s => String(s.id) === subcategoryId)) notFound();
-  const services = await getD4hServices(category.id, locale, subcategoryId ? Number(subcategoryId) : undefined);
+  const [serviceRows,packages]=await Promise.all([getD4hServices(category.id,locale,subcategoryId?Number(subcategoryId):undefined,!!category.special),category.special?getD4hPackages(category.id,locale,subcategoryId?Number(subcategoryId):undefined):Promise.resolve([])]);
+  const services=[...serviceRows.map(s=>({...s,special:!!category.special,itemType:"service" as const})),...packages.map(p=>({...p,special:true,itemType:"package" as const,price:{final:p.catalog_price??"0",currency:p.currency??"SAR"}}))];
   return <div className={styles.page}><div className="container">
     <Link href="/home-services" className={styles.back}><ArrowRight size={15} aria-hidden="true" />{t("All categories", "جميع الفئات")}</Link>
     <header className={styles.hero}><div className={styles.heroLayout}>

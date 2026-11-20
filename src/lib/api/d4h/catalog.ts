@@ -4,7 +4,7 @@ import { d4hV2 } from "./v2";
 import { slugify } from "@/lib/api/zuwara/slugs";
 import type { D4hCategoryData } from "./types";
 type CatalogRow = { id: number; name: string; name_ar?: string; description?: string; description_ar?: string; image_url?: string; services_count?: number; screen_type?: number };
-export type CatalogService = CatalogRow & { price?: { final: string; currency: string }; provider?: { id: number; name: string } | null };
+export type CatalogService = CatalogRow & { price?: { final: string; currency: string }; provider?: { id: number; name: string } | null; special?:boolean; itemType?:"service"|"package"; catalog_price?:string; catalog_price_halalas?:number; currency?:string };
 async function collection<T>(path: string, locale: string): Promise<T[]> {
   const rows: T[] = [];
   for (let page = 1; page <= 100; page++) {
@@ -17,9 +17,10 @@ async function collection<T>(path: string, locale: string): Promise<T[]> {
   throw new Error("Catalog pagination limit exceeded.");
 }
 export const getD4hCategories = cache(async (locale = "en"): Promise<D4hCategoryData> => {
-  const rows = await collection<CatalogRow>("/catalog/categories", locale);
+  const [rows,specialRows] = await Promise.all([collection<CatalogRow>("/catalog/categories", locale),collection<CatalogRow>("/catalog/categories?special=1", locale)]);
+  const specialIds=new Set(specialRows.map(row=>row.id));
   return { available: true, categories: rows.map(row => ({
-    id: row.id, name: locale === "ar" ? row.name_ar || row.name : row.name, nameAr: row.name_ar,
+    id: row.id, special:specialIds.has(row.id), name: locale === "ar" ? row.name_ar || row.name : row.name, nameAr: row.name_ar,
     description: (locale === "ar" ? row.description_ar || row.description : row.description) ?? null,
     imageUrl: row.image_url ?? null, serviceCount: row.services_count ?? 0,
     slug: slugify(row.name), screenType: row.screen_type ?? 0,
@@ -29,6 +30,10 @@ export const getD4hCategories = cache(async (locale = "en"): Promise<D4hCategory
 export function getD4hSubcategories(categoryId: number, locale: string) {
   return collection<CatalogRow>("/catalog/subcategories?category_id=" + categoryId, locale);
 }
-export function getD4hServices(categoryId: number, locale: string, subcategoryId?: number) {
-  return collection<CatalogService>("/catalog/services?category_id=" + categoryId + (subcategoryId ? "&subcategory_id=" + subcategoryId : ""), locale);
+export function getD4hServices(categoryId: number, locale: string, subcategoryId?: number, special=false) {
+  return collection<CatalogService>("/catalog/services?"+(special?"special=1&":"")+"category_id=" + categoryId + (subcategoryId ? "&subcategory_id=" + subcategoryId : ""), locale);
+}
+
+export function getD4hPackages(categoryId:number,locale:string,subcategoryId?:number){
+ return collection<CatalogService>("/catalog/packages?category_id="+categoryId+(subcategoryId?"&subcategory_id="+subcategoryId:""),locale);
 }

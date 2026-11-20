@@ -60,3 +60,12 @@ test('shared website chrome shows the QR card on public pages and hides it on al
     assert.equal(html.includes('home-app-download'), !dashboard, pathname);
   }
 });
+
+
+test('checkout can suppress the floating promotion without hiding normal public chrome',()=>{
+ for(const pathname of ['/cart','/ar/cart','/provider/7/book','/ar/provider/7/book']){
+  const Chrome=load('src/app/[locale]/SiteChrome.tsx',{'next/navigation':{usePathname:()=>pathname}}).default;
+  assert.equal(renderToStaticMarkup(React.createElement(Chrome,{hideOnCheckout:true},'promotion')),'');
+  assert.equal(renderToStaticMarkup(React.createElement(Chrome,null,'header')),'header');
+ }
+});

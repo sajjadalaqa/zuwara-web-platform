@@ -13,6 +13,7 @@ const links = [
   ["services", "/home-services"],
   ["categories", "/categories"],
   ["consultants", "/healthcare"],
+  ["therapy", "/therapy"],
   ["blogs", "/blog"],
   ["provider", "/provider"],
   ["contact", "/contact"],
@@ -74,7 +75,7 @@ export function Header({ signedIn = false, sessionExpiresAt = 0 }: { signedIn?: 
 
   // Close the menu if the screen grows into the desktop layout
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1101px)");
+    const mq = window.matchMedia("(min-width: 1241px)");
     const onChange = (event: MediaQueryListEvent) => {
       if (event.matches) setOpen(false);
     };
@@ -118,7 +119,7 @@ export function Header({ signedIn = false, sessionExpiresAt = 0 }: { signedIn?: 
                 aria-current={active ? "page" : undefined}
                 style={{ "--i": index } as CSSProperties}
               >
-                {t(`nav.${key}`)}
+                {key === "therapy" ? (locale === "ar" ? "\u062c\u0644\u0633\u0627\u062a \u0627\u0644\u0639\u0644\u0627\u062c" : "Therapy Sessions") : t(`nav.${key}`)}
               </Link>
             );
           })}

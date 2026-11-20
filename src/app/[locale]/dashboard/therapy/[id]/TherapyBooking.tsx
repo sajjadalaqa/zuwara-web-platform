@@ -13,7 +13,16 @@ import {
   type CareQuote,
   type PendingIntent,
 } from "../../_care/commands";
-import s from "../../_care/care.module.css";
+import base from "../../_care/care.module.css";
+import detail from "./detail.module.css";
+import {CalendarDays, Video} from "lucide-react";
+const s={...base,...detail};
+function displayTime(value: string) {
+  const match = /^(\d{2}):?(\d{2})(?::\d{2})?$/.exec(value);
+  if (!match || Number(match[1]) > 23 || Number(match[2]) > 59) return value;
+  const hour = Number(match[1]);
+  return String(hour % 12 || 12).padStart(2, "0") + ":" + match[2] + (hour >= 12 ? " PM" : " AM");
+}
 export default function TherapyBooking({
   plan,
   doctors,
@@ -56,6 +65,7 @@ export default function TherapyBooking({
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [uncertain, setUncertain] = useState(Boolean(pending));
+  const [activeDate, setActiveDate] = useState<string | null>(null);
   const [patient, setPatient] = useState<number | null>(null);
   const [resume, setResume] = useState(pending);
   const token = quote?.token || resume?.token,
@@ -86,7 +96,7 @@ export default function TherapyBooking({
     return () => {
       active = false;
     };
-  }, [plan.id, doctor, duration, date]);
+  }, [plan.id, doctor, duration, date, uiText]);
   function choose(day: string, time: string) {
     setQuote(null);
     setSessions((previous) => {
@@ -163,8 +173,8 @@ export default function TherapyBooking({
       </section>
     );
   return (
-    <section className={s.card}>
-      <h2>{uiText("Book therapy sessions")}</h2>
+    <section className={s.card} id="therapy-booking">
+      <div className={s.sectionHeading}><div><span className={s.eyebrow}>{ar?"\u062e\u0637\u0648\u062a\u0643 \u0627\u0644\u062a\u0627\u0644\u064a\u0629":"YOUR NEXT STEP"}</span><h2><CalendarDays size={22}/>{uiText("Book therapy sessions")}</h2></div><span className={s.softLabel}><Video size={15}/>{ar?"\u0639\u0646 \u0628\u064f\u0639\u062f":"Online"}</span></div>
       {resume ? (
         <p className={s.notice}>
           {uiText("An earlier request has an unconfirmed outcome. Retry it with the original selections before starting another package.")}{" "}</p>
@@ -176,6 +186,7 @@ export default function TherapyBooking({
             value={doctor}
             onChange={(e) => {
               setLoading(true);
+              setActiveDate(null);
               setDoctor(Number(e.target.value));
               setSessions([]);
               setQuote(null);
@@ -194,6 +205,7 @@ export default function TherapyBooking({
             value={duration}
             onChange={(e) => {
               setLoading(true);
+              setActiveDate(null);
               setDuration(Number(e.target.value));
               setSessions([]);
               setQuote(null);
@@ -213,15 +225,21 @@ export default function TherapyBooking({
             disabled={locked}
             onChange={(e) => {
               setLoading(true);
+              setActiveDate(null);
               setDate(e.target.value);
             }}
           />
         </label>
         {loading ? (
-          <p>{uiText("Loading availability?")}</p>
+          <p role="status" className={s.loading}>{ar?"\u062c\u0627\u0631\u064d \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u0645\u0648\u0627\u0639\u064a\u062f...":"Finding available sessions..."}</p>
         ) : (
-          calendar.map((day) => (
-            <div key={day.date}>
+          <div className={s.schedule}>
+          <div className={s.dateChoices} role="group" aria-label={ar?"\u0627\u062e\u062a\u0631 \u0627\u0644\u062a\u0627\u0631\u064a\u062e":"Choose a date"}>
+            {calendar.map(day=>{const stamp=new Date(day.date+"T12:00:00Z"),locale=ar?"ar-SA-u-ca-gregory":"en-GB";return <button type="button" key={day.date} disabled={locked||!day.is_available||!day.slots.length} aria-pressed={activeDate===day.date} onClick={()=>setActiveDate(day.date)}><small>{new Intl.DateTimeFormat(locale,{weekday:"short",timeZone:"UTC"}).format(stamp)}</small><strong>{new Intl.DateTimeFormat(locale,{day:"2-digit",timeZone:"UTC"}).format(stamp)}</strong><span>{new Intl.DateTimeFormat(locale,{month:"short",timeZone:"UTC"}).format(stamp)}</span></button>;})}
+          </div>
+          {!calendar.length?<p className={s.muted}>{uiText("No available slots.")}</p>:!activeDate?<p className={s.dateHint}>{ar?"\u0627\u062e\u062a\u0631 \u062a\u0627\u0631\u064a\u062e\u064b\u0627 \u0644\u0639\u0631\u0636 \u0627\u0644\u0623\u0648\u0642\u0627\u062a \u0627\u0644\u0645\u062a\u0627\u062d\u0629":"Select a date to see available times."}</p>:null}
+          {calendar.filter(day=>day.date===activeDate).map((day) => (
+            <div className={s.calendarDay} key={day.date}>
               <h3>{day.date}</h3>
               <div className={s.slots}>
                 {day.is_available && day.slots.length ? (
@@ -229,6 +247,7 @@ export default function TherapyBooking({
                     <button
                       type="button"
                       key={slot.start_time}
+                      aria-pressed={sessions.some(x=>x.date===day.date&&x.time===slot.start_time)}
                       disabled={
                         locked ||
                         (sessions.length >=
@@ -249,7 +268,7 @@ export default function TherapyBooking({
                       }
                       onClick={() => choose(day.date, slot.start_time)}
                     >
-                      {slot.start_time}?{slot.end_time}
+                      <bdi>{displayTime(slot.start_time)}{" \u2013 "}{displayTime(slot.end_time)}</bdi>
                     </button>
                   ))
                 ) : (
@@ -257,14 +276,15 @@ export default function TherapyBooking({
                 )}
               </div>
             </div>
-          ))
+          ))}
+          </div>
         )}
         <p>
           {sessions.length} {uiText("selected")}{" "}{plan.total_sessions ? " / " + Math.min(plan.total_sessions, 20) : ""}
         </p>
         {sessions.map((item) => (
           <p key={item.date + item.time}>
-            {item.date} ? {item.time}{" "}
+            {item.date}{" \u00b7 "}<bdi>{displayTime(item.time)}</bdi>{" "}
             {!locked ? (
               <button
                 type="button"
@@ -337,8 +357,8 @@ export default function TherapyBooking({
           </p>
           {quote.sessions?.map((item) => (
             <p key={item.session_number}>
-              {uiText("Session")}{" "}{item.session_number}: {item.date} {item.time}?
-              {item.end_time}
+              {uiText("Session")}{" "}{item.session_number}: {item.date} <bdi>{displayTime(item.time)}{" \u2013 "}
+              {displayTime(item.end_time)}</bdi>
             </p>
           ))}
           <p>{uiText("Slots are not reserved by this preview.")}</p>

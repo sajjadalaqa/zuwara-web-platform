@@ -80,7 +80,7 @@ export default async function LocaleLayout({
           <a className="skip-link" href="#main-content">{uiText("Skip to content")}</a>
           <SiteChrome><Header signedIn={signedIn} sessionExpiresAt={sessionExpiresAt} /></SiteChrome>
 <main id="main-content">{children}</main>
-<SiteChrome><Footer /><AppDownloadCard locale={locale} /></SiteChrome>
+<SiteChrome><Footer /></SiteChrome><SiteChrome hideOnCheckout><AppDownloadCard locale={locale} /></SiteChrome>
     </NextIntlClientProvider>
   );
 }

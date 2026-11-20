@@ -1,88 +1,27 @@
 import { getUiText } from "@/i18n/server-ui-text";
 import { patientApi } from "@/lib/auth/session";
 import { getLocale } from "next-intl/server";
+import Link from "next/link";
+import { ArrowLeft, ArrowUpRight, Brain, CalendarDays, Check, ChevronDown, Clock3, Flag, HeartHandshake, Sparkles, Target, Video } from "lucide-react";
 import { planDetails, planDoctors } from "@/lib/api/zuwara/care";
-import { CareLayout, Facts, bilingual, currency, s } from "../../_care/ui";
+import { bilingual, currency } from "../../_care/ui";
 import TherapyBooking from "./TherapyBooking";
 import { pendingCareIntent } from "../../_care/commands";
-export default async function PlanPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const uiText = await getUiText();
-  const { id } = await params,
-    ar = (await getLocale()) === "ar";
-  const [plan, doctors, pending, dependents] = await Promise.all([
-    planDetails(id),
-    planDoctors(id),
-    pendingCareIntent("therapy"),
-    patientApi<{ id: number }[]>("/patients/dependents"),
-  ]);
-  return (
-    <CareLayout title={bilingual(plan.title, ar)}>
-      <section className={s.card}>
-        <p className={s.summary}>{bilingual(plan.description, ar)}</p>
-        <Facts
-          rows={[
-            [uiText("Plan reference"), plan.id],
-            [uiText("Sessions"), plan.total_sessions],
-            [uiText("Session count recommended"), plan.sessions_recommended],
-          ]}
-        />
-        <h2>{uiText("Session prices")}</h2>
-        <table className={s.table}>
-          <thead>
-            <tr>
-              <th>{uiText("Duration")}</th>
-              <th>{uiText("Price per session")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {plan.durations?.map((d) => (
-              <tr key={d.duration_minutes}>
-                <td>{d.duration_minutes} {uiText("minutes")}</td>
-                <td>{currency(d.price_per_session_halalas, d.currency, ar)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-      <div className={s.grid}>
-        {[
-          [uiText("Milestones"), plan.milestones],
-          [uiText("Goals"), plan.goals],
-        ].map(([title, items]) => (
-          <section className={s.card} key={String(title)}>
-            <h2>{String(title)}</h2>
-            {Array.isArray(items) && items.length ? (
-              items.map((item) => (
-                <div key={item.id}>
-                  <h3>{bilingual(item.title, ar)}</h3>
-                  <p>{bilingual(item.description, ar)}</p>
-                </div>
-              ))
-            ) : (
-              <p className={s.muted}>{uiText("Not provided.")}</p>
-            )}
-          </section>
-        ))}
-      </div>
-      <section className={s.card}>
-        <h2>{uiText("Frequently asked questions")}</h2>
-        {plan.faqs?.map((faq) => (
-          <details key={faq.id}>
-            <summary>{bilingual(faq.question, ar)}</summary>
-            <p>{bilingual(faq.answer, ar)}</p>
-          </details>
-        ))}
-      </section>
-      <TherapyBooking
-        plan={plan}
-        doctors={doctors}
-        pending={pending}
-        dependents={dependents.data.map((row) => row.id)}
-      />
-    </CareLayout>
-  );
+import s from "./detail.module.css";
+export default async function PlanPage({params}:{params:Promise<{id:string}>}) {
+ const uiText=await getUiText(),{id}=await params,ar=(await getLocale())==="ar",prefix=ar?"/ar":"";
+ const [plan,doctors,pending,dependents]=await Promise.all([planDetails(id),planDoctors(id),pendingCareIntent("therapy"),patientApi<{id:number}[]>("/patients/dependents")]);
+ const copy=(en:string,arabic:string)=>ar?arabic:en;
+ const nav=[[uiText("Therapy"),"therapy"],[uiText("Rescheduling"),"rescheduling"],[uiText("Follow-ups"),"follow-ups"],[uiText("Benefits"),"benefits"],[uiText("Home visits"),"home-visits"]];
+ return <div className={s.page} dir={ar?"rtl":"ltr"}>
+  <div className={s.topline}><Link href={prefix+"/dashboard/therapy"} className={s.back}><ArrowLeft size={16}/>{copy("All therapy plans","\u062c\u0645\u064a\u0639 \u0627\u0644\u062e\u0637\u0637 \u0627\u0644\u0639\u0644\u0627\u062c\u064a\u0629")}</Link><span>{uiText("Plan reference")} #{plan.id}</span></div>
+  <nav className={s.nav} aria-label={copy("Care services","\u062e\u062f\u0645\u0627\u062a \u0627\u0644\u0631\u0639\u0627\u064a\u0629")}>{nav.map(([label,path])=><Link key={path} href={prefix+"/dashboard/"+path} aria-current={path==="therapy"?"page":undefined}>{label}</Link>)}</nav>
+  <header className={s.hero}><div className={s.heroCopy}><span className={s.eyebrow}><Sparkles size={14}/>{copy("YOUR WELLBEING, ONE SESSION AT A TIME","\u0639\u0627\u0641\u064a\u062a\u0643\u060c \u062e\u0637\u0648\u0629 \u0628\u062e\u0637\u0648\u0629")}</span><h1>{bilingual(plan.title,ar)}</h1>{plan.description&&<p>{bilingual(plan.description,ar)}</p>}<div className={s.heroActions}><a href="#therapy-booking" className={s.primary}>{uiText("Book therapy sessions")}<ArrowUpRight size={17}/></a><span><Video size={16}/>{copy("Online consultations","\u0627\u0633\u062a\u0634\u0627\u0631\u0627\u062a \u0639\u0646 \u0628\u064f\u0639\u062f")}</span></div></div><div className={s.heroArt} aria-hidden="true"><div className={s.orbit}/><div className={s.artIcon}><Brain size={58} strokeWidth={1.25}/></div><span className={s.artSpark}><Sparkles size={22}/></span><span className={s.artHeart}><HeartHandshake size={25}/></span></div></header>
+  <div className={s.stats}><div><span className={s.statIcon}><CalendarDays size={21}/></span><div><small>{uiText("Sessions")}</small><strong>{new Intl.NumberFormat(ar?"ar-SA":"en").format(plan.total_sessions)}</strong></div></div><div><span className={s.statIcon}><Clock3 size={21}/></span><div><small>{copy("Session durations","\u0645\u062f\u0629 \u0627\u0644\u062c\u0644\u0633\u0627\u062a")}</small><strong>{plan.durations?.length?plan.durations.map(d=>d.duration_minutes).join(" / "):"\u2014"}<em>{uiText("minutes")}</em></strong></div></div><div><span className={s.statIcon}><Check size={21}/></span><div><small>{uiText("Session count recommended")}</small><strong className={s.statText}>{plan.sessions_recommended?uiText("Yes"):uiText("No")}</strong></div></div></div>
+  <section className={s.panel}><div className={s.sectionHeading}><div><span className={s.eyebrow}>{copy("PLAN YOUR CARE","\u062e\u0637\u0637 \u0644\u0631\u0639\u0627\u064a\u062a\u0643")}</span><h2>{uiText("Session prices")}</h2></div><span className={s.softLabel}><Clock3 size={14}/>{uiText("Price per session")}</span></div><div className={s.prices}>{plan.durations?.length?plan.durations.map(d=><article key={d.duration_minutes} className={s.priceCard}><span className={s.duration}><Clock3 size={18}/><strong>{d.duration_minutes}</strong> {uiText("minutes")}</span><p>{currency(d.price_per_session_halalas,d.currency,ar)}</p><small>{uiText("Price per session")}</small></article>):<p className={s.muted}>{uiText("Not provided.")}</p>}</div></section>
+  <div className={s.twoCol}>{[{title:uiText("Milestones"),items:plan.milestones,Icon:Flag},{title:uiText("Goals"),items:plan.goals,Icon:Target}].map(({title,items,Icon})=><section className={s.panel} key={title}><div className={s.sectionHeading}><h2><span className={s.headingIcon}><Icon size={20}/></span>{title}</h2></div><div className={s.timeline}>{items?.length?items.map((item,index)=><article className={s.timelineItem} key={item.id}><span className={s.marker}>{String(index+1).padStart(2,"0")}</span><div><h3>{bilingual(item.title,ar)}</h3><p>{bilingual(item.description,ar)}</p></div></article>):<p className={s.muted}>{uiText("Not provided.")}</p>}</div></section>)}</div>
+  <TherapyBooking plan={plan} doctors={doctors} pending={pending} dependents={dependents.data.map(row=>row.id)}/>
+  <section className={s.panel}><div className={s.sectionHeading}><div><span className={s.eyebrow}>{copy("A LITTLE MORE CLARITY","\u0625\u062c\u0627\u0628\u0627\u062a \u0644\u0623\u0633\u0626\u0644\u062a\u0643")}</span><h2>{uiText("Frequently asked questions")}</h2></div></div><div className={s.faqs}>{plan.faqs?.length?plan.faqs.map(faq=><details key={faq.id}><summary>{bilingual(faq.question,ar)}<ChevronDown size={18}/></summary><p>{bilingual(faq.answer,ar)}</p></details>):<p className={s.muted}>{uiText("Not provided.")}</p>}</div></section>
+
+ </div>;
 }

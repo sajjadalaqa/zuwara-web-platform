@@ -7,6 +7,7 @@ export function consultantReturn(search: string): string | null {
   // path with the same alphabet used by doctorSlug, never arbitrary URLs.
   try { value = rawValue === null ? null : decodeURIComponent(rawValue); }
   catch { return null; }
+  if (params.get("bookingFlow") === "therapy" && value && /^\/therapy\/[1-9]\d{0,9}\/availability$/.test(value)) return value;
   if (value === "/cart" && params.get("bookingFlow") === "cart") return value;
   if (value === "/healthcare/doctors" && params.get("bookingFlow") === "public-instant") return value;
   return value && /^\/healthcare\/doctors\/[a-zA-Z0-9\u0600-\u06ff][a-zA-Z0-9\u0600-\u06ff-]{0,199}$/.test(value) ? value : null;
@@ -15,13 +16,13 @@ export function consultantReturn(search: string): string | null {
 export function consultantAuthHref(path: string, search: string): string {
   const target = consultantReturn(search);
   const flow = new URLSearchParams(search).get("bookingFlow");
-  const suffix = flow === "instant" || flow === "public-instant" || flow === "cart" ? `&bookingFlow=${flow}` : "";
+  const suffix = flow === "instant" || flow === "public-instant" || flow === "cart" || flow === "therapy" ? `&bookingFlow=${flow}` : "";
   return target ? `${path}?consultantReturn=${encodeURIComponent(target)}${suffix}` : path;
 }
 
 export function consultantSignInDestination(search: string): string {
   const target = consultantReturn(search);
   const flow = new URLSearchParams(search).get("bookingFlow");
-  const suffix = flow === "instant" || flow === "public-instant" || flow === "cart" ? `&bookingFlow=${flow}` : "";
+  const suffix = flow === "instant" || flow === "public-instant" || flow === "cart" || flow === "therapy" ? `&bookingFlow=${flow}` : "";
   return target ? `${target}?bookingSignIn=success${suffix}` : "/dashboard";
 }
