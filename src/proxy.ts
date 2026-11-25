@@ -6,6 +6,8 @@ const handleLocaleRouting = createMiddleware(routing);
 
 export default function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  if (pathname === "/app") return NextResponse.next();
+
   const segment = pathname.split("/")[1];
   const hasLocalePrefix = routing.locales.some(locale => locale === segment);
   const savedLocale = request.cookies.get("NEXT_LOCALE")?.value;

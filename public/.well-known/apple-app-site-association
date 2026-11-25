@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["V3579966P2.com.zuwara.patient.flutter.app"],
+        "components": [
+          { "/": "/healthcare/doctors/*", "comment": "Doctor profile links" },
+          { "/": "/app", "comment": "App landing page" },
+          { "/": "/app/*", "comment": "App landing page" }
+        ]
+      }
+    ]
+  }
+}
