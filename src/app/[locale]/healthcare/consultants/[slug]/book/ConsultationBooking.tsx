@@ -76,7 +76,7 @@ export default function ConsultationBooking({ doctor, dependents, today, walletB
   };
 
   const paymentLabels = {wallet:t("Wallet", "\u0627\u0644\u0645\u062d\u0641\u0638\u0629"), myfatoorah:"MyFatoorah", tamara:"Tamara"};
-  const profileHref = "/healthcare/doctors/" + doctorSlug(doctor.name, doctor.id);
+  const profileHref = "/healthcare/consultants/" + doctorSlug(doctor.name, doctor.id);
   return (
     <main className={s.page} dir={ar ? "rtl" : "ltr"}>
       <div className={s.container}>

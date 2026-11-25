@@ -40,7 +40,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   if (!id) return {};
   const profile = await getZuwaraDoctorProfile(id, safeDate(first(query.date)), duration(first(query.duration)));
   if (!profile) return {};
-  const canonical = `/healthcare/doctors/${doctorSlug(profile.name, profile.id)}`;
+  const canonical = `/healthcare/consultants/${doctorSlug(profile.name, profile.id)}`;
   return {
     title: `${profile.name} | ${profile.categoryTitle ?? "Healthcare Consultant"}`,
     description: `View ${profile.name}'s verified Zuwara profile, consultation durations, and date-based appointment availability.`,
@@ -60,14 +60,14 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
   const profile = await getZuwaraDoctorProfile(id, selectedDate, selectedDuration);
   if (!profile) notFound();
 
-  const canonical = `/healthcare/doctors/${doctorSlug(profile.name, profile.id)}`;
+  const canonical = `/healthcare/consultants/${doctorSlug(profile.name, profile.id)}`;
   const categoryHref = profile.categoryId && profile.categoryTitle ? `/healthcare/specialties/${specialtySlug(profile.categoryTitle, profile.categoryId)}` : "/healthcare/specialties";
   const durations = (profile.durationOptions ?? []).filter((item) => item.enabled);
   const isAr = (await getLocale()) === "ar";
   const bookingHref = canonical + "/book";
   const session = await readSession();
   const signedIn = !!session && Date.parse(session.session.access_expires_at) > Date.now() + 15_000;
-  const instantBookingHref = `/dashboard/instant?doctor=${profile.id}`;
+  const instantBookingHref = `/dashboard/instant?consultant=${profile.id}`;
   const instantRequestHref = signedIn ? instantBookingHref : `/login-page?consultantReturn=${encodeURIComponent(canonical)}&bookingFlow=instant`;
   const showSignInSuccess = first(query.bookingSignIn) === "success" && signedIn;
   const continueBookingHref = first(query.bookingFlow) === "instant" ? instantBookingHref : bookingHref;
@@ -85,7 +85,7 @@ export default async function DoctorProfilePage({ params, searchParams }: Props)
       medicalSpecialty: profile.categoryTitle ?? undefined,
     }}/>
     <section className="doctor-profile-hero"><div className="container">
-      <Breadcrumbs items={[{ label: uiText("Home"), href: "/" }, { label: uiText("Healthcare"), href: "/healthcare" }, { label: uiText("Consultants"), href: "/healthcare/doctors" }, { label: profile.name }]}/>
+      <Breadcrumbs items={[{ label: uiText("Home"), href: "/" }, { label: uiText("Healthcare"), href: "/healthcare" }, { label: uiText("Consultants"), href: "/healthcare/consultants" }, { label: profile.name }]}/>
       <div className="doctor-profile-heading">
         <div className="doctor-profile-portrait"><div className="doctor-profile-photo"><DoctorPhoto src={profile.imageUrl} name={healthcareText(profile, "name", displayLocale)} priority sizes="(max-width: 640px) 140px, 220px"/></div><SaveProvider id={profile.id} source="zuwara"/></div>
         <div className="doctor-profile-intro"><div className="doctor-result-tags">{healthcareText(profile, "categoryTitle", displayLocale) ? <Link href={categoryHref}>{healthcareText(profile, "categoryTitle", displayLocale)}</Link> : null}{healthcareText(profile, "classificationTitle", displayLocale) ? <span>{healthcareText(profile, "classificationTitle", displayLocale)}</span> : null}</div><h1>{healthcareText(profile, "name", displayLocale)}</h1><p>{healthcareText(profile, "designation", displayLocale) || healthcareText(profile, "classificationTitle", displayLocale) || uiText("Healthcare consultant")}</p><div className="doctor-profile-metrics">{Number.isFinite(profile.rating) && profile.rating >= 0 ? <span><strong>★ {profile.rating.toFixed(1)}</strong> {uiText("rating")}</span> : null}{profile.reviewsCount !== undefined ? <span><strong>{profile.reviewsCount}</strong> {uiText("reviews")}</span> : null}{profile.experienceYears > 0 ? <span><strong>{profile.experienceYears}</strong> {uiText("years experience")}</span> : null}{profile.happyClients > 0 ? <span><strong>{profile.happyClients}</strong> {uiText("completed consultations")}</span> : null}</div>{profile.consultationTypes.length > 0 || profile.acceptsInstant ? <div className="doctor-result-tags" style={{marginTop:12}}>{profile.consultationTypes.map(type => <span key={type}>{uiText(type)}</span>)}{profile.acceptsInstant ? <span>{uiText("Instant consultations available")}</span> : null}</div> : null}</div>

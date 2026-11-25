@@ -7,6 +7,7 @@ import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 const dependency=createRequire(import.meta.url);
 function load(path,mocks={}){const {outputText}=ts.transpileModule(fs.readFileSync(new URL('../'+path,import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}});const exports={};new Function('require','exports',outputText)(name=>name in mocks?mocks[name]:dependency(name),exports);return exports;}
+const slugs=load('src/lib/api/zuwara/slugs.ts');
 const auth=load('src/lib/auth/consultant-return.ts');
 test('therapy destination survives login, registration and OTP while rejecting unrelated or external paths',()=>{
  const search='?consultantReturn='+encodeURIComponent('/therapy/4/availability')+'&bookingFlow=therapy';
@@ -29,8 +30,8 @@ test('availability gates anonymous visitors and returns signed-in visitors to th
  await assert.rejects(()=>api.default({params:Promise.resolve({id:'invalid'})}),/NOT_FOUND/);
  }
 });
-function pageHarness({publicAvailable=true,signedIn=false}={}){let privateCalls=0;const css=new Proxy({},{get:(_,name)=>name==='__esModule'?false:String(name)});const api=load('src/app/[locale]/therapy/page.tsx',{'next/link':{default:({children,...props})=>React.createElement('a',props,children)},'next-intl/server':{getLocale:async()=> 'en'},'@/lib/auth/session':{readHeaderSession:async()=>({signedIn,sessionExpiresAt:Date.now()+60000})},'@/lib/api/zuwara/care':{careList:async()=>{privateCalls++;return {items:[plan],total:1,page:1,perPage:12,hasMore:false};}},'@/lib/therapy/public-plans':{publicTherapyPlans:async()=>{if(!publicAvailable)throw Error('404');return {items:[plan],total:1,page:1,perPage:12,hasMore:false};}},'./therapy.module.css':{default:css}});return {api,privateCalls:()=>privateCalls};}
-test('anonymous visitors can browse public plans and check availability without private API access',async()=>{const h=pageHarness();const html=renderToStaticMarkup(await h.api.default({searchParams:Promise.resolve({})}));assert.ok(html.includes('Sleep therapy'));assert.ok(html.includes('href="/therapy/4/availability"'));assert.ok(html.includes('href="/therapy/4"'));assert.ok(html.includes('Check availability'));assert.equal(h.privateCalls(),0);});
+function pageHarness({publicAvailable=true,signedIn=false}={}){let privateCalls=0;const css=new Proxy({},{get:(_,name)=>name==='__esModule'?false:String(name)});const api=load('src/app/[locale]/therapy/page.tsx',{'@/lib/api/zuwara/slugs':slugs,'next/link':{default:({children,...props})=>React.createElement('a',props,children)},'next-intl/server':{getLocale:async()=> 'en'},'@/lib/auth/session':{readHeaderSession:async()=>({signedIn,sessionExpiresAt:Date.now()+60000})},'@/lib/api/zuwara/care':{careList:async()=>{privateCalls++;return {items:[plan],total:1,page:1,perPage:12,hasMore:false};}},'@/lib/therapy/public-plans':{publicTherapyPlans:async()=>{if(!publicAvailable)throw Error('404');return {items:[plan],total:1,page:1,perPage:12,hasMore:false};}},'./therapy.module.css':{default:css}});return {api,privateCalls:()=>privateCalls};}
+test('anonymous visitors can browse public plans and check availability without private API access',async()=>{const h=pageHarness();const html=renderToStaticMarkup(await h.api.default({searchParams:Promise.resolve({})}));assert.ok(html.includes('Sleep therapy'));assert.ok(html.includes('href="/therapy/4/availability"'));assert.ok(html.includes('href="/therapy/sleep-therapy-4"'));assert.ok(html.includes('Check availability'));assert.equal(h.privateCalls(),0);});
 test('missing public endpoint shows a graceful anonymous state and uses the existing catalog only for signed-in visitors',async()=>{for(const signedIn of [false,true]){const h=pageHarness({publicAvailable:false,signedIn});const html=renderToStaticMarkup(await h.api.default({searchParams:Promise.resolve({})}));assert.equal(h.privateCalls(),signedIn?1:0);assert.ok(html.includes(signedIn?'Sleep therapy':'Therapy plans are temporarily unavailable'));}});
 
 test('public plan details request one plan anonymously and distinguish a 404 from an outage', async () => {
@@ -71,7 +72,11 @@ test('public detail renders localized plan content and hands booking to existing
   const route = load('src/app/[locale]/therapy/[id]/page.tsx', {
     'next/link': { default: ({children, ...props}) => React.createElement('a', props, children) },
     'next/image': { default: () => null },
-    'next/navigation': { notFound: () => { throw Error('NOT_FOUND'); } },
+    'next/navigation': {
+      notFound: () => { throw Error('NOT_FOUND'); },
+      redirect: path => { throw Error('REDIRECT ' + path); },
+    },
+    '@/lib/api/zuwara/slugs': slugs,
     'next-intl/server': { getLocale: async () => 'ar' },
     '@/lib/therapy/public-plans': {
       publicTherapyPlan: async (id, locale) => {
@@ -84,11 +89,13 @@ test('public detail renders localized plan content and hands booking to existing
     },
     './plan.module.css': { default: {} },
   });
-  const renderPlan = (id = '4') => route.default({ params: Promise.resolve({ id }) });
+  const renderPlan = (id = 'sleep-4') => route.default({ params: Promise.resolve({ id }) });
   const html = renderToStaticMarkup(await renderPlan());
   for (const text of ['/ar/therapy/4/availability', 'Build a routine', 'Your first session', 'Is it online?', '<details', 'dir="rtl"']) assert.ok(html.includes(text));
   await assert.rejects(() => renderPlan('invalid'), /NOT_FOUND/);
   assert.equal(calls, 1);
+  await assert.rejects(() => renderPlan('4'), /REDIRECT \/ar\/therapy\/sleep-4$/);
+  await assert.rejects(() => renderPlan('old-title-4'), /REDIRECT \/ar\/therapy\/sleep-4$/);
   outcome = null;
   await assert.rejects(() => renderPlan(), /NOT_FOUND/);
   outcome = Error('Unavailable');

@@ -34,7 +34,7 @@ const slides: Slide[] = [
   },
   {
     label: { en: "Healthcare", ar: "الرعاية الصحية" },
-    href: "/healthcare/doctors",
+    href: "/healthcare/consultants",
     image: "/images/hero-2.jpg",
     ratio: "9600 / 3600",
     alt: {

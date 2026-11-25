@@ -22,7 +22,7 @@ export default async function BookConsultation({ params }: { params: Promise<{ l
   const id = parsedId ? String(parsedId) : null;
   if (!id) notFound();
   if (!(await readSession())) {
-    const target = `/healthcare/doctors/${slug}`;
+    const target = `/healthcare/consultants/${slug}`;
     redirect(`${locale === "ar" ? "/ar" : "/en"}/login-page?consultantReturn=${encodeURIComponent(target)}`);
   }
   let doctor;

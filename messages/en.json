@@ -186,7 +186,7 @@
     "clinic": "A bright, modern clinic room"
   },
   "features": {
-    "patientFirst": { "title": "Patient-First Home Care Model", "description": "We bring certified doctors, sterile instruments, and medical lab tech straight to you." },
+    "patientFirst": { "title": "Patient-First Home Care Model", "description": "We bring certified consultants, sterile instruments, and medical lab tech straight to you." },
     "platforms": { "title": "Integrated with Saudi Health Platforms", "description": "Seamless compatibility with Sehati, Wasfaty e-prescriptions, and NPHIES insurance." },
     "staff": { "title": "Compassionate & Licensed Medical Staff", "description": "Every team member is licensed by the Saudi Commission for Health Specialties (SCFHS)." }
   }
@@ -196,7 +196,7 @@
   "heading": "Our Services",
   "intro": "A complete spectrum of preventive, therapeutic, and diagnostic healthcare delivered in the privacy of your home by verified Saudi medical teams.",
   "items": {
-    "virtual": { "title": "Virtual Consultations", "description": "Connect with qualified doctors from the comfort of your home." },
+    "virtual": { "title": "Virtual Consultations", "description": "Connect with qualified consultants from the comfort of your home." },
     "instant": { "title": "Instant Appointments", "description": "Book appointments quickly with trusted healthcare professionals." },
     "therapy": { "title": "Therapy Sessions", "description": "Receive professional therapy and personalized care from home." },
     "caregiver": { "title": "Caregiver", "description": "Get reliable professional care and support in the comfort of your home." },
@@ -207,7 +207,7 @@
     "iv": { "title": "IV Therapy", "description": "Get essential vitamins and nutrients through personalized IV therapy." }
   }
 },
-"Doctors": {
+"Consultants": {
   "all": "All",
   "fallbackCategory": "Healthcare consultant",
   "fallbackRole": "Consultant",

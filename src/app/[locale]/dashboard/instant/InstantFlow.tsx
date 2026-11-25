@@ -10,7 +10,7 @@ import type { InterestField } from "@/lib/api/zuwara/interest-fields";
 import { instantErrorMessage } from "@/lib/api/zuwara/instant-errors";
 import { statusAction, historyAction, previewAction, createAction, payAction, cancelAction, checkoutAction, interestsAction } from "./actions";
 import s from "./instant.module.css";
-import paymentStyles from "@/app/[locale]/healthcare/doctors/[slug]/book/consultation-booking.module.css";
+import paymentStyles from "@/app/[locale]/healthcare/consultants/[slug]/book/consultation-booking.module.css";
 import ConsultantSelect from "./ConsultantSelect";
 const terminal = new Set(["accepted", "declined_all", "expired", "cancelled"]);
 type Operation = { name: "create" | "pay" | "cancel"; type: InstantType; input: InstantInput; uuid?: string; key: string };

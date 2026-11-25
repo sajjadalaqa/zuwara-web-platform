@@ -120,7 +120,7 @@ function renderRequest(data, locale = 'en', props = {}) {
     if (name === 'next/script') return { __esModule: true, default: () => null };
     if (name === '@/i18n/navigation') return { Link: ({ children, ...props }) => React.createElement('a', props, children) };
     if (name === './instant.module.css') return {};
-    if (name === '@/app/[locale]/healthcare/doctors/[slug]/book/consultation-booking.module.css') return {};
+    if (name === '@/app/[locale]/healthcare/consultants/[slug]/book/consultation-booking.module.css') return {};
     return requireDependency(name);
   }, exports);
   return renderToStaticMarkup(React.createElement(exports.default, { locale, identity: 'patient', settings: { enabled: true, durations: [] }, initial: { success: true, data }, history: { success: true, data: [] }, categories: [], consultants: [], dependents: [], selectedDoctor: '', cardEnabled: false, ...props }));

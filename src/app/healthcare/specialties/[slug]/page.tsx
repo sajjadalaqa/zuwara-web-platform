@@ -62,11 +62,11 @@ export default async function SpecialtyDetailPage({ params }: Props) {
           <div className={styles.detailIcon}><SpecialtyImage src={specialty.imageUrl}/></div>
           <div><span className="eyebrow">{uiText("Healthcare specialty")}</span><h1>{healthcareText(specialty, "title", displayLocale)}</h1></div>
         </div>
-        <div className={styles.detailSummary}><strong>{search.doctors.length}</strong><span>{uiText("active")}{" "}{search.doctors.length === 1 ? "consultant" : "consultants"} {uiText("currently listed in this specialty")}</span><Link href={`/healthcare/doctors?category=${specialty.id}`}>{uiText("Refine results")}{" "}<Icon name="arrow" size={17}/></Link></div>
+        <div className={styles.detailSummary}><strong>{search.doctors.length}</strong><span>{uiText("active")}{" "}{search.doctors.length === 1 ? "consultant" : "consultants"} {uiText("currently listed in this specialty")}</span><Link href={`/healthcare/consultants?category=${specialty.id}`}>{uiText("Refine results")}{" "}<Icon name="arrow" size={17}/></Link></div>
       </div>
     </section>
     <section className="content-section"><div className="container">
-      {search.available && search.doctors.length ? <div className="doctor-results-list">{search.doctors.map((doctor) => <DoctorCard key={doctor.id} doctor={doctor}/>)}</div> : <div className="directory-empty"><Icon name="search" size={32}/><h2>{uiText("No active consultants are listed yet.")}</h2><p>{uiText("Explore another specialty or return to the complete consultant directory.")}</p><Link className="button button-secondary" href="/healthcare/doctors">{uiText("View all consultants")}</Link></div>}
+      {search.available && search.doctors.length ? <div className="doctor-results-list">{search.doctors.map((doctor) => <DoctorCard key={doctor.id} doctor={doctor}/>)}</div> : <div className="directory-empty"><Icon name="search" size={32}/><h2>{uiText("No active consultants are listed yet.")}</h2><p>{uiText("Explore another specialty or return to the complete consultant directory.")}</p><Link className="button button-secondary" href="/healthcare/consultants">{uiText("View all consultants")}</Link></div>}
     </div></section>
   </>;
 }

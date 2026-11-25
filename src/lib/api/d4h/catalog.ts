@@ -24,7 +24,7 @@ export const getD4hCategories = cache(async (locale = "en"): Promise<D4hCategory
     description: (locale === "ar" ? row.description_ar || row.description : row.description) ?? null,
     imageUrl: row.image_url ?? null, serviceCount: row.services_count ?? 0,
     slug: slugify(row.name), screenType: row.screen_type ?? 0,
-    href: row.screen_type === 1 ? "/healthcare/specialties" : row.screen_type === 2 ? "/dashboard/instant?type=public" : row.screen_type === 3 ? "/dashboard/therapy" : "/home-services?category_id=" + row.id,
+    href: row.screen_type === 1 ? "/healthcare/specialties" : row.screen_type === 2 ? "/dashboard/instant?type=public" : row.screen_type === 3 ? "/therapy" : "/home-services?category_id=" + row.id,
   })) };
 });
 export function getD4hSubcategories(categoryId: number, locale: string) {

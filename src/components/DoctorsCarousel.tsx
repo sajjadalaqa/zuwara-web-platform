@@ -28,7 +28,7 @@ const FALLBACK_CATEGORY = "Healthcare consultant";
 
 export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
   const uiText = useUiText();
-  const t = useTranslations("Doctors");
+  const t = useTranslations("Consultants");
   const locale = useLocale();
 
   const [active, setActive] = useState<string>(ALL);
@@ -138,7 +138,7 @@ export function DoctorsCarousel({ doctors }: { doctors: CarouselDoctor[] }) {
               <h2 id="doctors-carousel-heading" className={c.emptyTitle}>{t("emptyTitle")}</h2>
               <p>{t("emptyText")}</p>
             </div>
-            <Link href="/healthcare/doctors" className={c.viewAll}>
+            <Link href="/healthcare/consultants" className={c.viewAll}>
               {t("emptyCta")} <Icon name="arrow" size={16} />
             </Link>
           </div>

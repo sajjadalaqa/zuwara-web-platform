@@ -41,6 +41,11 @@ const nextConfig: NextConfig = {
         permanent: false,
         missing: [{ type: "cookie", key: "NEXT_LOCALE", value: "(en|ar)" }],
       },
+      ...["", "/en", "/ar"].map(prefix => ({
+        source: `${prefix}/healthcare/doctors/:path*`,
+        destination: `${prefix}/healthcare/consultants/:path*`,
+        permanent: true,
+      })),
       { source: "/privacy", destination: "/privacy-policy", permanent: true },
       {
         source: "/ar/privacy",

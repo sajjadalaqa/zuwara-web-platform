@@ -12,7 +12,7 @@ async function instantWalletBalance() {
     return { balanceHalalas: data.balance_halalas, currency: data.currency };
   } catch (error) { unstable_rethrow(error); return null; }
 }
-export default async function InstantPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ doctor?: string; request?: string }> }) {
+export default async function InstantPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ consultant?: string; doctor?: string; request?: string }> }) {
   const { locale } = await params, query = await searchParams;
   const session = await requireSession();
   if (query.request && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(query.request)) notFound();
@@ -28,5 +28,5 @@ export default async function InstantPage({ params, searchParams }: { params: Pr
   return <InstantFlow locale={locale} identity={session.user.id} settings={settings.data} initial={active} history={history} categories={categories}
     consultants={consultants.filter(row => row.accepts_instant?.private).map(row => ({ id: row.id, name: locale === "ar" ? row.name_ar ?? row.name : row.name }))}
     dependents={dependents.data.map(row => ({ id: row.id, name: row.full_name ?? row.name ?? String(row.id) }))}
-    selectedDoctor={query.doctor ?? ""} initialInterests={interests} walletBalance={walletBalance} cardEnabled={process.env.INSTANT_MYFATOORAH_WEB_ENABLED === "true"} />;
+    selectedDoctor={query.consultant ?? query.doctor ?? ""} initialInterests={interests} walletBalance={walletBalance} cardEnabled={process.env.INSTANT_MYFATOORAH_WEB_ENABLED === "true"} />;
 }

@@ -41,7 +41,7 @@ export async function generateMetadata({
     title: "Find a Healthcare Consultant",
     description:
       "Browse real Zuwara consultant profiles by specialty, duration, consultation type, date, and availability.",
-    alternates: { canonical: "/healthcare/doctors" },
+    alternates: { canonical: "/healthcare/consultants" },
     robots: filtered
       ? { index: false, follow: true }
       : { index: true, follow: true },
@@ -83,7 +83,7 @@ export default async function DoctorsPage({
   );
   const ar = await getLocale() === "ar";
   const { signedIn } = await readHeaderSession();
-  const instantHref = signedIn ? "/dashboard/instant?type=public" : "/login-page?consultantReturn=%2Fhealthcare%2Fdoctors&bookingFlow=public-instant";
+  const instantHref = signedIn ? "/dashboard/instant?type=public" : "/login-page?consultantReturn=%2Fhealthcare%2Fconsultants&bookingFlow=public-instant";
 
   return (
     <>
@@ -152,7 +152,7 @@ export default async function DoctorsPage({
                 <p>
                   {uiText("Try another specialty, remove the availability filter, or search without a duration.")}{" "}</p>
                 <Link
-                  href="/healthcare/doctors"
+                  href="/healthcare/consultants"
                   className="button button-secondary"
                 >
                   {uiText("Clear all filters")}{" "}</Link>

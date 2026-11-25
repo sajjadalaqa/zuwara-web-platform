@@ -25,8 +25,8 @@ test('new visitors start in Arabic regardless of browser language', () => {
   }
 });
 test('Arabic default keeps the requested page and query parameters', () => {
-  const response = exports.default(new NextRequest('https://zuwara.net/healthcare/doctors?category=2'));
-  assert.equal(response.headers.get('Location'), 'https://zuwara.net/ar/healthcare/doctors?category=2');
+  const response = exports.default(new NextRequest('https://zuwara.net/healthcare/consultants?category=2'));
+  assert.equal(response.headers.get('Location'), 'https://zuwara.net/ar/healthcare/consultants?category=2');
 });
 test('saved English/Arabic choices and explicit language URLs keep their existing routing', () => {
   for (const locale of ['en', 'ar']) {
@@ -63,8 +63,21 @@ test('Next.js homepage redirect preserves saved language choices and rejects uns
   assert.equal(getRedirectUrl(response), 'https://zuwara.net/ar');
 });
 test('homepage fallback does not redirect Arabic pages or API requests', async () => {
-  for (const path of ['/ar', '/api/app-download', '/api/contact', '/healthcare/doctors']) {
+  for (const path of ['/ar', '/api/app-download', '/api/contact', '/healthcare/consultants']) {
     const response = await unstable_getResponseFromNextConfig({ url: 'https://zuwara.net' + path, nextConfig: configExports.default });
     assert.equal(getRedirectUrl(response), null);
+  }
+});
+
+test('old consultant directory, profile and booking URLs redirect with locale and query intact', async () => {
+  for (const prefix of ['', '/en', '/ar']) {
+    for (const path of ['', '/test-126', '/test-126/book']) {
+      const response = await unstable_getResponseFromNextConfig({
+        url: `https://zuwara.net${prefix}/healthcare/doctors${path}?date=2026-11-25`,
+        nextConfig: configExports.default,
+      });
+      assert.equal(response.status, 308);
+      assert.equal(getRedirectUrl(response), `https://zuwara.net${prefix}/healthcare/consultants${path}?date=2026-11-25`);
+    }
   }
 });

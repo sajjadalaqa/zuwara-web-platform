@@ -16,6 +16,10 @@ export function specialtySlug(title: string, id: number): string {
   return `${slugify(title) || "specialty"}-${id}`;
 }
 
+export function therapySlug(title: string, id: number): string {
+  return `${slugify(title).replace(/-$/, "") || "therapy"}-${id}`;
+}
+
 export function idFromSlug(slug: string): number | null {
   const match = slug.match(/-(\d+)$/);
   if (!match) return null;

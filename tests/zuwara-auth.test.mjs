@@ -76,10 +76,12 @@ test("OTP actions verify only the server-held challenge, preserve refresh sessio
   let session = null;
   const calls = [];
   class ApiError extends Error { constructor(status, code) { super(code); this.status = status; this.code = code; } }
+  const invalidations = [];
   let failRefresh = false;
   const issued = { user: { id: "patient-1" }, session: { access_token: "access-1", refresh_token: "refresh-1", access_expires_at: new Date(Date.now() + 3600000).toISOString(), refresh_expires_at: new Date(Date.now() + 86400000).toISOString() } };
   globalThis.__zuwaraAuthTest = {
     getLocale: async () => "en", ZuwaraV2Error: ApiError,
+    revalidatePath: (...args) => invalidations.push(args),
     clearPending: async () => { pending = null; }, clearSession: async () => { session = null; },
     readPending: async () => pending, readSession: async () => session,
     savePending: async value => { pending = value; }, saveSession: async value => { session = value; },
@@ -103,7 +105,7 @@ test("OTP actions verify only the server-held challenge, preserve refresh sessio
   try {
     const actions = await loadTypeScript("../src/lib/auth/actions.ts", source => {
       const stripped = source.replace(/^import .*;\r?$/gm, "");
-      return `const {getLocale,zuwaraV2,ZuwaraV2Error,clearPending,clearSession,readPending,readSession,savePending,saveSession} = globalThis.__zuwaraAuthTest;\n${stripped}`;
+      return `const {getLocale,revalidatePath,zuwaraV2,ZuwaraV2Error,clearPending,clearSession,readPending,readSession,savePending,saveSession} = globalThis.__zuwaraAuthTest;\n${stripped}`;
     });
     assert.equal((await actions.verifyOtpAction("123456")).ok, false);
     assert.equal(calls.length, 0);
@@ -128,6 +130,7 @@ test("OTP actions verify only the server-held challenge, preserve refresh sessio
     assert.equal(session.session.refresh_token, "refresh-2");
     assert.equal((await actions.logoutAction()).ok, true);
     assert.equal(session, null);
+    assert.deepEqual(invalidations, Array.from({ length: 3 }, () => ["/[locale]", "layout"]));
     assert.equal(JSON.stringify(result).includes("access-1"), false);
   } finally { globalThis.__zuwaraAuthTest = oldHarness; }
 });
@@ -176,7 +179,7 @@ test("session cookies isolate backend credentials, bind D4H identity, and reject
     assert.equal((await sessionApi.requireSession()).user.id, "patient-1");
     const expiredAccess = { ...data, session: { ...data.session, access_expires_at: new Date(Date.now() - 1000).toISOString() } };
     jar.set("zuwara_session", { value: seal(expiredAccess, secret, "zuwara_session") });
-    await assert.rejects(sessionApi.requireSession(), error => error.destination === "/ar/session-refresh-page");
+    await assert.rejects(sessionApi.requireSession(), error => error.destination === "/ar/login-page?reason=session-expired");
     jar.set("zuwara_session", { value: "tampered" });
     assert.equal(await sessionApi.readSession(), null);
     await assert.rejects(sessionApi.saveSession(expiredAccess));

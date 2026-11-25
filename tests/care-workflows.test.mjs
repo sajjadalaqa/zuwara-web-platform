@@ -386,7 +386,7 @@ test("booking preview rejects unsupported types before contacting the API and pr
 
 test("the preview server action rejects stale channel selections without trying another type", async () => {
   let calls = 0;
-  const actions = await load("../src/app/[locale]/healthcare/doctors/[slug]/book/actions.ts", {
+  const actions = await load("../src/app/[locale]/healthcare/consultants/[slug]/book/actions.ts", {
     previewBooking: async () => { calls++; throw new Error("Unexpected preview"); },
     createBooking: async () => { throw new Error("Unexpected creation"); },
     consultantSlots: async () => [], ZuwaraV2Error,

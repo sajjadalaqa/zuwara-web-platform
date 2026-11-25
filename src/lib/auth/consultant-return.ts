@@ -3,14 +3,15 @@ export function consultantReturn(search: string): string | null {
   const params = new URLSearchParams(search);
   const rawValue = params.get("consultantReturn");
   let value: string | null = rawValue;
-  // Browser URLs may percent-encode Arabic doctor names. Validate the decoded
+  // Browser URLs may percent-encode Arabic consultant names. Validate the decoded
   // path with the same alphabet used by doctorSlug, never arbitrary URLs.
   try { value = rawValue === null ? null : decodeURIComponent(rawValue); }
   catch { return null; }
+  value = value?.replace(/^\/healthcare\/doctors(?=\/|$)/, "/healthcare/consultants") ?? null;
   if (params.get("bookingFlow") === "therapy" && value && /^\/therapy\/[1-9]\d{0,9}\/availability$/.test(value)) return value;
   if (value === "/cart" && params.get("bookingFlow") === "cart") return value;
-  if (value === "/healthcare/doctors" && params.get("bookingFlow") === "public-instant") return value;
-  return value && /^\/healthcare\/doctors\/[a-zA-Z0-9\u0600-\u06ff][a-zA-Z0-9\u0600-\u06ff-]{0,199}$/.test(value) ? value : null;
+  if (value === "/healthcare/consultants" && params.get("bookingFlow") === "public-instant") return value;
+  return value && /^\/healthcare\/consultants\/[a-zA-Z0-9\u0600-\u06ff][a-zA-Z0-9\u0600-\u06ff-]{0,199}$/.test(value) ? value : null;
 }
 
 export function consultantAuthHref(path: string, search: string): string {

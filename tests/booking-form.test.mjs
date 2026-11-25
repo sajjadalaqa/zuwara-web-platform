@@ -17,7 +17,7 @@ function load(filename, dependencies = {}) {
 }
 
 function render(types, locale, walletBalance = null) {
-  const component = load('src/app/[locale]/healthcare/doctors/[slug]/book/ConsultationBooking.tsx', {
+  const component = load('src/app/[locale]/healthcare/consultants/[slug]/book/ConsultationBooking.tsx', {
     '@/i18n/use-ui-text': { useUiText: () => value => value },
     'next-intl': { useLocale: () => locale },
     '@/i18n/navigation': { Link: ({ children, ...props }) => React.createElement('a', props, children), useRouter: () => ({}) },

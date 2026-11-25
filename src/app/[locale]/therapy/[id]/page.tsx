@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { ArrowLeft, ArrowUpRight, ChevronDown, Clock3, Flag, Layers3, Target, Video } from "lucide-react";
+import { therapySlug } from "@/lib/api/zuwara/slugs";
 import type { Bilingual } from "@/lib/api/zuwara/care";
 import { publicTherapyPlan } from "@/lib/therapy/public-plans";
 import s from "./plan.module.css";
 
 export default async function TherapyPlanPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  if (!/^[1-9]\d{0,9}$/.test(id)) notFound();
+  const { id: segment } = await params;
+  const id = /^(?:[a-z0-9\u0600-\u06ff-]+-)?([1-9]\d{0,9})$/.exec(segment)?.[1];
+  if (!id) notFound();
 
   const locale = await getLocale();
   const ar = locale === "ar";
@@ -39,6 +41,9 @@ export default async function TherapyPlanPage({ params }: { params: Promise<{ id
       </div>
     );
   }
+
+  const slug = therapySlug(localize(plan.title), plan.id);
+  if (segment !== slug) redirect(`${catalog}/${slug}`);
 
   const number = new Intl.NumberFormat(ar ? "ar-SA" : "en-SA");
   const money = new Intl.NumberFormat(ar ? "ar-SA" : "en-SA", { style: "currency", currency: "SAR" });

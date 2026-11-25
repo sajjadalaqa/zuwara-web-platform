@@ -93,7 +93,7 @@ export default async function DashboardHome({
   ];
 
   const actions = [
-    { href: "/healthcare/doctors", icon: CalendarPlus, text: t.qa.book, tone: s.tPurple },
+    { href: "/healthcare/consultants", icon: CalendarPlus, text: t.qa.book, tone: s.tPurple },
     { href: "/dashboard/requests", icon: FileText, text: t.qa.requests, tone: s.tMint },
     { href: "/provider", icon: Stethoscope, text: t.qa.find, tone: s.tRose },
     { href: "/dashboard/messages", icon: MessageSquare, text: t.qa.messages, tone: s.tIndigo },
@@ -123,7 +123,7 @@ export default async function DashboardHome({
   <Handshake aria-hidden="true" className={s.nameIcon} />
 </h2>
           <p className={s.sub}>{t.sub}</p>
-          <Link href={`${p}/healthcare/doctors`} className={s.heroBtn}>
+          <Link href={`${p}/healthcare/consultants`} className={s.heroBtn}>
             <CalendarPlus size={19} />
             {t.book}
             <ArrowRight size={18} className={s.rtlFlip} />

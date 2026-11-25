@@ -32,7 +32,7 @@ function seed(): Store {
         provider: { id: "p2", name: "Dr. Khalid Al-Harbi", specialty: "General Medicine" },
         unreadCount: 2,
         messages: [
-          m("me", "Hello doctor, thank you for accepting my appointment.", 2 * D),
+          m("me", "Hello consultant, thank you for accepting my appointment.", 2 * D),
           m("them", "You're welcome! Please have your recent test results ready for the call.", 2 * D - 5 * MIN),
           m("me", "Of course. Should I upload them to my medical records?", D + 3 * H),
           m("them", "Yes please, that would help a lot.", D + 3 * H - 10 * MIN),

@@ -37,7 +37,7 @@ export function CareHero({
           </p>
           <div className={s.heroActions}>
             <Link
-              href={directory ? "#consultant-directory" : "/healthcare/doctors"}
+              href={directory ? "#consultant-directory" : "/healthcare/consultants"}
               className={s.primary}
             >
               {directory ? "Explore consultants" : "Find my consultant"}

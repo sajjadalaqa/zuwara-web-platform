@@ -22,7 +22,7 @@ export function DoctorCard({ doctor, date, duration }: { doctor: ZuwaraDoctor; d
   if (date) params.set("date", date);
   if (duration) params.set("duration", String(duration));
   const suffix = params.size ? `?${params.toString()}` : "";
-  const href = `/healthcare/doctors/${doctorSlug(doctor.name, doctor.id)}${suffix}`;
+  const href = `/healthcare/consultants/${doctorSlug(doctor.name, doctor.id)}${suffix}`;
   const previewSlots = doctor.slots?.slice(0, 5) ?? [];
   const rating = Number.isFinite(doctor.rating) && doctor.rating >= 0 ? doctor.rating.toFixed(1) : null;
   const hasPrice = doctor.startingPrice != null && String(doctor.startingPrice).trim() !== "" && Number.isFinite(Number(doctor.startingPrice)) && Number(doctor.startingPrice) >= 0;

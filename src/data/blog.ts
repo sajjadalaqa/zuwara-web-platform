@@ -59,8 +59,8 @@ export const posts: BlogPostData[] = [
       {
         type: "p",
         text: {
-          en: "Familiar surroundings help many people feel calmer during a visit. There is no need to move someone who is tired or in pain, and family members can stay close and take part in the conversation with the nurse or doctor.",
-          ar: "تساعد البيئة المألوفة كثيرًا من الناس على الشعور بهدوء أكبر أثناء الزيارة. ولا حاجة لنقل شخص متعب أو يشعر بالألم، ويمكن لأفراد العائلة البقاء بجانبه والمشاركة في الحديث مع الممرض أو الطبيب.",
+          en: "Familiar surroundings help many people feel calmer during a visit. There is no need to move someone who is tired or in pain, and family members can stay close and take part in the conversation with the nurse or consultant.",
+          ar: "تساعد البيئة المألوفة كثيرًا من الناس على الشعور بهدوء أكبر أثناء الزيارة. ولا حاجة لنقل شخص متعب أو يشعر بالألم، ويمكن لأفراد العائلة البقاء بجانبه والمشاركة في الحديث مع الممرض أو الاستشاري.",
         },
       },
       { type: "h2", text: { en: "Less travel, less waiting", ar: "سفر أقل وانتظار أقل" } },
@@ -118,15 +118,15 @@ export const posts: BlogPostData[] = [
       ar: "استشارتك الافتراضية الأولى: دليل بسيط",
     },
     excerpt: {
-      en: "A few small steps before the call can help you get clear answers and make the most of your time with the doctor.",
-      ar: "خطوات بسيطة قبل المكالمة تساعدك على الحصول على إجابات واضحة والاستفادة القصوى من وقتك مع الطبيب.",
+      en: "A few small steps before the call can help you get clear answers and make the most of your time with the consultant.",
+      ar: "خطوات بسيطة قبل المكالمة تساعدك على الحصول على إجابات واضحة والاستفادة القصوى من وقتك مع الاستشاري.",
     },
     content: [
       {
         type: "p",
         text: {
-          en: "A virtual consultation lets you speak with a doctor by video from wherever you are. It works well for follow-ups, questions about symptoms and general advice. If it is your first time, a little preparation makes the call smoother.",
-          ar: "تتيح لك الاستشارة الافتراضية التحدث مع الطبيب عبر الفيديو من أي مكان. وهي مناسبة للمتابعة والأسئلة حول الأعراض والنصائح العامة. وإن كانت تجربتك الأولى، فقليل من التحضير يجعل المكالمة أسهل.",
+          en: "A virtual consultation lets you speak with a consultant by video from wherever you are. It works well for follow-ups, questions about symptoms and general advice. If it is your first time, a little preparation makes the call smoother.",
+          ar: "تتيح لك الاستشارة الافتراضية التحدث مع الاستشاري عبر الفيديو من أي مكان. وهي مناسبة للمتابعة والأسئلة حول الأعراض والنصائح العامة. وإن كانت تجربتك الأولى، فقليل من التحضير يجعل المكالمة أسهل.",
         },
       },
       { type: "h2", text: { en: "Before the call", ar: "قبل المكالمة" } },
@@ -144,8 +144,8 @@ export const posts: BlogPostData[] = [
       {
         type: "p",
         text: {
-          en: "Start with the main reason for your visit, then describe what you have noticed in your own words. Do not worry about medical terms. If something is unclear, ask the doctor to explain it again, and repeat the plan back so you are sure you understood.",
-          ar: "ابدأ بالسبب الرئيسي لزيارتك، ثم صف ما لاحظته بكلماتك. لا تقلق من المصطلحات الطبية. وإن كان شيء غير واضح فاطلب من الطبيب إعادة شرحه، وكرّر الخطة بصوتك للتأكد من فهمك لها.",
+          en: "Start with the main reason for your visit, then describe what you have noticed in your own words. Do not worry about medical terms. If something is unclear, ask the consultant to explain it again, and repeat the plan back so you are sure you understood.",
+          ar: "ابدأ بالسبب الرئيسي لزيارتك، ثم صف ما لاحظته بكلماتك. لا تقلق من المصطلحات الطبية. وإن كان شيء غير واضح فاطلب من الاستشاري إعادة شرحه، وكرّر الخطة بصوتك للتأكد من فهمك لها.",
         },
       },
       {
@@ -159,8 +159,8 @@ export const posts: BlogPostData[] = [
       {
         type: "p",
         text: {
-          en: "Check your prescriptions and any follow-up steps in your account, and book a follow-up if the doctor recommended one. If a visit in person or a home service such as a lab test is needed, you can arrange it from the same place.",
-          ar: "راجع وصفاتك وأي خطوات متابعة في حسابك، واحجز موعد متابعة إن أوصى الطبيب بذلك. وإذا لزمت زيارة حضورية أو خدمة منزلية مثل فحص مخبري، يمكنك ترتيبها من المكان نفسه.",
+          en: "Check your prescriptions and any follow-up steps in your account, and book a follow-up if the consultant recommended one. If a visit in person or a home service such as a lab test is needed, you can arrange it from the same place.",
+          ar: "راجع وصفاتك وأي خطوات متابعة في حسابك، واحجز موعد متابعة إن أوصى الاستشاري بذلك. وإذا لزمت زيارة حضورية أو خدمة منزلية مثل فحص مخبري، يمكنك ترتيبها من المكان نفسه.",
         },
       },
       {

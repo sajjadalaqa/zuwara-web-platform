@@ -176,7 +176,7 @@ export default async function PatientFeature({
 
           <section className={s.card} id="upload-document"><h2>{uiText("Upload a document")}</h2>
             <p>
-              {uiText("Patient-authored PDFs are separate from official clinical reports. Uploading does not share a file in chat or assign it to a doctor.")}{" "}</p>
+              {uiText("Patient-authored PDFs are separate from official clinical reports. Uploading does not share a file in chat or assign it to a consultant.")}{" "}</p>
             <Form
               op="document-upload"
               uploadLimit={process.env.VERCEL ? 4000000 : 50 * 1024 * 1024}

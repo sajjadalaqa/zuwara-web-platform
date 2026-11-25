@@ -6,10 +6,10 @@ export function HeroSearch() {
   const uiText = useUiText();
   const locale = useLocale();
   return (
-    <form className="hero-search" action={`${locale === "ar" ? "/ar" : ""}/healthcare/doctors`} method="get">
+    <form className="hero-search" action={`${locale === "ar" ? "/ar" : ""}/healthcare/consultants`} method="get">
       <label className="search-field">
         <span>{uiText("What care do you need?")}</span>
-        <div><Icon name="search" size={19}/><select name="specialty" defaultValue=""><option value="">{uiText("Doctor, specialty or service")}</option><option value="family-medicine">{uiText("Family medicine")}</option><option value="general-medicine">{uiText("General medicine")}</option><option value="mental-wellness">{uiText("Mental wellness")}</option><option value="therapy">{uiText("Therapy sessions")}</option></select></div>
+        <div><Icon name="search" size={19}/><select name="specialty" defaultValue=""><option value="">{uiText("Consultant, specialty or service")}</option><option value="family-medicine">{uiText("Family medicine")}</option><option value="general-medicine">{uiText("General medicine")}</option><option value="mental-wellness">{uiText("Mental wellness")}</option><option value="therapy">{uiText("Therapy sessions")}</option></select></div>
       </label>
       <label className="search-field search-date">
         <span>{uiText("Preferred date")}</span>

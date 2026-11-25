@@ -27,7 +27,7 @@ const footerColumns = [
     id: "healthcare", icon: "heart",
     links: [
       { id: "explore", href: "/healthcare" },
-      { id: "consultant", href: "/healthcare/doctors" },
+      { id: "consultant", href: "/healthcare/consultants" },
       { id: "therapy", href: "/services/therapy-sessions" },
       { id: "instant", href: "/services/instant-consultations" },
     ],

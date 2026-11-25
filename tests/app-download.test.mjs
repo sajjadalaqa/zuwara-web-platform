@@ -53,7 +53,7 @@ test('shared website chrome shows the QR card on public pages and hides it on al
     'next/image': { __esModule: true, default: () => null },
     './AppDownloadCard.module.css': {},
   }).default;
-  for (const pathname of ['/', '/ar', '/about', '/ar/healthcare/doctors/test-65', '/en/services', '/login-page', '/ar/download', '/dashboard', '/dashboard/instant', '/ar/dashboard', '/en/dashboard/wallet', '/ar/dashboard/appointments/5/chat']) {
+  for (const pathname of ['/', '/ar', '/about', '/ar/healthcare/consultants/test-65', '/en/services', '/login-page', '/ar/download', '/dashboard', '/dashboard/instant', '/ar/dashboard', '/en/dashboard/wallet', '/ar/dashboard/appointments/5/chat']) {
     const Chrome = load('src/app/[locale]/SiteChrome.tsx', { 'next/navigation': { usePathname: () => pathname } }).default;
     const html = renderToStaticMarkup(React.createElement(Chrome, null, React.createElement(Card, { locale: pathname.startsWith('/ar') ? 'ar' : 'en' })));
     const dashboard = pathname.split('/').includes('dashboard');

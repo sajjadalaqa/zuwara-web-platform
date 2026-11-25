@@ -18,8 +18,8 @@ export type HealthcareFilterValues = {
 export function HealthcareFilters({ categories, values }: { categories: ZuwaraCategory[]; values: HealthcareFilterValues }) {
   const displayLocale = useLocale();
   const uiText = useUiText();
-  return <form action={`${displayLocale === "ar" ? "/ar" : ""}/healthcare/doctors`} method="get" className="healthcare-filters">
-    <div className="filter-title"><div><span>{uiText("Refine your search")}</span><strong>{uiText("Consultant filters")}</strong></div><Link href="/healthcare/doctors">{uiText("Reset")}</Link></div>
+  return <form action={`${displayLocale === "ar" ? "/ar" : ""}/healthcare/consultants`} method="get" className="healthcare-filters">
+    <div className="filter-title"><div><span>{uiText("Refine your search")}</span><strong>{uiText("Consultant filters")}</strong></div><Link href="/healthcare/consultants">{uiText("Reset")}</Link></div>
     <label className="filter-full"><span>{uiText("Name, specialty or classification")}</span><input type="search" name="query" defaultValue={values.query} placeholder={uiText("Search in English or Arabic")} autoComplete="off"/></label>
     <label><span>{uiText("Specialty")}</span><select name="category" defaultValue={values.category ?? ""}><option value="">{uiText("All specialties")}</option>{categories.map(item=><option key={item.id} value={item.id}>{healthcareText(item, "title", displayLocale)}</option>)}</select></label>
     <label><span>{uiText("Duration")}</span><select name="duration" defaultValue={values.duration ?? ""}><option value="">{uiText("All durations")}</option>{[15,30,45,60].map(value=><option value={value} key={value}>{value} {uiText("minutes")}</option>)}</select></label>

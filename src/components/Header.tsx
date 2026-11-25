@@ -133,7 +133,7 @@ export function Header({ signedIn = false, sessionExpiresAt = 0 }: { signedIn?: 
 </Link>
           {/* Inside the mobile menu only */}
           <div className={styles.mobileActions}>
-            <Link href="/healthcare/doctors" className={styles.mobileCta} onClick={() => setOpen(false)}>
+            <Link href="/healthcare/consultants" className={styles.mobileCta} onClick={() => setOpen(false)}>
               {t("book")}
             </Link>
             <Link href="/login-page" className={styles.mobileSignIn} onClick={() => setOpen(false)}>
@@ -169,7 +169,7 @@ export function Header({ signedIn = false, sessionExpiresAt = 0 }: { signedIn?: 
             <span>{t("switchShort")}</span>
           </Link>
 
-          <Link href="/healthcare/doctors" className={styles.cta} onClick={() => setOpen(false)}>{t("book")}</Link>
+          <Link href="/healthcare/consultants" className={styles.cta} onClick={() => setOpen(false)}>{t("book")}</Link>
 
           <button
             type="button"

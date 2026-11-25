@@ -37,7 +37,7 @@ const en: Content = {
     "How Zuwara, operated by ALAQA Business Services Company, collects, uses, discloses and safeguards your information.",
   title: "Privacy Policy",
   intro:
-    "Welcome to Zuwara, a service operated by ALAQA Business Services Company, based in Riyadh, Saudi Arabia. Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Zuwara mobile application (for both doctors and patients).",
+    "Welcome to Zuwara, a service operated by ALAQA Business Services Company, based in Riyadh, Saudi Arabia. Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Zuwara mobile application (for both consultants and patients).",
   updatedLabel: "Last updated",
   updated: "October 18, 2026",
   tocLabel: "On this page",
@@ -52,7 +52,7 @@ const en: Content = {
         { label: "Personal Information", text: "Name, email address, phone number, date of birth, and gender." },
         {
           label: "Health Information",
-          text: "Medical history, appointment details, prescriptions, and other health-related data (for patients); professional details and qualifications (for doctors).",
+          text: "Medical history, appointment details, prescriptions, and other health-related data (for patients); professional details and qualifications (for consultants).",
         },
         {
           label: "Usage Data",
@@ -66,7 +66,7 @@ const en: Content = {
       body: ["Your information is used to:"],
       list: [
         "Provide and manage healthcare consultation and appointment services.",
-        "Facilitate communication between doctors and patients via messaging, video calls, and document sharing.",
+        "Facilitate communication between consultants and patients via messaging, video calls, and document sharing.",
         "Enhance app functionality, security, and user experience.",
         "Comply with regulatory and legal obligations.",
       ],
@@ -126,7 +126,7 @@ const ar: Content = {
     "كيف تجمع زوارة، التي تشغّلها شركة علاقة لخدمات الأعمال، معلوماتك وتستخدمها وتفصح عنها وتحميها.",
   title: "سياسة الخصوصية",
   intro:
-    "مرحبًا بك في زوارة، وهي خدمة تشغّلها شركة علاقة لخدمات الأعمال ومقرها الرياض، المملكة العربية السعودية. خصوصيتك مهمة لنا. توضح سياسة الخصوصية هذه كيف نجمع معلوماتك ونستخدمها ونفصح عنها ونحميها عند استخدامك لتطبيق زوارة للجوال (للأطباء والمرضى على حد سواء).",
+    "مرحبًا بك في زوارة، وهي خدمة تشغّلها شركة علاقة لخدمات الأعمال ومقرها الرياض، المملكة العربية السعودية. خصوصيتك مهمة لنا. توضح سياسة الخصوصية هذه كيف نجمع معلوماتك ونستخدمها ونفصح عنها ونحميها عند استخدامك لتطبيق زوارة للجوال (للاستشاريين والمرضى على حد سواء).",
   updatedLabel: "آخر تحديث",
   updated: "١٨ أكتوبر ٢٠٢٦",
   tocLabel: "محتويات الصفحة",
@@ -141,7 +141,7 @@ const ar: Content = {
         { label: "المعلومات الشخصية", text: "الاسم والبريد الإلكتروني ورقم الجوال وتاريخ الميلاد والجنس." },
         {
           label: "المعلومات الصحية",
-          text: "التاريخ الطبي وتفاصيل المواعيد والوصفات الطبية وغيرها من البيانات المتعلقة بالصحة (للمرضى)؛ والبيانات المهنية والمؤهلات (للأطباء).",
+          text: "التاريخ الطبي وتفاصيل المواعيد والوصفات الطبية وغيرها من البيانات المتعلقة بالصحة (للمرضى)؛ والبيانات المهنية والمؤهلات (للاستشاريين).",
         },
         {
           label: "بيانات الاستخدام",
@@ -155,7 +155,7 @@ const ar: Content = {
       body: ["تُستخدم معلوماتك من أجل:"],
       list: [
         "تقديم خدمات الاستشارات الصحية والمواعيد وإدارتها.",
-        "تسهيل التواصل بين الأطباء والمرضى عبر الرسائل ومكالمات الفيديو ومشاركة المستندات.",
+        "تسهيل التواصل بين الاستشاريين والمرضى عبر الرسائل ومكالمات الفيديو ومشاركة المستندات.",
         "تحسين وظائف التطبيق وأمانه وتجربة المستخدم.",
         "الالتزام بالمتطلبات التنظيمية والنظامية.",
       ],

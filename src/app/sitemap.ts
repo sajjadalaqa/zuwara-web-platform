@@ -6,7 +6,7 @@ import { doctorSlug, specialtySlug } from "@/lib/api/zuwara/slugs";
 const routes = [
   ["", 1, "weekly"],
   ["/healthcare", 0.9, "daily"],
-  ["/healthcare/doctors", 0.9, "daily"],
+  ["/healthcare/consultants", 0.9, "daily"],
   ["/healthcare/specialties", 0.85, "weekly"],
   ["/home-services", 0.9, "daily"],
   ["/how-it-works", 0.8, "monthly"],
@@ -38,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
   const doctors: MetadataRoute.Sitemap = healthcare.doctors.map((doctor) => ({
-    url: `${SITE_URL}/healthcare/doctors/${doctorSlug(doctor.name, doctor.id)}`,
+    url: `${SITE_URL}/healthcare/consultants/${doctorSlug(doctor.name, doctor.id)}`,
     lastModified,
     changeFrequency: "daily",
     priority: 0.8,

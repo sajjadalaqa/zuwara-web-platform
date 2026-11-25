@@ -15,7 +15,7 @@ function load(path, dependencies = {}) {
   return exports;
 }
 const { consultantReturn, consultantAuthHref, consultantSignInDestination } = load('src/lib/auth/consultant-return.ts');
-const target = '/healthcare/doctors/doctor-test-126';
+const target = '/healthcare/consultants/consultant-test-126';
 const search = '?consultantReturn=' + encodeURIComponent(target);
 
 test('consultant sign-in returns to the profile while ordinary sign-in keeps its dashboard destination', () => {
@@ -28,7 +28,7 @@ test('consultant sign-in returns to the profile while ordinary sign-in keeps its
 });
 
 test('return destinations reject external URLs, other flows and injected query parameters', () => {
-  for (const value of ['https://example.com', '//example.com', '/dashboard', '/ar/healthcare/doctors/test-126', target + '/book', target + '?redirect=https://example.com', '/healthcare/doctors/../dashboard', '/healthcare/doctors/test%2f126', '/healthcare/doctors/test\\126']) {
+  for (const value of ['https://example.com', '//example.com', '/dashboard', '/ar/healthcare/consultants/test-126', target + '/book', target + '?redirect=https://example.com', '/healthcare/consultants/../dashboard', '/healthcare/consultants/test%2f126', '/healthcare/consultants/test\\126']) {
     const query = '?consultantReturn=' + encodeURIComponent(value);
     assert.equal(consultantReturn(query), null);
     assert.equal(consultantSignInDestination(query), '/dashboard');
@@ -49,11 +49,11 @@ test('instant booking context survives login, registration and OTP without chang
 });
 
 test('public instant entry returns to the consultant directory after sign-in', () => {
-  const query = '?consultantReturn=%2Fhealthcare%2Fdoctors&bookingFlow=public-instant';
-  assert.equal(consultantReturn(query), '/healthcare/doctors');
-  assert.equal(consultantReturn('?consultantReturn=%2Fhealthcare%2Fdoctors'), null);
+  const query = '?consultantReturn=%2Fhealthcare%2Fconsultants&bookingFlow=public-instant';
+  assert.equal(consultantReturn(query), '/healthcare/consultants');
+  assert.equal(consultantReturn('?consultantReturn=%2Fhealthcare%2Fconsultants'), null);
   for (const path of ['/login-page', '/register-page', '/verify-otp-page']) assert.equal(consultantAuthHref(path, query), path + query);
-  assert.equal(consultantSignInDestination(query), '/healthcare/doctors?bookingSignIn=success&bookingFlow=public-instant');
+  assert.equal(consultantSignInDestination(query), '/healthcare/consultants?bookingSignIn=success&bookingFlow=public-instant');
 });
 
 test('instant sign-in popup continues with the selected consultant and retains the dashboard choice', () => {
@@ -63,8 +63,8 @@ test('instant sign-in popup continues with the selected consultant and retains t
       '@/i18n/navigation': { Link: ({ children, ...props }) => React.createElement('a', props, children) },
       './booking-sign-in-success.module.css': {},
     }).default;
-    const html = renderToStaticMarkup(React.createElement(Popup, { bookingHref: '/dashboard/instant?doctor=126' }));
-    assert.ok(html.includes('href="/dashboard/instant?doctor=126"'));
+    const html = renderToStaticMarkup(React.createElement(Popup, { bookingHref: '/dashboard/instant?consultant=126' }));
+    assert.ok(html.includes('href="/dashboard/instant?consultant=126"'));
     assert.ok(html.includes('href="/dashboard"'));
     assert.ok(!html.includes(target + '/book'));
   }
@@ -89,7 +89,7 @@ test('success popup offers booking, dashboard and dismissal actions in both lang
 
 test('unauthenticated consultant booking redirects with a locale-preserving return path before patient API calls', async () => {
   for (const locale of ['en', 'ar']) {
-    const page = load('src/app/[locale]/healthcare/doctors/[slug]/book/page.tsx', {
+    const page = load('src/app/[locale]/healthcare/consultants/[slug]/book/page.tsx', {
       '@/i18n/server-ui-text': { getUiText: async () => text => text },
       '@/lib/api/zuwara/slugs': { idFromSlug: () => 126 },
       'next/navigation': { notFound: () => { throw new Error('Unexpected not found'); }, redirect: path => { throw new Error(path); } },
@@ -98,12 +98,12 @@ test('unauthenticated consultant booking redirects with a locale-preserving retu
       '@/lib/api/zuwara/v2': { ZuwaraV2Error: class extends Error {} },
       './ConsultationBooking': { default: () => null },
     }).default;
-    await assert.rejects(page({ params: Promise.resolve({ locale, slug: 'doctor-test-126' }) }), error => error.message === `/${locale}/login-page${search}`);
+    await assert.rejects(page({ params: Promise.resolve({ locale, slug: 'consultant-test-126' }) }), error => error.message === `/${locale}/login-page${search}`);
   }
 });
 
 test('Arabic doctor booking returns survive login and OTP instead of falling back to dashboard', () => {
-  const arabicTarget = '/healthcare/doctors/\u062e\u0644\u0648\u062f-\u0635\u0627\u0644\u062d-49';
+  const arabicTarget = '/healthcare/consultants/\u062e\u0644\u0648\u062f-\u0635\u0627\u0644\u062d-49';
   for (const returnPath of [arabicTarget, encodeURI(arabicTarget)]) {
     const query = '?consultantReturn=' + encodeURIComponent(returnPath);
     assert.equal(consultantReturn(query), arabicTarget);
@@ -114,9 +114,13 @@ test('Arabic doctor booking returns survive login and OTP instead of falling bac
 });
 
 test('encoded return paths still reject traversal, external redirects and query injection', () => {
-  for (const path of ['/healthcare/doctors/../dashboard', '//example.com', target + '?next=/dashboard', target + '/book', '/healthcare/doctors/test\\49', '%E0%A4%A']) {
+  for (const path of ['/healthcare/consultants/../dashboard', '//example.com', target + '?next=/dashboard', target + '/book', '/healthcare/consultants/test\\49', '%E0%A4%A']) {
     const query = '?consultantReturn=' + encodeURIComponent(encodeURI(path));
     assert.equal(consultantReturn(query), null);
     assert.equal(consultantSignInDestination(query), '/dashboard');
   }
+});
+test('legacy consultant sign-in destinations resolve to the current URLs', () => {
+  assert.equal(consultantReturn('?consultantReturn=%2Fhealthcare%2Fdoctors%2Ftest-126'), '/healthcare/consultants/test-126');
+  assert.equal(consultantReturn('?consultantReturn=%2Fhealthcare%2Fdoctors&bookingFlow=public-instant'), '/healthcare/consultants');
 });

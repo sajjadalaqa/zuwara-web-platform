@@ -104,7 +104,7 @@ export default async function HealthcarePage() {
               {uiText("Consultants are temporarily unavailable. Please try again shortly.")}{" "}</p>
           )}
           <div className={s.centerAction}>
-            <Link href="/healthcare/doctors" className={s.primary}>
+            <Link href="/healthcare/consultants" className={s.primary}>
               {uiText("Meet all consultants")}{" "}<Icon name="arrow" size={18} />
             </Link>
           </div>

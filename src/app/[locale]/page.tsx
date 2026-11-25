@@ -106,7 +106,7 @@ export default async function Home({ params }: Props) {
       <StatsCards />
       <AboutSection />
       <ServicesSection />
-      <DoctorsCarousel doctors={(await getZuwaraHomeData()).doctors.map(d => ({ ...d, role: d.designation, href: "/healthcare/doctors/" + doctorSlug(d.name, d.id) }))} />
+      <DoctorsCarousel doctors={(await getZuwaraHomeData()).doctors.map(d => ({ ...d, role: d.designation, href: "/healthcare/consultants/" + doctorSlug(d.name, d.id) }))} />
 
       {/* ---------- How healthcare works ---------- */}
       <section className={j.section} aria-labelledby="healthcare-journey-heading">

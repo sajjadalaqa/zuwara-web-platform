@@ -24,7 +24,7 @@ export const manualDoctors: CarouselDoctor[] = [
     experienceYears: 12,
     startingPrice: 200,
     currency: "SAR",
-    href: "/healthcare/doctors",
+    href: "/healthcare/consultants",
   },
   {
     id: "m2",
@@ -37,7 +37,7 @@ export const manualDoctors: CarouselDoctor[] = [
     experienceYears: 8,
     startingPrice: 180,
     currency: "SAR",
-    href: "/healthcare/doctors",
+    href: "/healthcare/consultants",
   },
   {
     id: "m3",
@@ -50,7 +50,7 @@ export const manualDoctors: CarouselDoctor[] = [
     experienceYears: 10,
     startingPrice: 170,
     currency: "SAR",
-    href: "/healthcare/doctors",
+    href: "/healthcare/consultants",
   },
   {
     id: "m4",
@@ -63,7 +63,7 @@ export const manualDoctors: CarouselDoctor[] = [
     experienceYears: 9,
     startingPrice: 220,
     currency: "SAR",
-    href: "/healthcare/doctors",
+    href: "/healthcare/consultants",
   },
   {
     id: "m5",
@@ -76,7 +76,7 @@ export const manualDoctors: CarouselDoctor[] = [
     experienceYears: 14,
     startingPrice: 160,
     currency: "SAR",
-    href: "/healthcare/doctors",
+    href: "/healthcare/consultants",
   },
   {
     id: "m6",
@@ -89,7 +89,7 @@ export const manualDoctors: CarouselDoctor[] = [
     experienceYears: 11,
     startingPrice: 210,
     currency: "SAR",
-    href: "/healthcare/doctors",
+    href: "/healthcare/consultants",
   },
   {
     id: "m7",
@@ -102,7 +102,7 @@ export const manualDoctors: CarouselDoctor[] = [
     experienceYears: 7,
     startingPrice: 150,
     currency: "SAR",
-    href: "/healthcare/doctors",
+    href: "/healthcare/consultants",
   },
   {
     id: "m8",
@@ -115,6 +115,6 @@ export const manualDoctors: CarouselDoctor[] = [
     experienceYears: 6,
     startingPrice: 140,
     currency: "SAR",
-    href: "/healthcare/doctors",
+    href: "/healthcare/consultants",
   },
 ];
